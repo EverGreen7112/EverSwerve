@@ -13,12 +13,20 @@ public class Swerve extends SubsystemBase{
     
     private SwerveModule[] m_modules = new SwerveModule[4];
     private AHRS m_navx = new AHRS(Port.kMXP);
+    private static Swerve m_instance = null;
 
     public Swerve(){
         m_modules[0] = new SwerveModule(0, 0);
         m_modules[1] = new SwerveModule(0, 0);
         m_modules[2] = new SwerveModule(0, 0);
         m_modules[3] = new SwerveModule(0, 0);
+    }
+
+    public static Swerve getInstance(){
+        if(m_instance == null){
+            m_instance = new Swerve();
+        }
+        return m_instance;
     }
 
     //see math on pdf document for more information
