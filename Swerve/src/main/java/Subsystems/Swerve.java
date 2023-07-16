@@ -16,11 +16,10 @@ public class Swerve extends SubsystemBase{
     private static Swerve m_instance = null;
 
     public Swerve(){
-        m_modules[0] = new SwerveModule(0, 0);
-        m_modules[1] = new SwerveModule(0, 0);
-        m_modules[2] = new SwerveModule(0, 0);
-        m_modules[3] = new SwerveModule(0, 0);
-        
+        m_modules[0] = new SwerveModule(Consts.TOP_LEFT_SPEED_PORT, Consts.TOP_LEFT_ROT_PORT);
+        m_modules[1] = new SwerveModule(Consts.TOP_RIGHT_SPEED_PORT, Consts.TOP_RIGHT_ROT_PORT);
+        m_modules[2] = new SwerveModule(Consts.DOWN_LEFT_SPEED_PORT, Consts.DOWN_LEFT_ROT_PORT);
+        m_modules[3] = new SwerveModule(Consts.DOWN_RIGHT_SPEED_PORT, Consts.DOWN_RIGHT_ROT_PORT);   
     }
 
     public static Swerve getInstance(){
@@ -35,13 +34,13 @@ public class Swerve extends SubsystemBase{
         
         Vector2d dirVec = directionVec.get();
         if(isFieldOriented.get()){
-            dirVec = dirVec.rotate(m_navx.getAngle());
+            dirVec = dirVec.rotate(m_navx.getAngle() % 360);
         }
         
         Vector2d[] rotVecs = new Vector2d[4];
         
         for(int i = 0 ;i < 4; i++){
-            rotVecs[i].set(Consts.physicalMoudulesVector[i]);
+            rotVecs[i] = new Vector2d(Consts.physicalMoudulesVector[i]);
         }
 
         rotVecs[0].rotate(-45);
