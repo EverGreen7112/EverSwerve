@@ -20,6 +20,7 @@ public class Swerve extends SubsystemBase{
         m_modules[1] = new SwerveModule(0, 0);
         m_modules[2] = new SwerveModule(0, 0);
         m_modules[3] = new SwerveModule(0, 0);
+        
     }
 
     public static Swerve getInstance(){
@@ -41,8 +42,12 @@ public class Swerve extends SubsystemBase{
         
         for(int i = 0 ;i < 4; i++){
             rotVecs[i].set(Consts.physicalMoudulesVector[i]);
-            rotVecs[i].rotate(Math.toRadians(45));              //adjusting for optimal rotation vector
         }
+
+        rotVecs[0].rotate(-45);
+        rotVecs[1].rotate(45);
+        rotVecs[2].rotate(-45);
+        rotVecs[3].rotate(45);
 
         //find max magnitude
         double maxMagnitude = rotVecs[0].mag();
