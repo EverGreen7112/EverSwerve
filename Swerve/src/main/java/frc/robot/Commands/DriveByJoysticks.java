@@ -22,7 +22,7 @@ public class DriveByJoysticks extends CommandBase{
     
     @Override
     public void initialize() {
-        
+        swerve.initModules();        
     }
 
     @Override
