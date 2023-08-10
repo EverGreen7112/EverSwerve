@@ -1,18 +1,19 @@
-package Subsystems;
+package frc.robot.Subsystems;
 
 import java.util.function.Supplier;
-
-import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Utils.Consts;
 import frc.robot.Utils.Vector2d;
+import com.ctre.phoenix.sensors.WPI_PigeonIMU;
+import com.ctre.phoenixpro.hardware.CANcoder;
 
 public class Swerve extends SubsystemBase{
     
     private SwerveModule[] m_modules = new SwerveModule[4];
-    private AHRS m_navx = new AHRS(Port.kMXP);
+    private CANcoder[] m_encoders = new CANcoder[4];
+    private WPI_PigeonIMU m_pigeon;
     private static Swerve m_instance = null;
 
     public Swerve(){
@@ -20,6 +21,11 @@ public class Swerve extends SubsystemBase{
         m_modules[1] = new SwerveModule(Consts.TOP_RIGHT_SPEED_PORT, Consts.TOP_RIGHT_ROT_PORT);
         m_modules[2] = new SwerveModule(Consts.DOWN_LEFT_SPEED_PORT, Consts.DOWN_LEFT_ROT_PORT);
         m_modules[3] = new SwerveModule(Consts.DOWN_RIGHT_SPEED_PORT, Consts.DOWN_RIGHT_ROT_PORT);   
+
+        m_encoders[0] = new CANcoder(Consts.TOP_LEFT_CANCODER);
+        m_encoders[1] = new CANcoder(Consts.TOP_RIGHT_CANCODER);
+        m_encoders[2] = new CANcoder(Consts.DOWN_LEFT_CANCODER);
+        m_encoders[3] = new CANcoder(Consts.DOWN_RIGHT_CANCODER);
     }
 
     public static Swerve getInstance(){
@@ -28,13 +34,20 @@ public class Swerve extends SubsystemBase{
         }
         return m_instance;
     }
+    
+    
+    public void initModules(){
+        for(int i = 0; i < m_modules.length; i++){
+            m_modules[i].setRotPos(m_encoders[i].getPosition().getValue());
+        }
+    }
 
     //see math on pdf document for more information
     public void drive(Supplier<Vector2d> directionVec, Supplier<Double> rotationSpeed, Supplier<Boolean> isFieldOriented){
         
         Vector2d dirVec = directionVec.get();
         if(isFieldOriented.get()){
-            dirVec = dirVec.rotate(m_navx.getAngle() % 360);
+            dirVec = dirVec.rotate(m_pigeon.getAngle() % 360);
         }
         
         Vector2d[] rotVecs = new Vector2d[4];

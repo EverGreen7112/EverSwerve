@@ -1,5 +1,6 @@
-package Subsystems;
+package frc.robot.Subsystems;
 
+import com.ctre.phoenixpro.hardware.CANcoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -17,12 +18,19 @@ public class SwerveModule extends SubsystemBase{
     public SwerveModule(int speedPort, int rotationPort){
         m_speedMotor = new CANSparkMax(speedPort, MotorType.kBrushless);
         m_rotationMotor = new CANSparkMax(rotationPort, MotorType.kBrushless);
+
         m_rotationMotor.getPIDController().setP(0);
         m_rotationMotor.getPIDController().setI(0);
         m_rotationMotor.getPIDController().setD(0);
+        
         m_speedMotor.getPIDController().setP(0);
         m_speedMotor.getPIDController().setI(0);
         m_speedMotor.getPIDController().setD(0);
+        
+    }
+
+    public void setRotPos(double pos){
+        m_rotationMotor.getEncoder().setPosition(pos);
     }
 
     public Vector2d getState(){
