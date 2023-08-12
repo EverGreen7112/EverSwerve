@@ -2,18 +2,19 @@ package frc.robot.Subsystems;
 
 import java.util.function.Supplier;
 
-import edu.wpi.first.wpilibj.SerialPort.Port;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Utils.Consts;
 import frc.robot.Utils.Vector2d;
-import com.ctre.phoenix.sensors.WPI_PigeonIMU;
+
+import com.ctre.phoenix.sensors.PigeonIMU;
 import com.ctre.phoenixpro.hardware.CANcoder;
 
 public class Swerve extends SubsystemBase{
     
     private SwerveModule[] m_modules = new SwerveModule[4];
     private CANcoder[] m_encoders = new CANcoder[4];
-    private WPI_PigeonIMU m_pigeon;
+    private PigeonIMU m_pigeon;
     private static Swerve m_instance = null;
 
     public Swerve(){
@@ -35,7 +36,22 @@ public class Swerve extends SubsystemBase{
         return m_instance;
     }
     
-    
+    @Override
+    public void periodic() {
+        Vector2d topLeftState = m_modules[0].getState();
+        SmartDashboard.putString("top left module", "speed: " + topLeftState.mag() + " angle: " + topLeftState.theta());
+
+        Vector2d topRightState = m_modules[1].getState();
+        SmartDashboard.putString("top left module", "speed: " + topRightState.mag() + " angle: " + topRightState.theta());
+
+        Vector2d downLeftState = m_modules[2].getState();
+        SmartDashboard.putString("top left module", "speed: " + downLeftState.mag() + " angle: " + downLeftState.theta());
+
+        Vector2d downRightState = m_modules[3].getState();
+        SmartDashboard.putString("top left module", "speed: " + downRightState.mag() + " angle: " + downRightState.theta());
+    }
+
+    //put real starting position from absolute encoders to the relative encoders
     public void initModules(){
         for(int i = 0; i < m_modules.length; i++){
             m_modules[i].setRotPos(m_encoders[i].getPosition().getValue());
@@ -47,7 +63,7 @@ public class Swerve extends SubsystemBase{
         
         Vector2d dirVec = directionVec.get();
         if(isFieldOriented.get()){
-            dirVec = dirVec.rotate(m_pigeon.getAngle() % 360);
+            dirVec = dirVec.rotate(m_pigeon.getYaw() % 360);
         }
         
         Vector2d[] rotVecs = new Vector2d[4];

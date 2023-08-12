@@ -18,6 +18,7 @@ public class DriveByJoysticks extends CommandBase{
         m_rotation = rotation;
         m_isFieldOriented = isFieldOriented;
         swerve = Swerve.getInstance();
+        addRequirements(swerve);
     }
     
     @Override
