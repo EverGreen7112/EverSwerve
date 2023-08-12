@@ -40,7 +40,7 @@ public class Consts {
     }
 
     public static double rotationsToDegrees(double rotations){
-      return (rotations / GEAR_RATIO) / 360;
+      return (rotations / GEAR_RATIO) * 360;
     }
 
     public static double degreesToRotations(double angle){

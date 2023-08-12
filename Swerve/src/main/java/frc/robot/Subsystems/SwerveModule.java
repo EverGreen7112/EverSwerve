@@ -18,8 +18,7 @@ public class SwerveModule{
 
         m_rotationMotor.getPIDController().setP(Consts.WHEEL_ROTATION_KP);
         m_rotationMotor.getPIDController().setI(Consts.WHEEL_ROTATION_KI);
-        m_rotationMotor.getPIDController().setD(Consts.WHEEL_ROTATION_KD);
-        
+        m_rotationMotor.getPIDController().setD(Consts.WHEEL_ROTATION_KD);   
     }
 
     public void setRotPos(double pos){
