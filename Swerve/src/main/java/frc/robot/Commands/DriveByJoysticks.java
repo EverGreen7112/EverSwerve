@@ -20,11 +20,9 @@ public class DriveByJoysticks extends CommandBase{
         swerve = Swerve.getInstance();
         addRequirements(swerve);
     }
-    
+
     @Override
-    public void initialize() {
-        swerve.initModules();        
-    }
+    public void initialize() {}
 
     @Override
     public void execute() {
@@ -38,7 +36,5 @@ public class DriveByJoysticks extends CommandBase{
     }
 
     @Override
-    public void end(boolean interrupted) {
-        
-    }
+    public void end(boolean interrupted) {}
 }

@@ -39,10 +39,12 @@ public class Consts {
       return wheelRadius * 2 * Math.PI * rps;
     }
 
+    //check that
     public static double rotationsToDegrees(double rotations){
       return (rotations / GEAR_RATIO) * 360;
     }
 
+    //check that
     public static double degreesToRotations(double angle){
       return (angle / 360) * GEAR_RATIO;
     }
