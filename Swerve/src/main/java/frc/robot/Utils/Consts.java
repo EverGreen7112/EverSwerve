@@ -17,6 +17,9 @@ public class Consts {
     public static final int DOWN_LEFT_CANCODER = 12;
     public static final int DOWN_RIGHT_CANCODER = 13;
 
+    //gyro
+    public static final int PIGEON = 9;
+
     //pid values
     public static final double WHEEL_ROTATION_KP = 0.0124; 
     public static final double WHEEL_ROTATION_KI = 0;

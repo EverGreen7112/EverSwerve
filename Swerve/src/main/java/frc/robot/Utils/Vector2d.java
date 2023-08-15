@@ -199,23 +199,6 @@ public class Vector2d
         return this;
     }
 
-    //check that
-
-    /**
-     * Turn the vector's angle to the given angle
-     * @param theta - angle given, in radians
-     */
-    public Vector2d turnTo(double theta){
-        double mag = mag();
-        double nx = mag * Math.cos(theta);
-        double ny = mag * Math.sin(theta);
-        
-        this.x = nx;
-        this.y = ny;
-        
-        return this;
-    }
-
     /**
      * Calculates the scalar product of this vector and the one passed by parameter
      * @param v vector to do the scalar product with.

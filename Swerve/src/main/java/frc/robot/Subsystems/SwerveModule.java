@@ -12,6 +12,7 @@ public class SwerveModule{
 
     private CANSparkMax m_speedMotor;
     private CANSparkMax m_rotationMotor;
+    private CANCoder m_coder; 
 
     public SwerveModule(int speedPort, int rotationPort){
         m_speedMotor = new CANSparkMax(speedPort, MotorType.kBrushless);
@@ -25,9 +26,13 @@ public class SwerveModule{
     //used for putting starting values from the absolute encoders in the encoders of the sparkmax
     public SwerveModule(int speedPort, int rotationPort, int absoluteEncoderPort){
         this(speedPort, rotationPort);
-        CANCoder absEncoder = new CANCoder(absoluteEncoderPort);
-        m_rotationMotor.getEncoder().setPosition(absEncoder.getPosition() / 360);   //CANcoder works with degrees and sparkmax encoder works with rotations
+        m_coder = new CANCoder(absoluteEncoderPort);
     }
+
+    public void setAbsPosInSpark(){
+        m_rotationMotor.getEncoder().setPosition(m_coder.getPosition() / 360); 
+    }
+
 
     public Vector2d getState(){
         double currentAngle = Consts.rotationsToDegrees(m_rotationMotor.getEncoder().getPosition());
