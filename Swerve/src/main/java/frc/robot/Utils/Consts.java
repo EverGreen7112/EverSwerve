@@ -20,6 +20,10 @@ public class Consts {
     //gyro
     public static final int PIGEON = 9;
 
+    //joysticks
+    public static final int LEFT_JOYSTICK = 0;
+    public static final int RIGHT_JOYSTICK = 1;
+
     //pid values
     public static final double WHEEL_ROTATION_KP = 0.0124; 
     public static final double WHEEL_ROTATION_KI = 0;
@@ -42,12 +46,10 @@ public class Consts {
       return wheelRadius * 2 * Math.PI * rps;
     }
 
-    //check that
     public static double rotationsToDegrees(double rotations){
       return (rotations / GEAR_RATIO) * 360;
     }
 
-    //check that
     public static double degreesToRotations(double angle){
       return (angle / 360) * GEAR_RATIO;
     }

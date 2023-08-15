@@ -1,6 +1,5 @@
 package frc.robot.Subsystems;
 
-import java.util.function.Supplier;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Utils.Consts;
@@ -9,7 +8,7 @@ import com.ctre.phoenix.sensors.PigeonIMU;
 
 public class Swerve extends SubsystemBase{
     
-    private SwerveModule[] m_modules = new SwerveModule[4];
+    private SwerveModule[] m_modules = new SwerveModule[Consts.physicalMoudulesVector.length];
     private PigeonIMU m_pigeon; 
     private static Swerve m_instance = null;
 
@@ -35,46 +34,40 @@ public class Swerve extends SubsystemBase{
         SmartDashboard.putString("top left module", "speed: " + topLeftState.mag() + " angle: " + topLeftState.theta());
 
         Vector2d topRightState = m_modules[1].getState();
-        SmartDashboard.putString("top left module", "speed: " + topRightState.mag() + " angle: " + topRightState.theta());
+        SmartDashboard.putString("top right module", "speed: " + topRightState.mag() + " angle: " + topRightState.theta());
 
         Vector2d downLeftState = m_modules[2].getState();
-        SmartDashboard.putString("top left module", "speed: " + downLeftState.mag() + " angle: " + downLeftState.theta());
+        SmartDashboard.putString("down left module", "speed: " + downLeftState.mag() + " angle: " + downLeftState.theta());
 
         Vector2d downRightState = m_modules[3].getState();
-        SmartDashboard.putString("top left module", "speed: " + downRightState.mag() + " angle: " + downRightState.theta());
-        
-        //put absolute encoder value in relative encoder of SparkMax 
-        for(int i = 0; i < 4; i++){
-            m_modules[i].setAbsPosInSpark();;
-        }
+        SmartDashboard.putString("down right module", "speed: " + downRightState.mag() + " angle: " + downRightState.theta());
     }
 
     //see math on pdf document for more information
-    public void drive(Supplier<Vector2d> directionVec, Supplier<Double> spinSpeed, Supplier<Boolean> isFieldOriented){
-        Vector2d dirVec = directionVec.get();
-        //i thought we might need to rotate the vector to the opposite direction, can you think about it? 
-        if(isFieldOriented.get()){
+    public void drive(Vector2d directionVec, double spinSpeed, boolean isFieldOriented){
+        Vector2d dirVec = directionVec;
+        if(isFieldOriented){
             dirVec = dirVec.rotate(-(m_pigeon.getYaw() % 360));
         }
         
-        Vector2d[] rotVecs = new Vector2d[4];
-        
-        for(int i = 0 ;i < 4; i++){
+        Vector2d[] rotVecs = new Vector2d[m_modules.length];
+
+        for(int i = 0 ;i < rotVecs.length; i++){ 
             rotVecs[i] = new Vector2d(Consts.physicalMoudulesVector[i]); 
-            rotVecs[i].rotate(Math.toDegrees(90));
+            rotVecs[i].rotate(Math.toDegrees(90));// make rotation vectors parallel to origin
         }
 
-        //find magnitude
+        //we need the max magnitude and because all of the magnitudes are equals there is no reason to search for the biggest one
         double mag = rotVecs[0].mag(); 
 
         //normalize by the vector with the biggest magnitude
         for(int i = 0 ;i < rotVecs.length; i++){
             rotVecs[i].mul(1/mag); //normalize
-            rotVecs[i].mul(spinSpeed.get()); //mul by the rotation speed
+            rotVecs[i].mul(spinSpeed); //mul by the rotation speed
         }
         
         //add vectors
-        Vector2d[] finalVecs = new Vector2d[4]; 
+        Vector2d[] finalVecs = new Vector2d[m_modules.length]; 
         for(int i = 0; i < finalVecs.length; i++){
             finalVecs[i] = new Vector2d(rotVecs[i]);
             finalVecs[i].add(dirVec);
