@@ -15,6 +15,7 @@ public class SwerveModule extends SubsystemBase{
     private CANSparkMax m_rotationMotor;
     private CANCoder m_coder;
     private Vector2d desiredState;
+    private boolean usesAbsEncoder = false;
 
     public SwerveModule(int movmentPort, int rotationPort){
         m_speedMotor = new CANSparkMax(movmentPort, MotorType.kBrushless);
@@ -30,13 +31,15 @@ public class SwerveModule extends SubsystemBase{
         this(speedPort, rotationPort);
         m_coder = new CANCoder(absoluteEncoderPort);
         this.desiredState = new Vector2d(0, 0);
+        usesAbsEncoder = true;
     }
 
     @Override   
     public void periodic() {
         // put abs encoder pos in relative encoder of sparkmax
         // div by 360 because position in cancoder is by degrees and sparkmax encoder is by rotations
-        m_rotationMotor.getEncoder().setPosition(m_coder.getPosition() / 360);
+        if(usesAbsEncoder)
+            m_rotationMotor.getEncoder().setPosition(m_coder.getPosition() / 360);
 
         //get target speed and angle from desired state
         double targetAngle = desiredState.theta();
