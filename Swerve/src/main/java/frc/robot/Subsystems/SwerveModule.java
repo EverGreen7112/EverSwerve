@@ -29,6 +29,7 @@ public class SwerveModule extends SubsystemBase{
     public SwerveModule(int speedPort, int rotationPort, int absoluteEncoderPort){
         this(speedPort, rotationPort);
         m_coder = new CANCoder(absoluteEncoderPort);
+        this.desiredState = new Vector2d(0, 0);
     }
 
     @Override   
