@@ -12,18 +12,27 @@ public class Swerve extends SubsystemBase{
     private PigeonIMU m_pigeon; 
     private static Swerve m_instance = null;
 
-    public Swerve(){
-        m_modules[0] = new SwerveModule(Consts.TOP_LEFT_SPEED_PORT, Consts.TOP_LEFT_ROT_PORT, Consts.TOP_LEFT_CANCODER);
-        m_modules[1] = new SwerveModule(Consts.TOP_RIGHT_SPEED_PORT, Consts.TOP_RIGHT_ROT_PORT, Consts.TOP_RIGHT_CANCODER);
-        m_modules[2] = new SwerveModule(Consts.DOWN_LEFT_SPEED_PORT, Consts.DOWN_LEFT_ROT_PORT, Consts.DOWN_LEFT_CANCODER);
-        m_modules[3] = new SwerveModule(Consts.DOWN_RIGHT_SPEED_PORT, Consts.DOWN_RIGHT_ROT_PORT, Consts.DOWN_RIGHT_CANCODER);        
+    public Swerve(boolean usesAbsEncoder){
+        
+        if(usesAbsEncoder){
+            m_modules[0] = new SwerveModule(Consts.TOP_LEFT_SPEED_PORT, Consts.TOP_LEFT_ROT_PORT, Consts.TOP_LEFT_CANCODER);
+            m_modules[1] = new SwerveModule(Consts.TOP_RIGHT_SPEED_PORT, Consts.TOP_RIGHT_ROT_PORT, Consts.TOP_RIGHT_CANCODER);
+            m_modules[2] = new SwerveModule(Consts.DOWN_LEFT_SPEED_PORT, Consts.DOWN_LEFT_ROT_PORT, Consts.DOWN_LEFT_CANCODER);
+            m_modules[3] = new SwerveModule(Consts.DOWN_RIGHT_SPEED_PORT, Consts.DOWN_RIGHT_ROT_PORT, Consts.DOWN_RIGHT_CANCODER);        
+        }
+        else{
+            m_modules[0] = new SwerveModule(Consts.TOP_LEFT_SPEED_PORT, Consts.TOP_LEFT_ROT_PORT);
+            m_modules[1] = new SwerveModule(Consts.TOP_RIGHT_SPEED_PORT, Consts.TOP_RIGHT_ROT_PORT);
+            m_modules[2] = new SwerveModule(Consts.DOWN_LEFT_SPEED_PORT, Consts.DOWN_LEFT_ROT_PORT);
+            m_modules[3] = new SwerveModule(Consts.DOWN_RIGHT_SPEED_PORT, Consts.DOWN_RIGHT_ROT_PORT);        
+        }
 
         m_pigeon = new PigeonIMU(Consts.PIGEON);
     }
 
-    public static Swerve getInstance(){
+    public static Swerve getInstance(boolean usesAbsEncoder){
         if(m_instance == null){
-            m_instance = new Swerve();
+            m_instance = new Swerve(usesAbsEncoder);
         }
         return m_instance;
     }

@@ -1,6 +1,10 @@
 package frc.robot.Utils;
 
 public class Consts {
+
+    //speed values
+    public static final double MAX_SPEED = 0.3; 
+
     //chassis motors
     public static final int TOP_LEFT_SPEED_PORT = 3;
     public static final int TOP_RIGHT_SPEED_PORT = 1;
@@ -23,6 +27,7 @@ public class Consts {
     //joysticks
     public static final int LEFT_JOYSTICK = 0;
     public static final int RIGHT_JOYSTICK = 1;
+    public static final double JOYSTICK_DEADZONE = 0.2;
 
     //pid values
     public static final double WHEEL_ROTATION_KP = 0.0124; 
@@ -38,7 +43,7 @@ public class Consts {
 
     public static final Vector2d[] physicalMoudulesVector = { TOP_LEFT, TOP_RIGHT, DOWN_LEFT, DOWN_RIGHT};//array of vectors from robot center to swerves module
 
-    public static final double GEAR_RATIO = 8.14;
+    public static final double GEAR_RATIO = 8.14; //L1
 
 
     public static double rpmToMs(double wheelRadius, double rpm){
