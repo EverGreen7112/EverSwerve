@@ -32,7 +32,8 @@ public class DriveByJoysticks extends CommandBase{
         double speedY = m_speedY.get();
         double rotation = m_rotation.get();
 
-        if(Math.abs(speedX) < Consts.JOYSTICK_DEADZONE || Math.abs(speedY) < Consts.JOYSTICK_DEADZONE || Math.abs(rotation) < Consts.JOYSTICK_DEADZONE){
+        if(Math.abs(speedX) < Consts.JOYSTICK_DEADZONE && Math.abs(speedY) < Consts.JOYSTICK_DEADZONE && Math.abs(rotation) < Consts.JOYSTICK_DEADZONE){
+            Swerve.getInstance(true).stop();
             return;
         }
         Vector2d vec = new Vector2d(speedX * Consts.MAX_SPEED, speedY * Consts.MAX_SPEED);
@@ -45,5 +46,7 @@ public class DriveByJoysticks extends CommandBase{
     }
 
     @Override
-    public void end(boolean interrupted) {}
+    public void end(boolean interrupted) {
+        
+    }
 }
