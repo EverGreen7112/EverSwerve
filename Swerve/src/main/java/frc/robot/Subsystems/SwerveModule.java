@@ -1,28 +1,27 @@
 package frc.robot.Subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.CANCoder;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMax.ControlType;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Utils.Consts;
 import frc.robot.Utils.Vector2d;
 
 public class SwerveModule extends SubsystemBase {
 
-    public CANSparkMax m_speedMotor;
-    public CANSparkMax m_rotationMotor;
+    public TalonFX m_speedMotor;
+    public TalonFX m_rotationMotor;
     public CANCoder m_coder;
 
-    public SwerveModule(int movmentPort, int rotationPort) {
-        m_speedMotor = new CANSparkMax(movmentPort, MotorType.kBrushless);
-        m_rotationMotor = new CANSparkMax(rotationPort, MotorType.kBrushless);
+    public SwerveModule(int speedPort, int rotationPort) {
+        m_speedMotor = new TalonFX(speedPort);
+        m_rotationMotor = new TalonFX(rotationPort);
 
-        m_rotationMotor.getPIDController().setP(Consts.WHEEL_ROTATION_KP);
-        m_rotationMotor.getPIDController().setI(Consts.WHEEL_ROTATION_KI);
-        m_rotationMotor.getPIDController().setD(Consts.WHEEL_ROTATION_KD);
-
-        m_rotationMotor.getEncoder().setPositionConversionFactor(1 / Consts.ROTATION_GEAR_RATIO);
+        m_rotationMotor.config_kP(0, Consts.WHEEL_ROTATION_KP);
+        m_rotationMotor.config_kI(0, Consts.WHEEL_ROTATION_KI);
+        m_rotationMotor.config_kD(0, Consts.WHEEL_ROTATION_KD);
+            
+        // (1 / (Consts.ROTATION_GEAR_RATIO * 2048));
     }
 
     // used only if using CanCoder
@@ -30,19 +29,19 @@ public class SwerveModule extends SubsystemBase {
         this(speedPort, rotationPort);
         m_coder = new CANCoder(absoluteEncoderPort);
         m_coder.configFactoryDefault();
-        m_rotationMotor.getEncoder().setPosition(m_coder.getAbsolutePosition() / 360);
+        m_rotationMotor.setSelectedSensorPosition((m_coder.getAbsolutePosition() / 360) * 2048);
     }
 
     //turn off motors
     public void turnOff() {
-        this.m_rotationMotor.set(0);
-        this.m_speedMotor.set(0);
+        this.m_rotationMotor.set(ControlMode.PercentOutput, 0);
+        this.m_speedMotor.set(ControlMode.PercentOutput, 0);
     }
 
     // get current state of module(magnitude is speed, direction is angle of module)
     public Vector2d getState() {
-        double currentAngle = Consts.rotationsToDegrees(m_rotationMotor.getEncoder().getPosition());
-        double currentSpeed = m_speedMotor.get();
+        double currentAngle = Consts.rotationsToDegrees(m_rotationMotor.getSelectedSensorPosition());
+        double currentSpeed = m_speedMotor.getActiveTrajectoryArbFeedFwd();
         return new Vector2d(currentSpeed * Math.cos(Math.toRadians(currentAngle)),
                 currentSpeed * Math.sin(Math.toRadians(currentAngle)));
     }
@@ -58,11 +57,11 @@ public class SwerveModule extends SubsystemBase {
 
         double optimizedAngle = Math.toDegrees(currentState.theta()) + Consts.closestAngle(Math.toDegrees(currentState.theta()), targetAngle);
         // rotate module to the target angle
-        m_rotationMotor.getPIDController().setReference(Consts.degreesToRotations(optimizedAngle), ControlType.kPosition);
+        m_rotationMotor.set(ControlMode.Position,Consts.degreesToRotations(optimizedAngle) * 2048 * Consts.ROTATION_GEAR_RATIO);
 
         // drive module by the mag of the desired state(on the current state as the)
         targetSpeed = targetSpeed * Math.cos(desiredState.theta() - currentState.theta());
-        m_speedMotor.set(0.1); //for testing only rotation
+        m_speedMotor.set(ControlMode.PercentOutput ,0.1); //for testing only rotation
     }
 
 }
