@@ -21,13 +21,11 @@ public class Swerve extends SubsystemBase{
             m_modules[3] = new SwerveModule(Consts.DOWN_LEFT_SPEED_PORT, Consts.DOWN_LEFT_ROT_PORT, Consts.DOWN_LEFT_CANCODER, Consts.DOWN_LEFT_CANCODER_OFFSET);        
         }
         else{
-            //CHANGE ACCORDING TO IF
-            m_modules[0] = new SwerveModule(Consts.TOP_LEFT_SPEED_PORT, Consts.TOP_LEFT_ROT_PORT);
-            m_modules[1] = new SwerveModule(Consts.TOP_RIGHT_SPEED_PORT, Consts.TOP_RIGHT_ROT_PORT);
-            m_modules[2] = new SwerveModule(Consts.DOWN_LEFT_SPEED_PORT, Consts.DOWN_LEFT_ROT_PORT);
-            m_modules[3] = new SwerveModule(Consts.DOWN_RIGHT_SPEED_PORT, Consts.DOWN_RIGHT_ROT_PORT);        
+            m_modules[0] = new SwerveModule(Consts.TOP_RIGHT_SPEED_PORT, Consts.TOP_RIGHT_ROT_PORT);
+            m_modules[1] = new SwerveModule(Consts.TOP_LEFT_SPEED_PORT, Consts.TOP_LEFT_ROT_PORT);
+            m_modules[2] = new SwerveModule(Consts.DOWN_RIGHT_SPEED_PORT, Consts.DOWN_RIGHT_ROT_PORT);
+            m_modules[3] = new SwerveModule(Consts.DOWN_LEFT_SPEED_PORT, Consts.DOWN_LEFT_ROT_PORT);        
         }
-
         m_pigeon = new PigeonIMU(Consts.PIGEON);
     }
 
@@ -56,8 +54,6 @@ public class Swerve extends SubsystemBase{
             SmartDashboard.putNumber("sparkmax encoder " + i, m_modules[i].m_rotationMotor.getEncoder().getPosition());
             SmartDashboard.putNumber("Can coder " + i, m_modules[i].m_coder.getAbsolutePosition());
         }
-
-
     }
 
     //see math on pdf document for more information
@@ -71,7 +67,7 @@ public class Swerve extends SubsystemBase{
 
         for(int i = 0 ;i < rotVecs.length; i++){ 
             rotVecs[i] = new Vector2d(Consts.physicalMoudulesVector[i]); 
-            rotVecs[i].rotate(Math.toRadians(-90));// make rotation vectors parallel to origin
+            rotVecs[i].rotate(Math.toRadians(-90));
         }
 
         //we need the max magnitude and because all of the magnitudes are equals there is no reason to search for the biggest one

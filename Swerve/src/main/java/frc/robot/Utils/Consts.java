@@ -39,7 +39,6 @@ public class Consts {
     public static final double WHEEL_ROTATION_KI = 0;
     public static final double WHEEL_ROTATION_KD = 0;
 
-
     //swerve vectors
     public static final Vector2d TOP_RIGHT = new Vector2d(0.2551, 0.31535);
     public static final Vector2d TOP_LEFT = new Vector2d(-0.2551, 0.31535);
