@@ -36,8 +36,9 @@ public class DriveByJoysticks extends CommandBase{
             Swerve.getInstance(true).stop();
             return;
         }
-        Vector2d vec = new Vector2d(speedX * Consts.MAX_SPEED, speedY * Consts.MAX_SPEED);
+        Vector2d vec = new Vector2d(speedX * Consts.MAX_SPEED, speedY * Consts.MAX_SPEED * -1).rotate(Math.toRadians(-90));
         Swerve.getInstance(m_usesAbsEncoder).drive(vec, rotation, m_isFieldOriented.get());
+        
     }
 
     @Override

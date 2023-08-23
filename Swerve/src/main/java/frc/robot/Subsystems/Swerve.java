@@ -5,11 +5,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Utils.Consts;
 import frc.robot.Utils.Vector2d;
+
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.kauailabs.navx.frc.AHRS;
 
 public class Swerve extends SubsystemBase {
 
-    private SwerveModule[] m_modules = new SwerveModule[Consts.physicalMoudulesVector.length];
+    public SwerveModule[] m_modules = new SwerveModule[Consts.physicalMoudulesVector.length];
     private AHRS m_navx;
     private static Swerve m_instance = null;
 
@@ -42,23 +44,26 @@ public class Swerve extends SubsystemBase {
 
     @Override
     public void periodic() {
-        Vector2d topLeftState = m_modules[0].getState();
-        SmartDashboard.putString("top left module", "speed: " + topLeftState.mag() + " angle: " + topLeftState.theta());
+        Vector2d topLeftState = m_modules[1].getState();
 
-        Vector2d topRightState = m_modules[1].getState();
+        SmartDashboard.putNumber("yaw", m_navx.getYaw());
+        SmartDashboard.putString("top left module",
+                 "speed: " + topLeftState.mag() + " angle: " + Math.toDegrees(topLeftState.theta()));
+
+        Vector2d topRightState = m_modules[0].getState();
         SmartDashboard.putString("top right module",
-                "speed: " + topRightState.mag() + " angle: " + topRightState.theta());
+                "speed: " + topRightState.mag() + " angle: " + Math.toDegrees(topRightState.theta()));
 
-        Vector2d downLeftState = m_modules[2].getState();
+        Vector2d downLeftState = m_modules[3].getState();
         SmartDashboard.putString("down left module",
-                "speed: " + downLeftState.mag() + " angle: " + downLeftState.theta());
+                "speed: " + downLeftState.mag() + " angle: " + Math.toDegrees(downLeftState.theta()));
 
-        Vector2d downRightState = m_modules[3].getState();
+        Vector2d downRightState = m_modules[2].getState();
         SmartDashboard.putString("down right module",
-                "speed: " + downRightState.mag() + " angle: " + downRightState.theta());
+                "speed: " + downRightState.mag() + " angle: " + Math.toDegrees(downRightState.theta()));
 
         for (int i = 0; i < m_modules.length; i++) {
-            SmartDashboard.putNumber("sparkmax encoder " + i, m_modules[i].m_rotationMotor.getSelectedSensorPosition());
+            SmartDashboard.putNumber("sparkmax encoder " + i, (m_modules[i].m_rotationMotor.getSelectedSensorPosition() / 2048) * 360);
             SmartDashboard.putNumber("Can coder " + i, m_modules[i].m_coder.getAbsolutePosition());
         }
     }
@@ -67,14 +72,14 @@ public class Swerve extends SubsystemBase {
     public void drive(Vector2d directionVec, double spinSpeed, boolean isFieldOriented) {
         Vector2d dirVec = directionVec;
         if (isFieldOriented) {
-            dirVec = dirVec.rotate(-(m_navx.getYaw() % 360));
+            dirVec = dirVec.rotate((-m_navx.getYaw()));
         }
 
         Vector2d[] rotVecs = new Vector2d[m_modules.length];
 
         for (int i = 0; i < rotVecs.length; i++) {
             rotVecs[i] = new Vector2d(Consts.physicalMoudulesVector[i]);
-            rotVecs[i].rotate(Math.toRadians(-90));
+            rotVecs[i].rotate(Math.toRadians(0));
         }
 
         // we need the max magnitude and because all of the magnitudes are equals there
@@ -111,7 +116,7 @@ public class Swerve extends SubsystemBase {
         }
     }
 
-    //untested alternative way to calculate module states
+    // untested alternative way to calculate module states
     public void driveByMats(Vector2d directionVec, double spinSpeed, boolean isFieldOriented) {
         Vector2d dirVec = directionVec;
         if (isFieldOriented) {

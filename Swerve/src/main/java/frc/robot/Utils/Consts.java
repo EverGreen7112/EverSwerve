@@ -3,7 +3,7 @@ package frc.robot.Utils;
 public class Consts {
 
     //speed values
-    public static final double MAX_SPEED = 0.45;
+    public static final double MAX_SPEED = 0.2;
 
     //chassis motors
     public static final int TOP_LEFT_SPEED_PORT = 15;
@@ -21,18 +21,18 @@ public class Consts {
     public static final int DOWN_LEFT_CANCODER = 10;
     public static final int DOWN_RIGHT_CANCODER = 12;
 
-    public static final double TOP_RIGHT_CANCODER_OFFSET = 0.51;
-    public static final double TOP_LEFT_CANCODER_OFFSET = 40.5;
-    public static final double DOWN_RIGHT_CANCODER_OFFSET = 265.3;
-    public static final double DOWN_LEFT_CANCODER_OFFSET = -133;
+    public static final double TOP_RIGHT_CANCODER_OFFSET = 180;
+    public static final double TOP_LEFT_CANCODER_OFFSET = 360 - 219;
+    public static final double DOWN_RIGHT_CANCODER_OFFSET = 360 - 85;
+    public static final double DOWN_LEFT_CANCODER_OFFSET = 360 - 43;
 
     //joysticks
-    public static final int LEFT_JOYSTICK = 0;
-    public static final int RIGHT_JOYSTICK = 1;
+    public static final int LEFT_JOYSTICK = 1;
+    public static final int RIGHT_JOYSTICK = 0;
     public static final double JOYSTICK_DEADZONE = 0.2;
 
     //pid values
-    public static final double WHEEL_ROTATION_KP = 0.75; 
+    public static final double WHEEL_ROTATION_KP = 0.1; 
     public static final double WHEEL_ROTATION_KI = 0;
     public static final double WHEEL_ROTATION_KD = 0;
 
@@ -75,5 +75,7 @@ public class Consts {
     public static double modulo(double a, double b) {
       return ((a % b) + b) % b;
     }
+
+   
 
 }
