@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Utils.Consts;
 import frc.robot.Utils.Vector2d;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.kauailabs.navx.frc.AHRS;
 
 public class Swerve extends SubsystemBase {
@@ -63,7 +62,7 @@ public class Swerve extends SubsystemBase {
                 "speed: " + downRightState.mag() + " angle: " + Math.toDegrees(downRightState.theta()));
 
         for (int i = 0; i < m_modules.length; i++) {
-            SmartDashboard.putNumber("sparkmax encoder " + i, (m_modules[i].m_rotationMotor.getSelectedSensorPosition() / 2048) * 360);
+            SmartDashboard.putNumber("sparkmax encoder " + i, (m_modules[i].m_rotationMotor.getEncoder().getPosition() * 360));
             SmartDashboard.putNumber("Can coder " + i, m_modules[i].m_coder.getAbsolutePosition());
         }
     }
@@ -71,15 +70,16 @@ public class Swerve extends SubsystemBase {
     // see math on pdf document for more information
     public void drive(Vector2d directionVec, double spinSpeed, boolean isFieldOriented) {
         Vector2d dirVec = directionVec;
+
         if (isFieldOriented) {
-            dirVec = dirVec.rotate((-m_navx.getYaw()));
+            dirVec = dirVec.rotate(Math.toRadians(-m_navx.getYaw()));
         }
 
         Vector2d[] rotVecs = new Vector2d[m_modules.length];
 
         for (int i = 0; i < rotVecs.length; i++) {
             rotVecs[i] = new Vector2d(Consts.physicalMoudulesVector[i]);
-            rotVecs[i].rotate(Math.toRadians(0));
+            rotVecs[i].rotate(Math.toRadians(90));
         }
 
         // we need the max magnitude and because all of the magnitudes are equals there
@@ -109,9 +109,11 @@ public class Swerve extends SubsystemBase {
         for (int i = 0; i < finalVecs.length; i++) {
             finalVecs[i].mul(1 / mag); // divide by maxMagnitude
         }
+        mag = Math.min(Consts.MAX_SPEED * mag, Consts.MAX_SPEED);
 
         // set target state of module
         for (int i = 0; i < finalVecs.length; i++) {
+            finalVecs[i].mul(mag);
             m_modules[i].setState(finalVecs[i]);
         }
     }
@@ -120,7 +122,7 @@ public class Swerve extends SubsystemBase {
     public void driveByMats(Vector2d directionVec, double spinSpeed, boolean isFieldOriented) {
         Vector2d dirVec = directionVec;
         if (isFieldOriented) {
-            dirVec = dirVec.rotate(-(m_navx.getYaw() % 360));
+            dirVec = dirVec.rotate(Math.toRadians(-m_navx.getAngle()));
         }
 
         for (int i = 0; i < m_modules.length; i++) {

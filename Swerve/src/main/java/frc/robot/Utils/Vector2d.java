@@ -183,13 +183,13 @@ public class Vector2d
 
     /**
      * Rotates the vector an angle given, in radians.
-     * @param theta angle given, in radians
+     * @param thetaRadians angle given, in radians
      */
-    public Vector2d rotate(double theta) {
+    public Vector2d rotate(double thetaRadians) {
         // rotate this vector by the angle made to the horizontal by this line
         // theta is in radians
-        double cosTheta = Math.cos(theta);
-        double sinTheta = Math.sin(theta);
+        double cosTheta = Math.cos(thetaRadians);
+        double sinTheta = Math.sin(thetaRadians);
 
         double nx = x * cosTheta - y * sinTheta;
         double ny = x * sinTheta + y * cosTheta;

@@ -3,7 +3,7 @@ package frc.robot.Utils;
 public class Consts {
 
     //speed values
-    public static final double MAX_SPEED = 0.2;
+    public static final double MAX_SPEED = 0.2;/
 
     //chassis motors
     public static final int TOP_LEFT_SPEED_PORT = 15;
