@@ -3,7 +3,7 @@ package frc.robot.Utils;
 public class Consts {
 
     //speed values
-    public static final double MAX_SPEED = 0.2;/
+    public static final double MAX_SPEED = 0.2;
 
     //chassis motors
     public static final int TOP_LEFT_SPEED_PORT = 15;
@@ -36,11 +36,15 @@ public class Consts {
     public static final double WHEEL_ROTATION_KI = 0;
     public static final double WHEEL_ROTATION_KD = 0;
 
+    public static final double FRONT_WHEEL_DIST_METERS = 0.6703;
+    public static final double SIDE_WHEEL_DIST_METERS = 0.5102;
+
+
     //swerve vectors
-    public static final Vector2d TOP_RIGHT = new Vector2d(0.29515, 0.29515); 
-    public static final Vector2d TOP_LEFT = new Vector2d(-0.29515, 0.29515);
-    public static final Vector2d DOWN_RIGHT = new Vector2d(0.29515, -0.29515);
-    public static final Vector2d DOWN_LEFT = new Vector2d(-0.29515, -0.29515);
+    public static final Vector2d TOP_RIGHT = new Vector2d((FRONT_WHEEL_DIST_METERS / 2), (SIDE_WHEEL_DIST_METERS / 2)); 
+    public static final Vector2d TOP_LEFT = new Vector2d(-(FRONT_WHEEL_DIST_METERS / 2), SIDE_WHEEL_DIST_METERS / 2);
+    public static final Vector2d DOWN_RIGHT = new Vector2d(FRONT_WHEEL_DIST_METERS / 2, -(SIDE_WHEEL_DIST_METERS / 2));
+    public static final Vector2d DOWN_LEFT = new Vector2d(-(FRONT_WHEEL_DIST_METERS / 2), -(SIDE_WHEEL_DIST_METERS / 2));
 
     public static final Vector2d[] physicalMoudulesVector = { TOP_RIGHT, TOP_LEFT, DOWN_RIGHT, DOWN_LEFT};//array of vectors from robot center to swerves module
 
