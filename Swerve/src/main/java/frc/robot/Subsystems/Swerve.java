@@ -1,17 +1,16 @@
 package frc.robot.Subsystems;
 
-import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Utils.Consts;
 import frc.robot.Utils.Vector2d;
 
-import com.kauailabs.navx.frc.AHRS;
+import com.ctre.phoenix.sensors.PigeonIMU;
 
 public class Swerve extends SubsystemBase {
 
     public SwerveModule[] m_modules = new SwerveModule[Consts.physicalMoudulesVector.length];
-    private AHRS m_navx;
+    private PigeonIMU m_gyro;
     private static Swerve m_instance = null;
 
     public Swerve(boolean usesAbsEncoder) {
@@ -31,7 +30,7 @@ public class Swerve extends SubsystemBase {
             m_modules[2] = new SwerveModule(Consts.DOWN_RIGHT_SPEED_PORT, Consts.DOWN_RIGHT_ROT_PORT);
             m_modules[3] = new SwerveModule(Consts.DOWN_LEFT_SPEED_PORT, Consts.DOWN_LEFT_ROT_PORT);
         }
-        m_navx = new AHRS(SerialPort.Port.kMXP);
+        m_gyro = new PigeonIMU(Consts.PIGEON);
     }
 
     public static Swerve getInstance(boolean usesAbsEncoder) {
@@ -45,7 +44,7 @@ public class Swerve extends SubsystemBase {
     public void periodic() {
         Vector2d topLeftState = m_modules[1].getState();
 
-        SmartDashboard.putNumber("yaw", m_navx.getYaw());
+        SmartDashboard.putNumber("yaw", m_gyro.getYaw());
         SmartDashboard.putString("top left module",
                  "speed: " + topLeftState.mag() + " angle: " + Math.toDegrees(topLeftState.theta()));
 
@@ -62,7 +61,7 @@ public class Swerve extends SubsystemBase {
                 "speed: " + downRightState.mag() + " angle: " + Math.toDegrees(downRightState.theta()));
 
         for (int i = 0; i < m_modules.length; i++) {
-            SmartDashboard.putNumber("sparkmax encoder " + i, (m_modules[i].m_rotationMotor.getEncoder().getPosition() * 360));
+            SmartDashboard.putNumber("sparkmax encoder " + i, (m_modules[i].m_rotationMotor.getEncoder().getPosition()));
             SmartDashboard.putNumber("Can coder " + i, m_modules[i].m_coder.getAbsolutePosition());
         }
     }
@@ -72,7 +71,7 @@ public class Swerve extends SubsystemBase {
         Vector2d dirVec = directionVec;
 
         if (isFieldOriented) {
-            dirVec = dirVec.rotate(Math.toRadians(-m_navx.getYaw()));
+            dirVec = dirVec.rotate(Math.toRadians(-m_gyro.getYaw()));
         }
 
         Vector2d[] rotVecs = new Vector2d[m_modules.length];
@@ -82,7 +81,7 @@ public class Swerve extends SubsystemBase {
             rotVecs[i].rotate(Math.toRadians(90));
         }
 
-        // we need the max magnitude and because all of the magnitudes are equals there
+        // we need the max magnitude and because all of the magnitudes are equal there
         // is no reason to search for the biggest one
         double mag = rotVecs[0].mag();
 
@@ -109,8 +108,8 @@ public class Swerve extends SubsystemBase {
         for (int i = 0; i < finalVecs.length; i++) {
             finalVecs[i].mul(1 / mag); // divide by maxMagnitude
         }
-        mag = Math.min(Consts.MAX_SPEED * mag, Consts.MAX_SPEED);
 
+        mag = Math.min(Consts.MAX_SPEED * mag, Consts.MAX_SPEED);
         // set target state of module
         for (int i = 0; i < finalVecs.length; i++) {
             finalVecs[i].mul(mag);
@@ -122,7 +121,7 @@ public class Swerve extends SubsystemBase {
     public void driveByMats(Vector2d directionVec, double spinSpeed, boolean isFieldOriented) {
         Vector2d dirVec = directionVec;
         if (isFieldOriented) {
-            dirVec = dirVec.rotate(Math.toRadians(-m_navx.getAngle()));
+            dirVec = dirVec.rotate(Math.toRadians(-m_gyro.getYaw()));
         }
 
         for (int i = 0; i < m_modules.length; i++) {

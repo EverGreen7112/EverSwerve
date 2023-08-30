@@ -6,21 +6,25 @@ public class Consts {
     public static final double MAX_SPEED = 0.2;
 
     //chassis motors
-    public static final int TOP_LEFT_SPEED_PORT = 15;
-    public static final int TOP_RIGHT_SPEED_PORT = 16;
-    public static final int DOWN_LEFT_SPEED_PORT = 17;
-    public static final int DOWN_RIGHT_SPEED_PORT = 18;
-    public static final int TOP_LEFT_ROT_PORT = 5;
-    public static final int TOP_RIGHT_ROT_PORT = 7;
-    public static final int DOWN_LEFT_ROT_PORT = 9;
-    public static final int DOWN_RIGHT_ROT_PORT = 11;
+    public static final int TOP_LEFT_SPEED_PORT = 3;
+    public static final int TOP_RIGHT_SPEED_PORT = 1;
+    public static final int DOWN_LEFT_SPEED_PORT = 5;
+    public static final int DOWN_RIGHT_SPEED_PORT = 7;
+    public static final int TOP_LEFT_ROT_PORT = 4;
+    public static final int TOP_RIGHT_ROT_PORT = 2;
+    public static final int DOWN_LEFT_ROT_PORT = 6;
+    public static final int DOWN_RIGHT_ROT_PORT = 8;
 
     //chassis encoders
-    public static final int TOP_LEFT_CANCODER = 6;
-    public static final int TOP_RIGHT_CANCODER = 8;
-    public static final int DOWN_LEFT_CANCODER = 10;
-    public static final int DOWN_RIGHT_CANCODER = 12;
+    public static final int TOP_LEFT_CANCODER = 11;
+    public static final int TOP_RIGHT_CANCODER = 10;
+    public static final int DOWN_LEFT_CANCODER = 12;
+    public static final int DOWN_RIGHT_CANCODER = 13;
 
+    //gyro id
+    public static final int PIGEON = 9;
+
+    //cancoder offset(remember to update with robot!!)
     public static final double TOP_RIGHT_CANCODER_OFFSET = 180;
     public static final double TOP_LEFT_CANCODER_OFFSET = 360 - 219;
     public static final double DOWN_RIGHT_CANCODER_OFFSET = 360 - 85;
@@ -32,13 +36,13 @@ public class Consts {
     public static final double JOYSTICK_DEADZONE = 0.2;
 
     //pid values
-    public static final double WHEEL_ROTATION_KP = 0.1; 
+    public static final double WHEEL_ROTATION_KP = 0.1;
     public static final double WHEEL_ROTATION_KI = 0;
     public static final double WHEEL_ROTATION_KD = 0;
 
+    //chassis size
     public static final double FRONT_WHEEL_DIST_METERS = 0.6703;
     public static final double SIDE_WHEEL_DIST_METERS = 0.5102;
-
 
     //swerve vectors
     public static final Vector2d TOP_RIGHT = new Vector2d((FRONT_WHEEL_DIST_METERS / 2), (SIDE_WHEEL_DIST_METERS / 2)); 
@@ -46,23 +50,15 @@ public class Consts {
     public static final Vector2d DOWN_RIGHT = new Vector2d(FRONT_WHEEL_DIST_METERS / 2, -(SIDE_WHEEL_DIST_METERS / 2));
     public static final Vector2d DOWN_LEFT = new Vector2d(-(FRONT_WHEEL_DIST_METERS / 2), -(SIDE_WHEEL_DIST_METERS / 2));
 
+    //array of physical module vectors
     public static final Vector2d[] physicalMoudulesVector = { TOP_RIGHT, TOP_LEFT, DOWN_RIGHT, DOWN_LEFT};//array of vectors from robot center to swerves module
 
-    public static final double DRIVE_GEAR_RATIO = 8.14; //L1
-    public static final double ROTATION_GEAR_RATIO = 12.8;
-
+    public static final double DRIVE_GEAR_RATIO =  1 / 8.14; //L1
+    public static final double ROTATION_GEAR_RATIO = 1 / 12.8;
 
     public static double rpmToMs(double wheelRadius, double rpm){
       double rps = rpm / 60;
       return wheelRadius * 2 * Math.PI * rps;
-    }
-
-    public static double rotationsToDegrees(double rotations){
-      return rotations * 360;
-    }
-
-    public static double degreesToRotations(double angle){
-      return angle / 360;
     }
 
     public static double closestAngle(double a, double b) {

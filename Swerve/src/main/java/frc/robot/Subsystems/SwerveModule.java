@@ -5,8 +5,6 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Utils.Consts;
 import frc.robot.Utils.Vector2d;
@@ -32,10 +30,15 @@ public class SwerveModule extends SubsystemBase {
     // used only if using CanCoder
     public SwerveModule(int speedPort, int rotationPort, int absoluteEncoderPort, double canCoderOffset) {
         this(speedPort, rotationPort);
+        
         m_coder = new CANCoder(absoluteEncoderPort);
         m_coder.configFactoryDefault();
         m_coder.configMagnetOffset(canCoderOffset);
-        m_rotationMotor.getEncoder().setPosition(m_coder.getAbsolutePosition() / (360.0 / (Consts.ROTATION_GEAR_RATIO)));
+        
+        m_rotationMotor.getEncoder().setPositionConversionFactor(Consts.ROTATION_GEAR_RATIO * 360); //degrees and gear ratio
+        m_rotationMotor.getEncoder().setPosition(m_coder.getAbsolutePosition());
+
+        m_speedMotor.getEncoder().setVelocityConversionFactor(Consts.DRIVE_GEAR_RATIO);
     }
 
     @Override
@@ -49,20 +52,18 @@ public class SwerveModule extends SubsystemBase {
 
     // get current state of module(magnitude is speed, direction is angle of module)
     public Vector2d getState() {
-        double currentAngle = Consts.rotationsToDegrees(m_rotationMotor.getEncoder().getPosition() * 360.0 / Consts.ROTATION_GEAR_RATIO);
-        double currentSpeed = m_speedMotor.getAppliedOutput();
+        double currentAngle = m_rotationMotor.getEncoder().getPosition();
+        double currentSpeed = m_speedMotor.get();
         return new Vector2d(currentSpeed * Math.cos(Math.toRadians(currentAngle)),
                 currentSpeed * Math.sin(Math.toRadians(currentAngle)));
     }
 
     // change motors to the desired state
     public void setState(Vector2d desiredState) {
-        Vector2d currentState = getState();
-        
         double targetAngle = Math.toDegrees(desiredState.theta());
         double targetSpeed = desiredState.mag();
 
-        m_rotationMotor.getPIDController().setReference(targetAngle / (360.0 / (Consts.ROTATION_GEAR_RATIO)), ControlType.kPosition);
+        m_rotationMotor.getPIDController().setReference(targetAngle, ControlType.kPosition);
         m_speedMotor.set(targetSpeed);
     }
 
