@@ -1,5 +1,7 @@
 package frc.robot.Utils;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 public class Consts {
 
     //speed values
@@ -25,10 +27,10 @@ public class Consts {
     public static final int PIGEON = 9;
 
     //cancoder offset(remember to update with robot!!)
-    public static final double TOP_RIGHT_CANCODER_OFFSET = 180;
-    public static final double TOP_LEFT_CANCODER_OFFSET = 360 - 219;
-    public static final double DOWN_RIGHT_CANCODER_OFFSET = 360 - 85;
-    public static final double DOWN_LEFT_CANCODER_OFFSET = 360 - 43;
+    public static final double TOP_RIGHT_CANCODER_OFFSET = 360 - 331;
+    public static final double TOP_LEFT_CANCODER_OFFSET = 360 - 283.44;
+    public static final double DOWN_RIGHT_CANCODER_OFFSET = 360  - 66.6;
+    public static final double DOWN_LEFT_CANCODER_OFFSET = 360 - 359;
 
     //joysticks
     public static final int LEFT_JOYSTICK = 1;
@@ -36,7 +38,7 @@ public class Consts {
     public static final double JOYSTICK_DEADZONE = 0.2;
 
     //pid values
-    public static final double WHEEL_ROTATION_KP = 0.1;
+    public static double WHEEL_ROTATION_KP = 0.05;
     public static final double WHEEL_ROTATION_KI = 0;
     public static final double WHEEL_ROTATION_KD = 0;
 

@@ -78,7 +78,7 @@ public class Swerve extends SubsystemBase {
 
         for (int i = 0; i < rotVecs.length; i++) {
             rotVecs[i] = new Vector2d(Consts.physicalMoudulesVector[i]);
-            rotVecs[i].rotate(Math.toRadians(90));
+            rotVecs[i].rotate(Math.toRadians(0));
         }
 
         // we need the max magnitude and because all of the magnitudes are equal there
@@ -114,6 +114,7 @@ public class Swerve extends SubsystemBase {
         for (int i = 0; i < finalVecs.length; i++) {
             finalVecs[i].mul(mag);
             m_modules[i].setState(finalVecs[i]);
+            SmartDashboard.putString("final vector" + i, "(" + finalVecs[i].x + "," + finalVecs[i].y + ")");
         }
     }
 
@@ -130,6 +131,12 @@ public class Swerve extends SubsystemBase {
             m_modules[i].setState(driveVec);
         }
 
+    }
+
+    public void initModulesToAbs(){
+        for(int i = 0; i < m_modules.length; i++){
+            m_modules[i].initModulesToAbs();
+        }
     }
 
     public void stop() {

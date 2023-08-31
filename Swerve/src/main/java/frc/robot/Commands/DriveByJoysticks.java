@@ -2,6 +2,8 @@ package frc.robot.Commands;
 
 import java.util.function.Supplier;
 
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Subsystems.Swerve;
 import frc.robot.Utils.Consts;
@@ -38,6 +40,7 @@ public class DriveByJoysticks extends CommandBase{
         }
         Vector2d vec = new Vector2d(speedX, speedY * -1).rotate(Math.toRadians(-90));
         Swerve.getInstance(m_usesAbsEncoder).drive(vec, rotation, m_isFieldOriented.get());
+
         
     }
 
