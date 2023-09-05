@@ -7,14 +7,19 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.Commands.DriveByJoysticks;
+import frc.robot.Utils.Consts;
 
 public class RobotContainer {
   public RobotContainer() {
     configureBindings();
   }
 
-  public static final Joystick rightJoystick = new Joystick(0);
-  public static final Joystick leftJoystick = new Joystick(0);
+  public static final Joystick leftJoystick = new Joystick(Consts.LEFT_JOYSTICK);
+  public static final Joystick rightJoystick = new Joystick(Consts.RIGHT_JOYSTICK);
+  
+
+  public static DriveByJoysticks teleop = new DriveByJoysticks(() -> leftJoystick.getX(), () -> leftJoystick.getY(), () -> rightJoystick.getX(), () -> true, true);
 
   private void configureBindings() {}
 
