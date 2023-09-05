@@ -1,7 +1,5 @@
 package frc.robot.Utils;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 public class Consts {
 
     //speed values
@@ -27,6 +25,7 @@ public class Consts {
     public static final int PIGEON = 9;
 
     //cancoder offset(remember to update with robot!!)
+    //remember to sub your offset from 360
     public static final double TOP_RIGHT_CANCODER_OFFSET = 360 - 331;
     public static final double TOP_LEFT_CANCODER_OFFSET = 360 - 283.44;
     public static final double DOWN_RIGHT_CANCODER_OFFSET = 360  - 66.6;

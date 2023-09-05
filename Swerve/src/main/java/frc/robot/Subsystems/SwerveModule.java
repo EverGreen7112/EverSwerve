@@ -5,59 +5,79 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Utils.Consts;
 import frc.robot.Utils.Vector2d;
 
 public class SwerveModule extends SubsystemBase {
 
-    public CANSparkMax m_speedMotor;
-    public CANSparkMax m_rotationMotor;
-    public CANCoder m_coder;
+    //motor controller that controls the speed of the modules 
+    private CANSparkMax m_speedMotor;
 
+    //motor controller that controls the rotation of the modules
+    private CANSparkMax m_rotationMotor;
+
+    //can coder to save the absolute position of the module
+    private CANCoder m_coder;
+
+    /**
+     * 
+     * port = id(team convention)
+     * @param speedPort - speed motor id of module
+     * @param rotationPort - rotation motor id of module
+     */
     public SwerveModule(int speedPort, int rotationPort) {
         m_speedMotor = new CANSparkMax(speedPort, MotorType.kBrushless);
         m_rotationMotor = new CANSparkMax(rotationPort, MotorType.kBrushless);
+
+        //restore the deafult values of motor so nothing would interrupt motor
         m_rotationMotor.restoreFactoryDefaults();
         
+        //set idle mode of rotation motor
         m_rotationMotor.setIdleMode(IdleMode.kCoast);
+        
+        //config pid values
         m_rotationMotor.getPIDController().setP(Consts.WHEEL_ROTATION_KP);
         m_rotationMotor.getPIDController().setI(Consts.WHEEL_ROTATION_KI);
         m_rotationMotor.getPIDController().setD(Consts.WHEEL_ROTATION_KD);
-
     }
 
-    // used only if using CanCoder
+    /**
+     * port = id(7112 team convention)
+     * @param speedPort - speed motor id of module
+     * @param rotationPort - rotation motor id of module
+     * @param absoluteEncoderPort - can coder id of module
+     * @param canCoderOffset - can coder magnet offset offset
+     */
     public SwerveModule(int speedPort, int rotationPort, int absoluteEncoderPort, double canCoderOffset) {
         this(speedPort, rotationPort);
         
+        //configure cancoder
         m_coder = new CANCoder(absoluteEncoderPort);
         m_coder.configFactoryDefault();
         m_coder.configMagnetOffset(canCoderOffset,50);
         
+        //convert rotation motor position value to degrees and take care of gear ratio
         m_rotationMotor.getEncoder().setPositionConversionFactor(Consts.ROTATION_GEAR_RATIO * 360); //degrees and gear ratio
 
+        //take care of speed motor velocity gear velocity
         m_speedMotor.getEncoder().setVelocityConversionFactor(Consts.DRIVE_GEAR_RATIO);
     }
 
-    double kp = Consts.WHEEL_ROTATION_KP;
-    @Override
-    public void periodic() {
-        if(Consts.WHEEL_ROTATION_KP != kp){
-            kp = Consts.WHEEL_ROTATION_KP;
-            m_rotationMotor.getPIDController().setP(Consts.WHEEL_ROTATION_KP);
-        }
-    }
-
-    //turn off motors
+    /**
+     * set the speeds of motors to 0
+     */
     public void turnOff() {
         this.m_rotationMotor.set(0);
         this.m_speedMotor.set(0);
     }
 
-    // get current state of module(magnitude is speed, direction is angle of module)
+    /**
+     * 
+     * @return a 2d vector that represents the current state of the module <br>
+     * - magnitude represents the target speed (-1 - 1)  
+     *                                   angle represents the target angle
+     */
     public Vector2d getState() {
         double currentAngle = m_rotationMotor.getEncoder().getPosition();
         double currentSpeed = m_speedMotor.get();
@@ -65,20 +85,33 @@ public class SwerveModule extends SubsystemBase {
                 currentSpeed * Math.sin(Math.toRadians(currentAngle)));
     }
 
+    /**
+     * put the current position of the can coder in the rotation motor's integrated encoder
+     */
     public void initModulesToAbs(){
         m_rotationMotor.getEncoder().setPosition(m_coder.getAbsolutePosition());
     }
 
-    // change motors to the desired state
+    /**
+     * 
+     * @param desiredState - 2d vector - magnitude represents the target speed (-1 - 1)  
+     *                                   angle represents the target angle 
+     */
     public void setState(Vector2d desiredState) {
-        double targetAngle = Math.toDegrees(desiredState.theta());
-        double targetSpeed = desiredState.mag();
+        double targetAngle = Math.toDegrees(desiredState.theta()); //convert target angle from radians to degrees
+        double targetSpeed = desiredState.mag(); //get target speed
 
-        SmartDashboard.putNumber("targetAngle", targetAngle);
+        //turn module to target angle
         m_rotationMotor.getPIDController().setReference(targetAngle, ControlType.kPosition);
+
+        //set speed of module at target speed
         m_speedMotor.set(targetSpeed);
     }
 
+    /**
+     * turn module to targetAngle
+     * @param targetAngle in degrees
+     */
     public void turnToAngle(double targetAngle){
         m_rotationMotor.getPIDController().setReference(targetAngle, ControlType.kPosition);
     }

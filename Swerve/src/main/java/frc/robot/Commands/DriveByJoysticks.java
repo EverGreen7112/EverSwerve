@@ -1,9 +1,6 @@
 package frc.robot.Commands;
 
 import java.util.function.Supplier;
-
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Subsystems.Swerve;
 import frc.robot.Utils.Consts;
@@ -30,15 +27,23 @@ public class DriveByJoysticks extends CommandBase{
 
     @Override
     public void execute() {
+        //get values from suppliers
         double speedX = m_speedX.get();
         double speedY = m_speedY.get();
         double rotation = m_rotation.get();
-
+        
+        //apply deadzone on supplier values
         if(Math.abs(speedX) < Consts.JOYSTICK_DEADZONE && Math.abs(speedY) < Consts.JOYSTICK_DEADZONE && Math.abs(rotation) < Consts.JOYSTICK_DEADZONE){
             Swerve.getInstance(true).stop();
             return;
         }
+
+        //create direction vector
+        //y is multiplied by -1 because the y axis on the joystick is flipped 
+        //rotated by -90 so 0 degrees would be on the front of the joystick
         Vector2d vec = new Vector2d(speedX, speedY * -1).rotate(Math.toRadians(-90));
+
+        //activate the drive function with the s
         Swerve.getInstance(m_usesAbsEncoder).drive(vec, rotation, m_isFieldOriented.get());
 
         
