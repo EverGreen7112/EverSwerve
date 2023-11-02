@@ -2,48 +2,51 @@ package frc.robot.Utils;
 
 public class Consts {
 
+
     //speed values
-    public static final double MAX_SPEED = 0.2;
+    public static final double MAX_SPEED = 0.4;
 
     //chassis motors
-    public static final int TOP_LEFT_SPEED_PORT = 3;
-    public static final int TOP_RIGHT_SPEED_PORT = 1;
-    public static final int DOWN_LEFT_SPEED_PORT = 5;
-    public static final int DOWN_RIGHT_SPEED_PORT = 7;
-    public static final int TOP_LEFT_ROT_PORT = 4;
-    public static final int TOP_RIGHT_ROT_PORT = 2;
-    public static final int DOWN_LEFT_ROT_PORT = 6;
-    public static final int DOWN_RIGHT_ROT_PORT = 8;
+    public static final int TOP_LEFT_SPEED_PORT = 6;
+    public static final int TOP_RIGHT_SPEED_PORT = 8;
+    public static final int DOWN_LEFT_SPEED_PORT = 4;
+    public static final int DOWN_RIGHT_SPEED_PORT = 10;
+    public static final int TOP_LEFT_ROT_PORT = 7;
+    public static final int TOP_RIGHT_ROT_PORT = 9;
+    public static final int DOWN_LEFT_ROT_PORT = 5;
+    public static final int DOWN_RIGHT_ROT_PORT = 11;
 
     //chassis encoders
-    public static final int TOP_LEFT_CANCODER = 11;
-    public static final int TOP_RIGHT_CANCODER = 10;
-    public static final int DOWN_LEFT_CANCODER = 12;
-    public static final int DOWN_RIGHT_CANCODER = 13;
+    public static final int TOP_LEFT_CANCODER = 0;
+    public static final int TOP_RIGHT_CANCODER = 2;
+    public static final int DOWN_LEFT_CANCODER = 1;
+    public static final int DOWN_RIGHT_CANCODER = 3;
 
     //gyro id
     public static final int PIGEON = 9;
 
+    //gyro offset(degrees)
+    public static final double GYRO_OFFSET = -34.56;
     //cancoder offset(remember to update with robot!!)
     //remember to sub your offset from 360
-    public static final double TOP_RIGHT_CANCODER_OFFSET = 360 - 331;
-    public static final double TOP_LEFT_CANCODER_OFFSET = 360 - 283.44;
-    public static final double DOWN_RIGHT_CANCODER_OFFSET = 360  - 66.6;
-    public static final double DOWN_LEFT_CANCODER_OFFSET = 360 - 359;
+    public static final double TOP_RIGHT_CANCODER_OFFSET = 360 - 4.218; //360 - 331
+    public static final double TOP_LEFT_CANCODER_OFFSET = 360 - 222.89; //360 - 283.44
+    public static final double DOWN_RIGHT_CANCODER_OFFSET = 360 - 72.246; //360  - 66.6
+    public static final double DOWN_LEFT_CANCODER_OFFSET = 360 - 238.71;// 360 - 359
 
     //joysticks
-    public static final int LEFT_JOYSTICK = 1;
-    public static final int RIGHT_JOYSTICK = 0;
+    public static final int LEFT_JOYSTICK = 0;
+    public static final int RIGHT_JOYSTICK = 1;
     public static final double JOYSTICK_DEADZONE = 0.2;
 
     //pid values
-    public static double WHEEL_ROTATION_KP = 0.05;
+    public static final double WHEEL_ROTATION_KP = 0.005;
     public static final double WHEEL_ROTATION_KI = 0;
-    public static final double WHEEL_ROTATION_KD = 0;
+    public static final double WHEEL_ROTATION_KD = 0.0;
 
     //chassis size
-    public static final double FRONT_WHEEL_DIST_METERS = 0.6703;
-    public static final double SIDE_WHEEL_DIST_METERS = 0.5102;
+    public static final double FRONT_WHEEL_DIST_METERS = 0.57;
+    public static final double SIDE_WHEEL_DIST_METERS = 0.57;
 
     //swerve vectors
     public static final Vector2d TOP_RIGHT = new Vector2d((FRONT_WHEEL_DIST_METERS / 2), (SIDE_WHEEL_DIST_METERS / 2)); 

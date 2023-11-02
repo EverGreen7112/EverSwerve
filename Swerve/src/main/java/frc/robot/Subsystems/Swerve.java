@@ -1,5 +1,7 @@
 package frc.robot.Subsystems;
 
+import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -7,6 +9,7 @@ import frc.robot.Utils.Consts;
 import frc.robot.Utils.Vector2d;
 
 import com.ctre.phoenix.sensors.PigeonIMU;
+import com.kauailabs.navx.frc.AHRS;
 
 public class Swerve extends SubsystemBase {
 
@@ -14,7 +17,7 @@ public class Swerve extends SubsystemBase {
     public SwerveModule[] m_modules = new SwerveModule[Consts.physicalMoudulesVector.length];
 
     //robot gyro
-    private PigeonIMU m_gyro;
+    private AHRS m_gyro;
 
     //Swerve instance
     private static Swerve m_instance = null;
@@ -40,7 +43,7 @@ public class Swerve extends SubsystemBase {
             m_modules[2] = new SwerveModule(Consts.DOWN_RIGHT_SPEED_PORT, Consts.DOWN_RIGHT_ROT_PORT);
             m_modules[3] = new SwerveModule(Consts.DOWN_LEFT_SPEED_PORT, Consts.DOWN_LEFT_ROT_PORT);
         }
-        m_gyro = new PigeonIMU(Consts.PIGEON);
+        m_gyro = new AHRS(SerialPort.Port.kMXP);
     }
 
      /**
@@ -54,6 +57,8 @@ public class Swerve extends SubsystemBase {
         return m_instance;
     }
 
+  
+
     /**
      * see math on pdf document for more information 
      * @param directionVec - 2d vector that represents target velocity vector (x and y values are between 1 and -1)
@@ -65,7 +70,7 @@ public class Swerve extends SubsystemBase {
 
         if (isFieldOriented) {
             // rotates the direction vector to fit field coordinate system
-            dirVec = dirVec.rotate(Math.toRadians(-m_gyro.getYaw()));
+            dirVec = dirVec.rotate(Math.toRadians(m_gyro.getYaw()));
         }
 
         Vector2d[] rotVecs = new Vector2d[m_modules.length];
@@ -111,6 +116,10 @@ public class Swerve extends SubsystemBase {
             m_modules[i].setState(finalVecs[i]);
         }
     }
+    
+    public void zeroYaw(){
+        m_gyro.zeroYaw();
+    }
 
     /**
      * put the current position of every can coder in the every rotation motor's integrated encoder
@@ -129,5 +138,9 @@ public class Swerve extends SubsystemBase {
         for (int i = 0; i < m_modules.length; i++) {
             m_modules[i].turnOff();
         }
+    }
+
+    public Gyro getGyro(){
+        return m_gyro;
     }
 }
