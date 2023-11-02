@@ -22,7 +22,7 @@ public class DriveByJoysticks extends CommandBase{
 
     @Override
     public void initialize() {
-        addRequirements(Swerve.getInstance(m_usesAbsEncoder));
+        addRequirements(Swerve.getInstance());
     }
 
     @Override
@@ -34,7 +34,7 @@ public class DriveByJoysticks extends CommandBase{
         
         //apply deadzone on supplier values
         if(Math.abs(speedX) < Consts.JOYSTICK_DEADZONE && Math.abs(speedY) < Consts.JOYSTICK_DEADZONE && Math.abs(rotation) < Consts.JOYSTICK_DEADZONE){
-            Swerve.getInstance(true).stop();
+            Swerve.getInstance().stop();
             return;
         }
 
@@ -42,11 +42,9 @@ public class DriveByJoysticks extends CommandBase{
         //y is multiplied by -1 because the y axis on the joystick is flipped 
         //rotated by -90 so 0 degrees would be on the front of the joystick
         Vector2d vec = new Vector2d(speedX, speedY * -1).rotate(Math.toRadians(-90));
-
-        //activate the drive function with the s
-        Swerve.getInstance(m_usesAbsEncoder).drive(vec, rotation, m_isFieldOriented.get());
-
         
+        //activate drive
+        Swerve.getInstance().drive(vec, rotation, m_isFieldOriented.get());        
     }
 
     @Override
@@ -55,7 +53,5 @@ public class DriveByJoysticks extends CommandBase{
     }
 
     @Override
-    public void end(boolean interrupted) {
-        
-    }
+    public void end(boolean interrupted) {}
 }
