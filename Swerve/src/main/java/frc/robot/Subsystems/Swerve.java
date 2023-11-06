@@ -3,10 +3,12 @@ package frc.robot.Subsystems;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Utils.Consts;
 import frc.robot.Utils.Vector2d;
 
+import com.ctre.phoenix.sensors.PigeonIMU;
 import com.kauailabs.navx.frc.AHRS;
 
 public class Swerve extends SubsystemBase {
@@ -24,44 +26,38 @@ public class Swerve extends SubsystemBase {
      * 
      * @param usesAbsEncoder -if robot got can coders connected to the rotation motors
      */
-    private Swerve() {
+    public Swerve(boolean usesAbsEncoder) {
         //create modules array
-        m_modules[0] = new SwerveModule(Consts.TOP_RIGHT_SPEED_PORT, Consts.TOP_RIGHT_ROT_PORT,
-                Consts.TOP_RIGHT_CANCODER, Consts.TOP_RIGHT_CANCODER_OFFSET);
-        m_modules[1] = new SwerveModule(Consts.TOP_LEFT_SPEED_PORT, Consts.TOP_LEFT_ROT_PORT,
-                Consts.TOP_LEFT_CANCODER, Consts.TOP_LEFT_CANCODER_OFFSET);
-        m_modules[2] = new SwerveModule(Consts.DOWN_RIGHT_SPEED_PORT, Consts.DOWN_RIGHT_ROT_PORT,
-                Consts.DOWN_RIGHT_CANCODER, Consts.DOWN_RIGHT_CANCODER_OFFSET);
-        m_modules[3] = new SwerveModule(Consts.DOWN_LEFT_SPEED_PORT, Consts.DOWN_LEFT_ROT_PORT,
-                Consts.DOWN_LEFT_CANCODER, Consts.DOWN_LEFT_CANCODER_OFFSET);
-        
+        if (usesAbsEncoder) {
+            m_modules[0] = new SwerveModule(Consts.TOP_RIGHT_SPEED_PORT, Consts.TOP_RIGHT_ROT_PORT,
+                    Consts.TOP_RIGHT_CANCODER, Consts.TOP_RIGHT_CANCODER_OFFSET);
+            m_modules[1] = new SwerveModule(Consts.TOP_LEFT_SPEED_PORT, Consts.TOP_LEFT_ROT_PORT,
+                    Consts.TOP_LEFT_CANCODER, Consts.TOP_LEFT_CANCODER_OFFSET);
+            m_modules[2] = new SwerveModule(Consts.DOWN_RIGHT_SPEED_PORT, Consts.DOWN_RIGHT_ROT_PORT,
+                    Consts.DOWN_RIGHT_CANCODER, Consts.DOWN_RIGHT_CANCODER_OFFSET);
+            m_modules[3] = new SwerveModule(Consts.DOWN_LEFT_SPEED_PORT, Consts.DOWN_LEFT_ROT_PORT,
+                    Consts.DOWN_LEFT_CANCODER, Consts.DOWN_LEFT_CANCODER_OFFSET);
+        } else {
+            m_modules[0] = new SwerveModule(Consts.TOP_RIGHT_SPEED_PORT, Consts.TOP_RIGHT_ROT_PORT);
+            m_modules[1] = new SwerveModule(Consts.TOP_LEFT_SPEED_PORT, Consts.TOP_LEFT_ROT_PORT);
+            m_modules[2] = new SwerveModule(Consts.DOWN_RIGHT_SPEED_PORT, Consts.DOWN_RIGHT_ROT_PORT);
+            m_modules[3] = new SwerveModule(Consts.DOWN_LEFT_SPEED_PORT, Consts.DOWN_LEFT_ROT_PORT);
+        }
         m_gyro = new AHRS(SerialPort.Port.kMXP);
-        
-        //reset yaw value
-        zeroYaw();
-        //put pos values from cancoders in rotation motors encoders
-        initModulesToAbs();
     }
 
      /**
      * 
      * @param usesAbsEncoder -if robot got can coders connected to the rotation motors
      */
-    public static Swerve getInstance() {
+    public static Swerve getInstance(boolean usesAbsEncoder) {
         if (m_instance == null) {
-            m_instance = new Swerve();
+            m_instance = new Swerve(usesAbsEncoder);
         }
         return m_instance;
     }
 
-    @Override
-    public void periodic() {
-        SmartDashboard.putNumber("top right", m_modules[0].getAngle());
-        SmartDashboard.putNumber("top left", m_modules[1].getAngle());
-        SmartDashboard.putNumber("down right", m_modules[2].getAngle());
-        SmartDashboard.putNumber("down left", m_modules[3].getAngle());
-        SmartDashboard.putNumber("robot yaw", m_gyro.getYaw());
-    }
+  
 
     /**
      * see math on pdf document for more information 
@@ -120,12 +116,7 @@ public class Swerve extends SubsystemBase {
             m_modules[i].setState(finalVecs[i]);
         }
     }
-
     
-
-    /**
-     * reset yaw value in gyro
-     */
     public void zeroYaw(){
         m_gyro.zeroYaw();
     }
@@ -136,7 +127,7 @@ public class Swerve extends SubsystemBase {
      */
     public void initModulesToAbs(){
         for(int i = 0; i < m_modules.length; i++){
-            m_modules[i].setModulesToAbs();
+            m_modules[i].initModulesToAbs();
         }
     }
     

@@ -5,6 +5,8 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Utils.Consts;
 import frc.robot.Utils.Vector2d;
@@ -75,16 +77,16 @@ public class SwerveModule extends SubsystemBase {
     /**
      * put the current position of the can coder in the rotation motor's integrated encoder
      */
-    public void setModulesToAbs(){
+    public void initModulesToAbs(){
         m_rotationMotor.getEncoder().setPosition(m_coder.getAbsolutePosition());
     }
 
-    /**
-     * 
-     * @return current angle of module(in degrees)
-     */
-    public double getAngle(){
-        return Consts.modulo(m_rotationMotor.getEncoder().getPosition(), 360);
+    public double getCoderPos(){
+        return m_coder.getPosition();
+    }
+
+    public double getPos(){
+        return m_rotationMotor.getEncoder().getPosition();
     }
 
     /**
@@ -93,14 +95,13 @@ public class SwerveModule extends SubsystemBase {
      *                                   angle represents the target angle 
      */
     public void setState(Vector2d desiredState) {
-        //convert target angle from radians to degrees
-        double targetAngle = Math.toDegrees(desiredState.theta()); 
-        //get target speed
-        double targetSpeed = desiredState.mag(); 
-        //calculate optimal turning angle
-        double optimizedTargetAngle = getAngle() + Consts.closestAngle(getAngle(), targetAngle);
+        double targetAngle = Math.toDegrees(desiredState.theta()); //convert target angle from radians to degrees
+        double targetSpeed = desiredState.mag(); //get target speed
+
+        double optimizedTargetAngle = getPos() + Consts.closestAngle(getPos(), targetAngle);
         //turn module to target angle
         m_rotationMotor.getPIDController().setReference(optimizedTargetAngle, ControlType.kPosition);
+
         //set speed of module at target speed
         m_speedMotor.set(targetSpeed);
     }

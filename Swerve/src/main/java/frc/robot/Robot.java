@@ -5,9 +5,12 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Subsystems.Swerve;
+import frc.robot.Utils.Consts;
+import frc.robot.Utils.Vector2d;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
@@ -17,15 +20,22 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     m_robotContainer = new RobotContainer();
-    Swerve.getInstance().initModulesToAbs();
+    Swerve.getInstance(true).initModulesToAbs();
   }
 
   @Override
-  public void robotPeriodic() {}
+  public void robotPeriodic() {
+    CommandScheduler.getInstance().run();
+    SmartDashboard.putNumber("top right angle", Consts.modulo(Swerve.getInstance(true).m_modules[0].getPos(), 360 ));
+    SmartDashboard.putNumber("top left angle", Consts.modulo(Swerve.getInstance(true).m_modules[1].getPos(), 360 ));
+    SmartDashboard.putNumber("down right angle", Consts.modulo(Swerve.getInstance(true).m_modules[2].getPos(), 360 ));
+    SmartDashboard.putNumber("down left angle", Consts.modulo(Swerve.getInstance(true).m_modules[3].getPos(), 360 ));
+    SmartDashboard.putNumber("angle", Swerve.getInstance(true).getGyro().getAngle());
+  }
 
   @Override
   public void disabledInit() {
-    Swerve.getInstance().stop();
+    Swerve.getInstance(true).stop();
   }
 
   @Override
@@ -52,6 +62,8 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     CommandScheduler.getInstance().cancelAll();
+    Swerve.getInstance(true).zeroYaw();
+    Swerve.getInstance(true).initModulesToAbs();
     RobotContainer.teleop.schedule();
     
   }
@@ -62,11 +74,12 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopExit() {
-    Swerve.getInstance().stop();
+    Swerve.getInstance(true).stop();
   }
 
   @Override
   public void testInit() {
+    Swerve.getInstance(true).zeroYaw();
     CommandScheduler.getInstance().cancelAll();
     RobotContainer.teleop.schedule();
   }
@@ -76,6 +89,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testExit() {
-    Swerve.getInstance().stop();
+    Swerve.getInstance(true).stop();
   }
 }
