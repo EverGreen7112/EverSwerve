@@ -25,14 +25,12 @@ public class Consts {
     //gyro id
     public static final int PIGEON = 9;
 
-    //gyro offset(degrees)
-    public static final double GYRO_OFFSET = -34.56;
     //cancoder offset(remember to update with robot!!)
     //remember to sub your offset from 360
-    public static final double TOP_RIGHT_CANCODER_OFFSET = 360 - 4.218; //360 - 331
-    public static final double TOP_LEFT_CANCODER_OFFSET = 360 - 222.89; //360 - 283.44
-    public static final double DOWN_RIGHT_CANCODER_OFFSET = 360 - 72.246; //360  - 66.6
-    public static final double DOWN_LEFT_CANCODER_OFFSET = 360 - 238.71;// 360 - 359
+    public static final double TOP_RIGHT_CANCODER_OFFSET = 360 - 5.712890625; //360 - 4.218
+    public static final double TOP_LEFT_CANCODER_OFFSET =  360 -280.8984375;//360 - 247.24
+    public static final double DOWN_RIGHT_CANCODER_OFFSET = 360 - 53.261722564697266; //360 - 72.246
+    public static final double DOWN_LEFT_CANCODER_OFFSET = 360 - 146.162109375;// 360 - 238.71
 
     //joysticks
     public static final int LEFT_JOYSTICK = 0;
@@ -40,8 +38,8 @@ public class Consts {
     public static final double JOYSTICK_DEADZONE = 0.2;
 
     //pid values
-    public static final double WHEEL_ROTATION_KP = 0.005;
-    public static final double WHEEL_ROTATION_KI = 0;
+    public static final double WHEEL_ROTATION_KP = 0.02;
+    public static final double WHEEL_ROTATION_KI = 0.00000;//0.000007
     public static final double WHEEL_ROTATION_KD = 0.0;
 
     //chassis size
