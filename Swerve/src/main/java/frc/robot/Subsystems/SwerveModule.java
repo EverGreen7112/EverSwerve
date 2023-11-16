@@ -10,11 +10,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Utils.Consts;
 import frc.robot.Utils.Vector2d;
+import java.time.Duration;
+import java.time.Instant;
 
 public class SwerveModule extends SubsystemBase {
 
     //motor controller that controls the speed of the modules 
-    private CANSparkMax m_speedMotor;
+    public CANSparkMax m_speedMotor;
 
     //motor controller that controls the rotation of the modules
     private CANSparkMax m_rotationMotor;
@@ -61,9 +63,8 @@ public class SwerveModule extends SubsystemBase {
         
         //convert rotation motor position value to degrees and take care of gear ratio
         m_rotationMotor.getEncoder().setPositionConversionFactor(Consts.ROTATION_GEAR_RATIO * 360); //degrees and gear ratio
-
-        //take care of speed motor velocity gear velocity
-        m_speedMotor.getEncoder().setVelocityConversionFactor(Consts.DRIVE_GEAR_RATIO);
+        //convert rpm to meters per second
+        m_speedMotor.getEncoder().setVelocityConversionFactor(Consts.DRIVE_GEAR_RATIO * Consts.WHEAL_PERIMETER / 60);//return in meters per secpnds
     }
 
     /**
@@ -71,6 +72,7 @@ public class SwerveModule extends SubsystemBase {
      */
     public void turnOff() {
         this.m_rotationMotor.set(0);
+
         this.m_speedMotor.set(0);
     }
 
@@ -78,7 +80,12 @@ public class SwerveModule extends SubsystemBase {
      * put the current position of the can coder in the rotation motor's integrated encoder
      */
     public void initModulesToAbs(){
-        m_rotationMotor.getEncoder().setPosition(m_coder.getAbsolutePosition());
+        double pos =m_coder.getAbsolutePosition();
+        // convert from -360 to 360 to -180 to 180
+        if (Math.abs(pos) > 180.0) {
+            pos = -(Math.signum(pos) * 360.0) + pos;
+        };
+        m_rotationMotor.getEncoder().setPosition(pos);
     }
 
     public double getCoderPos(){
@@ -94,7 +101,6 @@ public class SwerveModule extends SubsystemBase {
     }
 
     /**
-     * 
      * @param desiredState - 2d vector - magnitude represents the target speed (-1 - 1)  
      *                                   angle represents the target angle 
      */
@@ -102,13 +108,41 @@ public class SwerveModule extends SubsystemBase {
         double targetAngle = Math.toDegrees(desiredState.theta()); //convert target angle from radians to degrees
         double targetSpeed = desiredState.mag(); //get target speed
 
-        double optimizedTargetAngle = getPos() + Consts.closestAngle(getPos(), targetAngle);
-        //turn module to target angle
-        m_rotationMotor.getPIDController().setReference(optimizedTargetAngle, ControlType.kPosition);
+        double currentAngle = getPos();
+        double optimizedTargetAngle = Consts.closestAngle(currentAngle, targetAngle);
+        double optimizedTargetAngleFlipped = Consts.closestAngle(currentAngle, targetAngle + 180.0);
 
+        // if (Math.abs(optimizedTargetAngle) > Math.abs(optimizedTargetAngleFlipped)){
+        //     targetSpeed *= -1;
+        //     optimizedTargetAngle = optimizedTargetAngleFlipped;
+        // }
+
+        //turn module to target angle
+        m_rotationMotor.getPIDController().setReference(currentAngle + optimizedTargetAngle, ControlType.kPosition);
+
+        SmartDashboard.putNumber("target", Consts.modulo(targetAngle, 360));
         //set speed of module at target speed
         m_speedMotor.set(targetSpeed);
     }
+
+    public Vector2d getStateInMs(){
+        //get current polar values from module 
+        double magnitude = m_speedMotor.getEncoder().getVelocity();
+        double degrees = m_rotationMotor.getEncoder().getPosition();
+
+        //convert to cartesian values and return vector
+        return new Vector2d(Math.cos(Math.toRadians(degrees)) * magnitude, Math.sin(Math.toRadians(degrees)) * magnitude);
+    }
+
+    public Vector2d getState(){
+        //get current polar values from module 
+
+        double magnitude = m_speedMotor.get();
+        double degrees = m_rotationMotor.getEncoder().getPosition();
+
+        //convert to cartesian values and return vector
+        return new Vector2d(Math.cos(Math.toRadians(degrees)) * magnitude, Math.sin(Math.toRadians(degrees)) * magnitude);
+    } 
 
     /**
      * turn module to targetAngle
@@ -118,4 +152,8 @@ public class SwerveModule extends SubsystemBase {
         m_rotationMotor.getPIDController().setReference(targetAngle, ControlType.kPosition);
     }
 
+    @Override
+    public void periodic() {
+         initModulesToAbs();
+    }
 }

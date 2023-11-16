@@ -21,6 +21,10 @@ public class Swerve extends SubsystemBase {
 
     //Swerve instance
     private static Swerve m_instance = null;
+    
+    private double currentTime;
+    private double x;
+    private double y;
 
     /**
      * 
@@ -44,6 +48,9 @@ public class Swerve extends SubsystemBase {
             m_modules[3] = new SwerveModule(Consts.DOWN_LEFT_SPEED_PORT, Consts.DOWN_LEFT_ROT_PORT);
         }
         m_gyro = new AHRS(SerialPort.Port.kMXP);
+        x = 0;
+        y = 0;
+        currentTime = System.currentTimeMillis() / 1000;
     }
 
      /**
@@ -57,7 +64,29 @@ public class Swerve extends SubsystemBase {
         return m_instance;
     }
 
-  
+    @Override
+    public void periodic() {
+        double deltaTime = (System.currentTimeMillis() - currentTime) / 1000;
+        double vx = 0;
+        double vy = 0;
+
+        for(int i = 0;i < m_modules.length;i++){
+            vx += m_modules[i].getStateInMs().x;
+            vy += m_modules[i].getStateInMs().y;
+        }
+      
+        SmartDashboard.putNumber("velocity",m_modules[0].m_speedMotor.getEncoder().getVelocity());
+        double deltaX = (vx) * deltaTime;
+        double deltaY = (vy) * deltaTime;
+        
+        x += deltaX;
+        y += deltaY;
+        
+        SmartDashboard.putNumber("x", x);
+        SmartDashboard.putNumber("y", y);
+        SmartDashboard.putNumber("deltatime",deltaTime);
+        currentTime = System.currentTimeMillis();
+    }
 
     /**
      * see math on pdf document for more information 
@@ -109,7 +138,7 @@ public class Swerve extends SubsystemBase {
             finalVecs[i].mul(1 / mag); // divide by maxMagnitude
         }
 
-        mag = Math.min(Consts.MAX_SPEED * mag, Consts.MAX_SPEED);
+        mag = Math.min(Consts.MAX_SPEED.get() * mag, Consts.MAX_SPEED.get());
         // set target state of module
         for (int i = 0; i < finalVecs.length; i++) {
             finalVecs[i].mul(mag);

@@ -21,6 +21,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     m_robotContainer = new RobotContainer();
     Swerve.getInstance(true).initModulesToAbs();
+    SmartDashboard.putNumber("max speed", 0.3);
   }
 
   @Override
@@ -32,6 +33,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("down left angle", Consts.modulo(Swerve.getInstance(true).m_modules[3].getPos(), 360 ));
     SmartDashboard.putNumber("angle", Swerve.getInstance(true).getGyro().getAngle());
     SmartDashboard.putNumber("controller angle", Consts.modulo(RobotContainer.controller.getDirectionDegrees(), 360));
+    
 
   }
 
