@@ -10,8 +10,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Utils.Consts;
 import frc.robot.Utils.Vector2d;
-import java.time.Duration;
-import java.time.Instant;
 
 public class SwerveModule extends SubsystemBase {
 
@@ -23,6 +21,8 @@ public class SwerveModule extends SubsystemBase {
 
     //can coder to save the absolute position of the module
     private CANCoder m_coder;
+
+    private Vector2d m_desiredState;
     
     /**
      * 
@@ -63,8 +63,33 @@ public class SwerveModule extends SubsystemBase {
         
         //convert rotation motor position value to degrees and take care of gear ratio
         m_rotationMotor.getEncoder().setPositionConversionFactor(Consts.ROTATION_GEAR_RATIO * 360); //degrees and gear ratio
-        //convert rpm to meters per second
-        m_speedMotor.getEncoder().setVelocityConversionFactor(Consts.DRIVE_GEAR_RATIO * Consts.WHEAL_PERIMETER / 60);//return in meters per secpnds
+
+        //take care of speed motor velocity gear velocity
+        m_speedMotor.getEncoder().setVelocityConversionFactor(Consts.DRIVE_GEAR_RATIO);
+    }
+
+    @Override
+    public void periodic() {
+        //apply desired state on module
+
+        double targetAngle = Math.toDegrees(m_desiredState.theta()); //convert target angle from radians to degrees
+        double targetSpeed = m_desiredState.mag(); //get target speed
+
+        Vector2d currentState = getState();
+        double optimizedFlippedTargetAngle = Math.toDegrees(currentState.theta()) + Consts.closestAngle(Math.toDegrees(currentState.theta()), targetAngle + 180);
+
+        if (Math.abs(targetAngle) > Math.abs(optimizedFlippedTargetAngle)){
+            targetAngle = optimizedFlippedTargetAngle;
+        }
+        
+        //turn module to target angle
+        m_rotationMotor.getPIDController().setReference(targetAngle, ControlType.kPosition);
+
+        //dot product to current state
+        targetSpeed *= Math.cos(Math.toRadians(targetAngle) - currentState.theta());
+
+        //set speed of module at target speed
+        m_speedMotor.set(targetSpeed);
     }
 
     /**
@@ -72,7 +97,6 @@ public class SwerveModule extends SubsystemBase {
      */
     public void turnOff() {
         this.m_rotationMotor.set(0);
-
         this.m_speedMotor.set(0);
     }
 
@@ -80,12 +104,7 @@ public class SwerveModule extends SubsystemBase {
      * put the current position of the can coder in the rotation motor's integrated encoder
      */
     public void initModulesToAbs(){
-        double pos =m_coder.getAbsolutePosition();
-        // convert from -360 to 360 to -180 to 180
-        if (Math.abs(pos) > 180.0) {
-            pos = -(Math.signum(pos) * 360.0) + pos;
-        };
-        m_rotationMotor.getEncoder().setPosition(pos);
+        m_rotationMotor.getEncoder().setPosition(m_coder.getAbsolutePosition());
     }
 
     public double getCoderPos(){
@@ -96,53 +115,32 @@ public class SwerveModule extends SubsystemBase {
         return m_rotationMotor.getEncoder().getPosition();
     }
 
+      
+    /**
+     * 
+     * @return a 2d vector that represents the current state of the module <br>
+     * - magnitude represents the target speed (-1 - 1)  
+     *                                   angle represents the target angle
+     */
+    public Vector2d getState() {
+        double currentAngle = m_rotationMotor.getEncoder().getPosition();
+        double currentSpeed = m_speedMotor.get();
+        return new Vector2d(currentSpeed * Math.cos(Math.toRadians(currentAngle)),
+                currentSpeed * Math.sin(Math.toRadians(currentAngle)));
+    }
+    
     public void setState(double speed, double angle){
         setState(new Vector2d(speed * Math.cos(Math.toRadians(angle)), speed * Math.sin(Math.toRadians(angle))));
     }
 
     /**
+     * 
      * @param desiredState - 2d vector - magnitude represents the target speed (-1 - 1)  
      *                                   angle represents the target angle 
      */
     public void setState(Vector2d desiredState) {
-        double targetAngle = Math.toDegrees(desiredState.theta()); //convert target angle from radians to degrees
-        double targetSpeed = desiredState.mag(); //get target speed
-
-        double currentAngle = getPos();
-        double optimizedTargetAngle = Consts.closestAngle(currentAngle, targetAngle);
-        double optimizedTargetAngleFlipped = Consts.closestAngle(currentAngle, targetAngle + 180.0);
-
-        // if (Math.abs(optimizedTargetAngle) > Math.abs(optimizedTargetAngleFlipped)){
-        //     targetSpeed *= -1;
-        //     optimizedTargetAngle = optimizedTargetAngleFlipped;
-        // }
-
-        //turn module to target angle
-        m_rotationMotor.getPIDController().setReference(currentAngle + optimizedTargetAngle, ControlType.kPosition);
-
-        SmartDashboard.putNumber("target", Consts.modulo(targetAngle, 360));
-        //set speed of module at target speed
-        m_speedMotor.set(targetSpeed);
+       this.m_desiredState = desiredState;
     }
-
-    public Vector2d getStateInMs(){
-        //get current polar values from module 
-        double magnitude = m_speedMotor.getEncoder().getVelocity();
-        double degrees = m_rotationMotor.getEncoder().getPosition();
-
-        //convert to cartesian values and return vector
-        return new Vector2d(Math.cos(Math.toRadians(degrees)) * magnitude, Math.sin(Math.toRadians(degrees)) * magnitude);
-    }
-
-    public Vector2d getState(){
-        //get current polar values from module 
-
-        double magnitude = m_speedMotor.get();
-        double degrees = m_rotationMotor.getEncoder().getPosition();
-
-        //convert to cartesian values and return vector
-        return new Vector2d(Math.cos(Math.toRadians(degrees)) * magnitude, Math.sin(Math.toRadians(degrees)) * magnitude);
-    } 
 
     /**
      * turn module to targetAngle
@@ -152,8 +150,4 @@ public class SwerveModule extends SubsystemBase {
         m_rotationMotor.getPIDController().setReference(targetAngle, ControlType.kPosition);
     }
 
-    @Override
-    public void periodic() {
-         initModulesToAbs();
-    }
 }
