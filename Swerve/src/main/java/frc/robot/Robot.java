@@ -27,10 +27,10 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
-    SmartDashboard.putNumber("top right angle", Consts.modulo(Swerve.getInstance(true).m_modules[0].getPos(), 360 ));
-    SmartDashboard.putNumber("top left angle", Consts.modulo(Swerve.getInstance(true).m_modules[1].getPos(), 360 ));
-    SmartDashboard.putNumber("down right angle", Consts.modulo(Swerve.getInstance(true).m_modules[2].getPos(), 360 ));
-    SmartDashboard.putNumber("down left angle", Consts.modulo(Swerve.getInstance(true).m_modules[3].getPos(), 360 ));
+    SmartDashboard.putNumber("top right angle", Swerve.getInstance(true).m_modules[0].getCoderPos());
+    SmartDashboard.putNumber("top left angle",Swerve.getInstance(true).m_modules[1].getCoderPos());
+    SmartDashboard.putNumber("down right angle",Swerve.getInstance(true).m_modules[2].getCoderPos());
+    SmartDashboard.putNumber("down left angle", Swerve.getInstance(true).m_modules[3].getCoderPos());
     SmartDashboard.putNumber("angle", Swerve.getInstance(true).getGyro().getAngle());
     SmartDashboard.putNumber("controller angle", Consts.modulo(RobotContainer.controller.getDirectionDegrees(), 360));
   }

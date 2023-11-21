@@ -36,19 +36,18 @@ public class Consts {
 
     //cancoder offset(remember to update with robot!!)
     //remember to sub your offset from 360
-    public static final double TOP_RIGHT_CANCODER_OFFSET = 360 -40.25390625; //360 - 4.218
-    public static final double TOP_LEFT_CANCODER_OFFSET =  360 -273.9551086425781;//360 - 247.24
-    public static final double DOWN_RIGHT_CANCODER_OFFSET = 360 -332.4149475097656; //360 - 72.246
-    public static final double DOWN_LEFT_CANCODER_OFFSET = 360 -124.1015625;// 360 - 238.71
-
+    public static final double TOP_RIGHT_CANCODER_OFFSET = 360 - 126.9140625; //360 - 4.218
+    public static final double TOP_LEFT_CANCODER_OFFSET =  360 - 116.54296875;//360 - 247.24
+    public static final double DOWN_RIGHT_CANCODER_OFFSET = 360 - 18.80859375; //360 - 72.246
+    public static final double DOWN_LEFT_CANCODER_OFFSET = 360 - 250.6640625;// 360 - 238.71
     //joysticks
     public static final int LEFT_JOYSTICK = 0;
     public static final int RIGHT_JOYSTICK = 1;
     public static final double JOYSTICK_DEADZONE = 0.2;
 
     //pid values
-    public static final double WHEEL_ROTATION_KP = 0.08;
-    public static final double WHEEL_ROTATION_KI = 0.00000;//0.000007
+    public static final double WHEEL_ROTATION_KP = 0.01; //0.08
+    public static final double WHEEL_ROTATION_KI = 0.0;//0.000007
     public static final double WHEEL_ROTATION_KD = 0.0;
 
     //chassis size

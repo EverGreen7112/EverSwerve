@@ -44,6 +44,9 @@ public class SwerveModule extends SubsystemBase {
         m_rotationMotor.getPIDController().setP(Consts.WHEEL_ROTATION_KP);
         m_rotationMotor.getPIDController().setI(Consts.WHEEL_ROTATION_KI);
         m_rotationMotor.getPIDController().setD(Consts.WHEEL_ROTATION_KD);
+
+        //init desired state
+        m_desiredState = new Vector2d(0, 0);
     }
 
     /**
@@ -69,28 +72,7 @@ public class SwerveModule extends SubsystemBase {
     }
 
     @Override
-    public void periodic() {
-        //apply desired state on module
-
-        double targetAngle = Math.toDegrees(m_desiredState.theta()); //convert target angle from radians to degrees
-        double targetSpeed = m_desiredState.mag(); //get target speed
-
-        Vector2d currentState = getState();
-        double optimizedFlippedTargetAngle = Math.toDegrees(currentState.theta()) + Consts.closestAngle(Math.toDegrees(currentState.theta()), targetAngle + 180);
-
-        if (Math.abs(targetAngle) > Math.abs(optimizedFlippedTargetAngle)){
-            targetAngle = optimizedFlippedTargetAngle;
-        }
-        
-        //turn module to target angle
-        m_rotationMotor.getPIDController().setReference(targetAngle, ControlType.kPosition);
-
-        //dot product to current state
-        targetSpeed *= Math.cos(Math.toRadians(targetAngle) - currentState.theta());
-
-        //set speed of module at target speed
-        m_speedMotor.set(targetSpeed);
-    }
+    public void periodic() {}
 
     /**
      * set the speeds of motors to 0
@@ -108,27 +90,13 @@ public class SwerveModule extends SubsystemBase {
     }
 
     public double getCoderPos(){
-        return m_coder.getPosition();
+        return m_coder.getAbsolutePosition();
     }
 
     public double getPos(){
         return m_rotationMotor.getEncoder().getPosition();
     }
 
-      
-    /**
-     * 
-     * @return a 2d vector that represents the current state of the module <br>
-     * - magnitude represents the target speed (-1 - 1)  
-     *                                   angle represents the target angle
-     */
-    public Vector2d getState() {
-        double currentAngle = m_rotationMotor.getEncoder().getPosition();
-        double currentSpeed = m_speedMotor.get();
-        return new Vector2d(currentSpeed * Math.cos(Math.toRadians(currentAngle)),
-                currentSpeed * Math.sin(Math.toRadians(currentAngle)));
-    }
-    
     public void setState(double speed, double angle){
         setState(new Vector2d(speed * Math.cos(Math.toRadians(angle)), speed * Math.sin(Math.toRadians(angle))));
     }
@@ -140,13 +108,41 @@ public class SwerveModule extends SubsystemBase {
      */
     public void setState(Vector2d desiredState) {
        this.m_desiredState = desiredState;
-    }
+        
+       //get polar values from desired state vector
+       double targetSpeed = m_desiredState.mag(); //get target speed
+       double targetAngle = Math.toDegrees(m_desiredState.theta()); //convert target angle from radians to degrees
+       
+       double currentAngle = getPos();
+       
+       double optimizedFlippedDeltaTargetAngle = Consts.closestAngle(currentAngle, targetAngle - 180);
+       double optimizedNormalDeltaTargetAngle = Consts.closestAngle(currentAngle, targetAngle);
+
+       double optimizedDeltaTargetAngle = 0;
+        if(Math.abs(optimizedNormalDeltaTargetAngle) > Math.abs(optimizedFlippedDeltaTargetAngle)){
+            optimizedDeltaTargetAngle = optimizedFlippedDeltaTargetAngle;
+        }
+        else{
+            optimizedDeltaTargetAngle = optimizedNormalDeltaTargetAngle;
+        }
+
+       //turn module to target angle
+       m_rotationMotor.getPIDController().setReference(currentAngle + optimizedDeltaTargetAngle, ControlType.kPosition);
+
+       //dot product to current state
+       targetSpeed *= Math.cos(Math.toRadians(optimizedNormalDeltaTargetAngle));
+
+       //set speed of module at target speed
+        m_speedMotor.set(targetSpeed);
+   }
+
 
     /**
-     * turn module to targetAngle
+     * turn module to targetngle
      * @param targetAngle in degrees
      */
-    public void turnToAngle(double targetAngle){
+
+     public void turnToAngle(double targetAngle){
         m_rotationMotor.getPIDController().setReference(targetAngle, ControlType.kPosition);
     }
 

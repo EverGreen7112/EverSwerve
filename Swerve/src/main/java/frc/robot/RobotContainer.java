@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Commands.DriveByJoysticks;
-import frc.robot.Subsystems.Swerve;
+
 import frc.robot.Utils.Consts;
 
 public class RobotContainer {
@@ -26,10 +26,11 @@ public class RobotContainer {
   public static final XboxController xbox = new XboxController(3);
   
 
-  public static DriveByJoysticks teleop = new DriveByJoysticks(() -> xbox.getLeftX(), () -> xbox.getLeftY(), () -> xbox.getRightX(), () -> true, true);
-
+  public static DriveByJoysticks teleop = new DriveByJoysticks(() -> controller.getX(), () -> controller.getY(), ()-> controller.getZ(), () -> true, true);
+                                        //new DriveByJoysticks(() -> xbox.getLeftX(), () -> xbox.getLeftY(), () -> xbox.getRightX(), () -> true, true); 
   private void configureBindings() {
   }
+
 
   public Command getAutonomousCommand() {
     return Commands.print("No autonomous command configured");
