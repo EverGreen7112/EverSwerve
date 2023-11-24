@@ -140,7 +140,7 @@ public class Swerve extends SubsystemBase {
         }
     }
 
-    public Gyro getGyro(){
+    public AHRS getGyro(){
         return m_gyro;
     }
 }

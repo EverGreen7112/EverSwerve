@@ -28,8 +28,7 @@ public class RobotContainer {
 
   public static DriveByJoysticks teleop = new DriveByJoysticks(() -> controller.getX(), () -> controller.getY(), ()-> controller.getZ(), () -> true, true);
                                         //new DriveByJoysticks(() -> xbox.getLeftX(), () -> xbox.getLeftY(), () -> xbox.getRightX(), () -> true, true); 
-  private void configureBindings() {
-  }
+  private void configureBindings() {}
 
 
   public Command getAutonomousCommand() {
