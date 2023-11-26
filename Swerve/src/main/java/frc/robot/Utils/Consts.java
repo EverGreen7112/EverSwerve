@@ -1,5 +1,6 @@
 package frc.robot.Utils;
 
+import java.lang.reflect.Executable;
 import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -66,8 +67,11 @@ public class Consts {
     public static final double DRIVE_GEAR_RATIO =  1 / 8.14; //L1
     public static final double ROTATION_GEAR_RATIO = 1 / 12.8;
 
+    public static final double executeFPS = 50;
+
     //robot yaw angle PID
-    public static final double SPIN_SPEED = 1.5;
+    public static final double SPIN_SPEED = 150 / executeFPS;
+
     
  //speed values
  public static final Supplier<Double> SPIN_ANGLE_KP = new Supplier<Double>() {
@@ -103,6 +107,17 @@ public class Consts {
       return Math.max(min, Math.min(max, value));
     }
 
+    /**
+     * 
+     * @param angle - the angle value in degrees that will be converted
+     * @return - the converted value from the -180 - 180 to 0 - 360
+     */
+    public static double convertTo0To360(double angle){
+      if(angle > 0){
+        angle += 360;
+      }
+      return angle;
+    }
    
 
 }

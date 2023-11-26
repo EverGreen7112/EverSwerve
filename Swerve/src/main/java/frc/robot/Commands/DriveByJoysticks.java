@@ -25,7 +25,6 @@ public class DriveByJoysticks extends CommandBase{
         m_spinPIDcontroller = new PIDController(Consts.SPIN_ANGLE_KP.get(), Consts.SPIN_ANGLE_KI, Consts.SPIN_ANGLE_KD.get());
         
         m_swerveInstance = Swerve.getInstance(usesAbsEncoder);
-
     }
 
     @Override
@@ -36,19 +35,27 @@ public class DriveByJoysticks extends CommandBase{
 
     @Override
     public void execute() {
+
+
+        //current robot angle
+        double currentAngle = m_swerveInstance.getGyro().getYaw();
         //get values from suppliers
         double speedX = m_speedX.get();
         double speedY = m_speedY.get();
         double rotation = m_rotation.get();
-        double currentAngle = m_swerveInstance.getGyro().getYaw();
-
+       
+        if(Math.abs(speedX) < Consts.JOYSTICK_DEADZONE && Math.abs(speedY) < Consts.JOYSTICK_DEADZONE && Math.abs(rotation) < Consts.JOYSTICK_DEADZONE){
+            m_swerveInstance.stop();
+            m_targetAngle = currentAngle;
+            return;
+        }
         m_spinPIDcontroller.setPID(Consts.SPIN_ANGLE_KP.get(), Consts.SPIN_ANGLE_KI, Consts.SPIN_ANGLE_KD.get());
 
         //update robot's target angle
         m_targetAngle += Consts.SPIN_SPEED * rotation;
 
         double optimizedAngle = currentAngle + Consts.closestAngle(currentAngle, m_targetAngle);
-        double output = Consts.clamp(m_spinPIDcontroller.calculate(currentAngle, optimizedAngle), -1, 1);
+        double output = -Consts.clamp(m_spinPIDcontroller.calculate(currentAngle, optimizedAngle), -1, 1);
         
         SmartDashboard.putNumber("target", m_targetAngle);
         SmartDashboard.putNumber("output", output);
@@ -63,7 +70,6 @@ public class DriveByJoysticks extends CommandBase{
         //activate the drive function
         m_swerveInstance.drive(vec, output, m_isFieldOriented.get());
                 
-   
     }
 
     @Override
