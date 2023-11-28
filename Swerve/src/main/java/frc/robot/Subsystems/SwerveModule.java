@@ -97,6 +97,10 @@ public class SwerveModule extends SubsystemBase {
         return m_rotationMotor.getEncoder().getPosition();
     }
 
+    public void setPos(double pos){
+        m_rotationMotor.getEncoder().setPosition(pos);
+    }
+
     public void setState(double speed, double angle){
         setState(new Vector2d(speed * Math.cos(Math.toRadians(angle)), speed * Math.sin(Math.toRadians(angle))));
     }

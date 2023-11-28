@@ -20,18 +20,19 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     m_robotContainer = new RobotContainer();
-    Swerve.getInstance(true).initModulesToAbs();
-    SmartDashboard.putNumber("max speed", 0.2);
+    
+    SmartDashboard.putNumber("max speed", 0.4);
+    SmartDashboard.putNumber("kp", 0.05);
+    SmartDashboard.putNumber("kd", 0.0);
   }
 
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
-    SmartDashboard.putNumber("top right angle", Swerve.getInstance(true).m_modules[0].getCoderPos());
-    SmartDashboard.putNumber("top left angle",Swerve.getInstance(true).m_modules[1].getCoderPos());
-    SmartDashboard.putNumber("down right angle",Swerve.getInstance(true).m_modules[2].getCoderPos());
-    SmartDashboard.putNumber("down left angle", Swerve.getInstance(true).m_modules[3].getCoderPos());
-    SmartDashboard.putNumber("angle", Swerve.getInstance(true).getGyro().getAngle());
+    SmartDashboard.putNumber("top right angle",Consts.modulo(Swerve.getInstance(true).m_modules[0].getPos(), 360));
+    SmartDashboard.putNumber("top left angle",Consts.modulo(Swerve.getInstance(true).m_modules[0].getPos(), 360));
+    SmartDashboard.putNumber("down right angle",Consts.modulo(Swerve.getInstance(true).m_modules[0].getPos(), 360));
+    SmartDashboard.putNumber("down left angle", Consts.modulo(Swerve.getInstance(true).m_modules[0].getPos(), 360));
     SmartDashboard.putNumber("controller angle", Consts.modulo(RobotContainer.controller.getDirectionDegrees(), 360));
   }
 
@@ -64,7 +65,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     CommandScheduler.getInstance().cancelAll();
-    // Swerve.getInstance(true).zeroYaw();    
+    Swerve.getInstance(true).zeroYaw();    
     RobotContainer.teleop.schedule();
     // for(int i =0 ; i < 4;i++){
     //    Swerve.getInstance(true).m_modules[i].setState(0.1, 90);

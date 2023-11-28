@@ -1,11 +1,11 @@
 package frc.robot.Utils;
 
+import java.lang.reflect.Executable;
 import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Consts {
-
 
     //speed values
     public static final Supplier<Double> MAX_SPEED = new Supplier<Double>() {
@@ -36,10 +36,10 @@ public class Consts {
 
     //cancoder offset(remember to update with robot!!)
     //remember to sub your offset from 360
-    public static final double TOP_RIGHT_CANCODER_OFFSET = 360 - 126.9140625; //360 - 4.218
-    public static final double TOP_LEFT_CANCODER_OFFSET =  360 - 116.54296875;//360 - 247.24
-    public static final double DOWN_RIGHT_CANCODER_OFFSET = 360 - 18.80859375; //360 - 72.246
-    public static final double DOWN_LEFT_CANCODER_OFFSET = 360 - 250.6640625;// 360 - 238.71
+    public static final double TOP_RIGHT_CANCODER_OFFSET = 360 - 227.98828125; 
+    public static final double TOP_LEFT_CANCODER_OFFSET =  360 - 334.6875;
+    public static final double DOWN_RIGHT_CANCODER_OFFSET = 360 - 129.19921875;
+    public static final double DOWN_LEFT_CANCODER_OFFSET = 360 - 268.857421875;
     //joysticks
     public static final int LEFT_JOYSTICK = 0;
     public static final int RIGHT_JOYSTICK = 1;
@@ -63,13 +63,30 @@ public class Consts {
     //array of physical module vectors
     public static final Vector2d[] physicalMoudulesVector = { TOP_RIGHT, TOP_LEFT, DOWN_RIGHT, DOWN_LEFT};//array of vectors from robot center to swerves module
 
+    //gear ratios
     public static final double DRIVE_GEAR_RATIO =  1 / 8.14; //L1
     public static final double ROTATION_GEAR_RATIO = 1 / 12.8;
 
-    public static double rpmToMs(double wheelRadius, double rpm){
-      double rps = rpm / 60;
-      return wheelRadius * 2 * Math.PI * rps;
+    public static final double executeFPS = 50;
+
+    //robot yaw angle PID
+    public static final double SPIN_SPEED = 150 / executeFPS;
+
+    
+ //speed values
+ public static final Supplier<Double> SPIN_ANGLE_KP = new Supplier<Double>() {
+  @Override
+  public Double get() {
+    return SmartDashboard.getNumber("kp", 0);
+  }
+};  
+  public static final double SPIN_ANGLE_KI = 0;
+  public static final Supplier<Double> SPIN_ANGLE_KD = new Supplier<Double>() {
+    @Override
+    public Double get() {
+      return SmartDashboard.getNumber("kd", 0);
     }
+  };  
 
     public static double closestAngle(double a, double b) {
       // get direction
@@ -86,6 +103,21 @@ public class Consts {
       return ((a % b) + b) % b;
     }
 
+    public static double clamp(double value, double min, double max){
+      return Math.max(min, Math.min(max, value));
+    }
+
+    /**
+     * 
+     * @param angle - the angle value in degrees that will be converted
+     * @return - the converted value from the -180 - 180 to 0 - 360
+     */
+    public static double convertTo0To360(double angle){
+      if(angle > 0){
+        angle += 360;
+      }
+      return angle;
+    }
    
 
 }
