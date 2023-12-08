@@ -32,10 +32,10 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("down right angle", m_swerveInstance.getModule(2).getAngle());
     SmartDashboard.putNumber("down left angle", m_swerveInstance.getModule(3).getAngle());
 
-    SmartDashboard.putNumber("top right velocity", m_swerveInstance.getModule(0).getVelocity());
-    SmartDashboard.putNumber("top left velocity", m_swerveInstance.getModule(1).getVelocity());
-    SmartDashboard.putNumber("down right velocity", m_swerveInstance.getModule(2).getVelocity());
-    SmartDashboard.putNumber("down left velocity", m_swerveInstance.getModule(3).getVelocity());
+    SmartDashboard.putNumber("top right velocity", m_swerveInstance.getModule(0).getSpeed());
+    SmartDashboard.putNumber("top left velocity", m_swerveInstance.getModule(1).getSpeed());
+    SmartDashboard.putNumber("down right velocity", m_swerveInstance.getModule(2).getSpeed());
+    SmartDashboard.putNumber("down left velocity", m_swerveInstance.getModule(3).getSpeed());
 
   }
 

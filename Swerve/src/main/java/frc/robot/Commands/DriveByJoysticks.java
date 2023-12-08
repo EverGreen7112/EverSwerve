@@ -34,7 +34,7 @@ public class DriveByJoysticks extends CommandBase{
         
         //apply deadzone on supplier values
         if(Math.abs(speedX) < Consts.JOYSTICK_DEADZONE && Math.abs(speedY) < Consts.JOYSTICK_DEADZONE && Math.abs(rotation) < Consts.JOYSTICK_DEADZONE){
-            Swerve.getInstance(true).stop();
+            Swerve.getInstance(Consts.USES_ABS_ENCODER).stop();
             return;
         }
 

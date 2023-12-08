@@ -100,7 +100,7 @@ public class SwerveModule extends SubsystemBase {
         return m_steeringMotor.getEncoder().getPosition();
     }
 
-    public double getVelocity(){
+    public double getSpeed(){
         return m_driveMotor.getEncoder().getVelocity();
     }
 
