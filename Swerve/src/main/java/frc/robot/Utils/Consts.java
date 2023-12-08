@@ -3,15 +3,17 @@ package frc.robot.Utils;
 import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Subsystems.Swerve;
 
 public class Consts {
 
+  public static final boolean USES_ABS_ENCODER = false;
 
-    //speed values
+    //speed values in m/s
     public static final Supplier<Double> MAX_SPEED = new Supplier<Double>() {
       @Override
       public Double get() {
-        return SmartDashboard.getNumber("max speed", 0.2);
+        return SmartDashboard.getNumber("max speed", 1);
       }
     };
 
@@ -40,20 +42,25 @@ public class Consts {
     public static final double TOP_LEFT_CANCODER_OFFSET =  360 - 116.54296875;//360 - 247.24
     public static final double DOWN_RIGHT_CANCODER_OFFSET = 360 - 18.80859375; //360 - 72.246
     public static final double DOWN_LEFT_CANCODER_OFFSET = 360 - 250.6640625;// 360 - 238.71
+    
     //joysticks
     public static final int LEFT_JOYSTICK = 0;
     public static final int RIGHT_JOYSTICK = 1;
     public static final double JOYSTICK_DEADZONE = 0.2;
 
     //pid values
-    public static final double WHEEL_ROTATION_KP = 0.01; //0.08
-    public static final double WHEEL_ROTATION_KI = 0.0;//0.000007
-    public static final double WHEEL_ROTATION_KD = 0.0;
+    public static final double WHEEL_ANGLE_KP = 0.01; //0.08
+    public static final double WHEEL_ANGLE_KI = 0.0;//0.000007
+    public static final double WHEEL_ANGLE_KD = 0.0;
+    public static final double WHEEL_VELOCITY_KP = 0;
+    public static final double WHEEL_VELOCITY_KI = 0;
+    public static final double WHEEL_VELOCITY_KD = 0;
+
 
     //chassis size
     public static final double FRONT_WHEEL_DIST_METERS = 0.57;
     public static final double SIDE_WHEEL_DIST_METERS = 0.57;
-
+    public static final double WHEEL_PERIMETER = Math.PI * 0.095;
     //swerve vectors
     public static final Vector2d TOP_RIGHT = new Vector2d((FRONT_WHEEL_DIST_METERS / 2), (SIDE_WHEEL_DIST_METERS / 2)); 
     public static final Vector2d TOP_LEFT = new Vector2d(-(FRONT_WHEEL_DIST_METERS / 2), SIDE_WHEEL_DIST_METERS / 2);
@@ -63,8 +70,9 @@ public class Consts {
     //array of physical module vectors
     public static final Vector2d[] physicalMoudulesVector = { TOP_RIGHT, TOP_LEFT, DOWN_RIGHT, DOWN_LEFT};//array of vectors from robot center to swerves module
 
+    //module gear ratios
     public static final double DRIVE_GEAR_RATIO =  1 / 8.14; //L1
-    public static final double ROTATION_GEAR_RATIO = 1 / 12.8;
+    public static final double STEERING_GEAR_RATIO = 1 / 12.8;
 
     public static double rpmToMs(double wheelRadius, double rpm){
       double rps = rpm / 60;

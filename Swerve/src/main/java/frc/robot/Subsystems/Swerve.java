@@ -14,7 +14,7 @@ import com.kauailabs.navx.frc.AHRS;
 public class Swerve extends SubsystemBase {
 
     //array of swerve modules
-    public SwerveModule[] m_modules = new SwerveModule[Consts.physicalMoudulesVector.length];
+    private SwerveModule[] m_modules = new SwerveModule[Consts.physicalMoudulesVector.length];
 
     //robot gyro
     private AHRS m_gyro;
@@ -142,5 +142,9 @@ public class Swerve extends SubsystemBase {
 
     public Gyro getGyro(){
         return m_gyro;
+    }
+
+    public SwerveModule getModule(int idx){
+        return m_modules[idx];
     }
 }

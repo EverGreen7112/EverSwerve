@@ -5,8 +5,6 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Utils.Consts;
 import frc.robot.Utils.Vector2d;
@@ -14,10 +12,10 @@ import frc.robot.Utils.Vector2d;
 public class SwerveModule extends SubsystemBase {
 
     //motor controller that controls the speed of the modules 
-    public CANSparkMax m_speedMotor;
+    public CANSparkMax m_driveMotor;
 
     //motor controller that controls the rotation of the modules
-    private CANSparkMax m_rotationMotor;
+    private CANSparkMax m_steeringMotor;
 
     //can coder to save the absolute position of the module
     private CANCoder m_coder;
@@ -27,23 +25,28 @@ public class SwerveModule extends SubsystemBase {
     /**
      * 
      * port = id(team convention)
-     * @param speedPort - speed motor id of module
-     * @param rotationPort - rotation motor id of module
+     * @param drivePort - speed motor id of module
+     * @param steeringPort - rotation motor id of module
      */
-    public SwerveModule(int speedPort, int rotationPort) {
-        m_speedMotor = new CANSparkMax(speedPort, MotorType.kBrushless);
-        m_rotationMotor = new CANSparkMax(rotationPort, MotorType.kBrushless);
+    public SwerveModule(int drivePort, int steeringPort) {
+        m_driveMotor = new CANSparkMax(drivePort, MotorType.kBrushless);
+        m_steeringMotor = new CANSparkMax(steeringPort, MotorType.kBrushless);
 
         //restore the deafult values of motor so nothing would interrupt motor
-        m_rotationMotor.restoreFactoryDefaults();
+        m_steeringMotor.restoreFactoryDefaults();
         
         //set idle mode of rotation motor
-        m_rotationMotor.setIdleMode(IdleMode.kCoast);
+        m_steeringMotor.setIdleMode(IdleMode.kCoast);
         
-        //config pid values
-        m_rotationMotor.getPIDController().setP(Consts.WHEEL_ROTATION_KP);
-        m_rotationMotor.getPIDController().setI(Consts.WHEEL_ROTATION_KI);
-        m_rotationMotor.getPIDController().setD(Consts.WHEEL_ROTATION_KD);
+        //config angle pid values
+        m_steeringMotor.getPIDController().setP(Consts.WHEEL_ANGLE_KP);
+        m_steeringMotor.getPIDController().setI(Consts.WHEEL_ANGLE_KI);
+        m_steeringMotor.getPIDController().setD(Consts.WHEEL_ANGLE_KD);
+
+        //config velocity pid values
+        m_driveMotor.getPIDController().setP(Consts.WHEEL_VELOCITY_KP);
+        m_driveMotor.getPIDController().setI(Consts.WHEEL_VELOCITY_KI);
+        m_driveMotor.getPIDController().setD(Consts.WHEEL_VELOCITY_KD);
 
         //init desired state
         m_desiredState = new Vector2d(0, 0);
@@ -51,13 +54,13 @@ public class SwerveModule extends SubsystemBase {
 
     /**
      * port = id(7112 team convention)
-     * @param speedPort - speed motor id of module
-     * @param rotationPort - rotation motor id of module
+     * @param drivePort - speed motor id of module
+     * @param steeringPort - rotation motor id of module
      * @param absoluteEncoderPort - can coder id of module
      * @param canCoderOffset - can coder magnet offset offset
      */
-    public SwerveModule(int speedPort, int rotationPort, int absoluteEncoderPort, double canCoderOffset) {
-        this(speedPort, rotationPort);
+    public SwerveModule(int drivePort, int steeringPort, int absoluteEncoderPort, double canCoderOffset) {
+        this(drivePort, steeringPort);
         
         //configure cancoder
         m_coder = new CANCoder(absoluteEncoderPort);
@@ -65,10 +68,10 @@ public class SwerveModule extends SubsystemBase {
         m_coder.configMagnetOffset(canCoderOffset,50);
         
         //convert rotation motor position value to degrees and take care of gear ratio
-        m_rotationMotor.getEncoder().setPositionConversionFactor(Consts.ROTATION_GEAR_RATIO * 360); //degrees and gear ratio
+        m_steeringMotor.getEncoder().setPositionConversionFactor(Consts.STEERING_GEAR_RATIO * 360); //degrees and gear ratio
 
         //take care of speed motor velocity gear velocity
-        m_speedMotor.getEncoder().setVelocityConversionFactor(Consts.DRIVE_GEAR_RATIO);
+        m_driveMotor.getEncoder().setVelocityConversionFactor(Consts.DRIVE_GEAR_RATIO * Consts.WHEEL_PERIMETER / 60.0); //convert from rpm to m/s
     }
 
     @Override
@@ -78,23 +81,27 @@ public class SwerveModule extends SubsystemBase {
      * set the speeds of motors to 0
      */
     public void turnOff() {
-        this.m_rotationMotor.set(0);
-        this.m_speedMotor.set(0);
+        this.m_steeringMotor.set(0);
+        this.m_driveMotor.set(0);
     }
 
     /**
      * put the current position of the can coder in the rotation motor's integrated encoder
      */
     public void initModulesToAbs(){
-        m_rotationMotor.getEncoder().setPosition(m_coder.getAbsolutePosition());
+        m_steeringMotor.getEncoder().setPosition(m_coder.getAbsolutePosition());
     }
 
     public double getCoderPos(){
         return m_coder.getAbsolutePosition();
     }
 
-    public double getPos(){
-        return m_rotationMotor.getEncoder().getPosition();
+    public double getAngle(){
+        return m_steeringMotor.getEncoder().getPosition();
+    }
+
+    public double getVelocity(){
+        return m_driveMotor.getEncoder().getVelocity();
     }
 
     public void setState(double speed, double angle){
@@ -113,8 +120,9 @@ public class SwerveModule extends SubsystemBase {
        double targetSpeed = m_desiredState.mag(); //get target speed
        double targetAngle = Math.toDegrees(m_desiredState.theta()); //convert target angle from radians to degrees
        
-       double currentAngle = getPos();
+       double currentAngle = getAngle();
        
+       //calculate optimal delta angle
        double optimizedFlippedDeltaTargetAngle = Consts.closestAngle(currentAngle, targetAngle - 180);
        double optimizedNormalDeltaTargetAngle = Consts.closestAngle(currentAngle, targetAngle);
 
@@ -127,23 +135,23 @@ public class SwerveModule extends SubsystemBase {
         }
 
        //turn module to target angle
-       m_rotationMotor.getPIDController().setReference(currentAngle + optimizedDeltaTargetAngle, ControlType.kPosition);
+       m_steeringMotor.getPIDController().setReference(currentAngle + optimizedDeltaTargetAngle, ControlType.kPosition);
 
        //dot product to current state
        targetSpeed *= Math.cos(Math.toRadians(optimizedNormalDeltaTargetAngle));
 
        //set speed of module at target speed
-        m_speedMotor.set(targetSpeed);
+       m_driveMotor.getPIDController().setReference(targetSpeed, ControlType.kVelocity);
    }
 
 
     /**
-     * turn module to targetngle
+     * turn module to targetAngle
      * @param targetAngle in degrees
      */
 
      public void turnToAngle(double targetAngle){
-        m_rotationMotor.getPIDController().setReference(targetAngle, ControlType.kPosition);
+        m_steeringMotor.getPIDController().setReference(targetAngle, ControlType.kPosition);
     }
 
 }

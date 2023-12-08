@@ -8,9 +8,6 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Commands.DriveByJoysticks;
 
 import frc.robot.Utils.Consts;
@@ -26,10 +23,10 @@ public class RobotContainer {
   public static final XboxController xbox = new XboxController(3);
   
 
-  public static DriveByJoysticks teleop = new DriveByJoysticks(() -> controller.getX(), () -> controller.getY(), ()-> controller.getZ(), () -> true, true);
+  public static DriveByJoysticks teleop = new DriveByJoysticks(() -> controller.getX(), () -> controller.getY(), ()-> controller.getZ(), () -> true, Consts.USES_ABS_ENCODER);
                                         //new DriveByJoysticks(() -> xbox.getLeftX(), () -> xbox.getLeftY(), () -> xbox.getRightX(), () -> true, true); 
-  private void configureBindings() {
-  }
+                                        
+  private void configureBindings() {}
 
 
   public Command getAutonomousCommand() {

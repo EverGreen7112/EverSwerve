@@ -13,26 +13,30 @@ import frc.robot.Utils.Consts;
 import frc.robot.Utils.Vector2d;
 
 public class Robot extends TimedRobot {
-  private Command m_autonomousCommand;
-
   private RobotContainer m_robotContainer;
+  private Swerve m_swerveInstance;
+
 
   @Override
   public void robotInit() {
-    m_robotContainer = new RobotContainer();
-    Swerve.getInstance(true).initModulesToAbs();
-    SmartDashboard.putNumber("max speed", 0.2);
+    m_swerveInstance = Swerve.getInstance(Consts.USES_ABS_ENCODER);
+    m_robotContainer = new RobotContainer();    
+    SmartDashboard.putNumber("max speed", 1);
   }
 
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
-    SmartDashboard.putNumber("top right angle", Swerve.getInstance(true).m_modules[0].getCoderPos());
-    SmartDashboard.putNumber("top left angle",Swerve.getInstance(true).m_modules[1].getCoderPos());
-    SmartDashboard.putNumber("down right angle",Swerve.getInstance(true).m_modules[2].getCoderPos());
-    SmartDashboard.putNumber("down left angle", Swerve.getInstance(true).m_modules[3].getCoderPos());
-    SmartDashboard.putNumber("angle", Swerve.getInstance(true).getGyro().getAngle());
-    SmartDashboard.putNumber("controller angle", Consts.modulo(RobotContainer.controller.getDirectionDegrees(), 360));
+    SmartDashboard.putNumber("top right angle", m_swerveInstance.getModule(0).getAngle());
+    SmartDashboard.putNumber("top left angle", m_swerveInstance.getModule(1).getAngle());
+    SmartDashboard.putNumber("down right angle", m_swerveInstance.getModule(2).getAngle());
+    SmartDashboard.putNumber("down left angle", m_swerveInstance.getModule(3).getAngle());
+
+    SmartDashboard.putNumber("top right velocity", m_swerveInstance.getModule(0).getVelocity());
+    SmartDashboard.putNumber("top left velocity", m_swerveInstance.getModule(1).getVelocity());
+    SmartDashboard.putNumber("down right velocity", m_swerveInstance.getModule(2).getVelocity());
+    SmartDashboard.putNumber("down left velocity", m_swerveInstance.getModule(3).getVelocity());
+
   }
 
   @Override
@@ -47,13 +51,7 @@ public class Robot extends TimedRobot {
   public void disabledExit() {}
 
   @Override
-  public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.schedule();
-    }
-  }
+  public void autonomousInit() {}
 
   @Override
   public void autonomousPeriodic() {}
@@ -64,7 +62,6 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     CommandScheduler.getInstance().cancelAll();
-    // Swerve.getInstance(true).zeroYaw();    
     RobotContainer.teleop.schedule();
     // for(int i =0 ; i < 4;i++){
     //    Swerve.getInstance(true).m_modules[i].setState(0.1, 90);
@@ -72,9 +69,7 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void teleopPeriodic() {
-    // Swerve.getInstance(true).m_modules[1].setState(0.01, RobotContainer.controller.getDirectionDegrees());
-  }
+  public void teleopPeriodic() {}
 
   @Override
   public void teleopExit() {
