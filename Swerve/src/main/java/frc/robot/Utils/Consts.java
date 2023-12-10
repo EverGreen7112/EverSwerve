@@ -52,9 +52,10 @@ public class Consts {
     public static final double WHEEL_ANGLE_KP = 0.01; //0.08
     public static final double WHEEL_ANGLE_KI = 0.0;//0.000007
     public static final double WHEEL_ANGLE_KD = 0.0;
-    public static final double WHEEL_VELOCITY_KP = 0;
-    public static final double WHEEL_VELOCITY_KI = 0;
-    public static final double WHEEL_VELOCITY_KD = 0;
+
+    public static final double WHEEL_VELOCITY_KP = 0.1;
+    public static final double WHEEL_VELOCITY_KI = 0.001;
+    public static final double WHEEL_VELOCITY_KD = 0.005;
 
 
     //chassis size
@@ -73,6 +74,21 @@ public class Consts {
     //module gear ratios
     public static final double DRIVE_GEAR_RATIO =  1 / 8.14; //L1
     public static final double STEERING_GEAR_RATIO = 1 / 12.8;
+
+     //speed values
+    public static final Supplier<Double> HEADING_KP = new Supplier<Double>() {
+      @Override
+      public Double get() {
+        return SmartDashboard.getNumber("heading kp", 0);
+      }
+    };  
+    public static final double HEADING_KI = 0;
+    public static final Supplier<Double> HEADING_KD = new Supplier<Double>() {
+      @Override
+      public Double get() {
+        return SmartDashboard.getNumber("heading kd", 0);
+      }
+    };  
 
     public static double rpmToMs(double wheelRadius, double rpm){
       double rps = rpm / 60;

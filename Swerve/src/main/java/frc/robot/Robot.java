@@ -22,6 +22,11 @@ public class Robot extends TimedRobot {
     m_swerveInstance = Swerve.getInstance(Consts.USES_ABS_ENCODER);
     m_robotContainer = new RobotContainer();    
     SmartDashboard.putNumber("max speed", 1);
+
+    SmartDashboard.putNumber("heading kp", 0.05);
+    SmartDashboard.putNumber("heading kd", 0.0);
+
+    m_swerveInstance.zeroModulesAngles();
   }
 
   @Override
@@ -66,6 +71,7 @@ public class Robot extends TimedRobot {
     // for(int i =0 ; i < 4;i++){
     //    Swerve.getInstance(true).m_modules[i].setState(0.1, 90);
     // }
+    m_swerveInstance.zeroYaw();
   }
 
   @Override
