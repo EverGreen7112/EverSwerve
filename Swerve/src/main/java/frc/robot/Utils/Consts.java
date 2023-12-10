@@ -17,6 +17,14 @@ public class Consts {
       }
     };
 
+    //speed values in m/s
+    public static final Supplier<Double> MAX_ANGULAR_SPEED = new Supplier<Double>() {
+      @Override
+      public Double get() {
+        return SmartDashboard.getNumber("max angular speed", 5);
+      }
+    };    
+
     //chassis motors
     public static final int TOP_LEFT_SPEED_PORT = 6;
     public static final int TOP_RIGHT_SPEED_PORT = 8;

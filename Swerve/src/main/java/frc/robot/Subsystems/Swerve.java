@@ -71,7 +71,7 @@ public class Swerve extends SubsystemBase {
         double currentAngle = m_gyro.getAngle();
         m_headingPidController.setPID(Consts.HEADING_KP.get(), Consts.HEADING_KI, Consts.HEADING_KD.get()); //remove later
         double optimizedAngle = currentAngle + Consts.closestAngle(currentAngle, m_headingTargetAngle);
-        m_rotationSpeed = -MathUtil.clamp(m_headingPidController.calculate(currentAngle, optimizedAngle), -1, 1);
+        m_rotationSpeed = -MathUtil.clamp(m_headingPidController.calculate(currentAngle, optimizedAngle), -Consts.MAX_ANGULAR_SPEED.get(), Consts.MAX_ANGULAR_SPEED.get());
         
         SmartDashboard.putNumber("rotation speed", m_rotationSpeed);
         SmartDashboard.putNumber("current angle", currentAngle);
@@ -140,6 +140,7 @@ public class Swerve extends SubsystemBase {
 
     public void zeroYaw(){
         m_gyro.zeroYaw();
+        m_headingTargetAngle = m_gyro.getAngle();
     }
 
     public void zeroModulesAngles(){

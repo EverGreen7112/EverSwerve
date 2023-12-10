@@ -46,7 +46,9 @@ public class RobotContainer {
   Trigger rotateRobotByMinus45 = new JoystickButton(controller, 5).onTrue(new InstantCommand(() ->{
     Swerve.getInstance(Consts.USES_ABS_ENCODER).rotateBy(-45);;
     }));
-
+    Trigger rotateRobot180 = new JoystickButton(controller, 8).onTrue(new InstantCommand(() ->{
+      Swerve.getInstance(Consts.USES_ABS_ENCODER).rotateBy(180);;
+      }));
   }
 
 
