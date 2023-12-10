@@ -26,31 +26,37 @@ public class RobotContainer {
   public static final Joystick rightJoystick = new Joystick(Consts.RIGHT_JOYSTICK);
   public static final Joystick controller = new Joystick(2);
   public static final XboxController xbox = new XboxController(3);
-  
 
-  public static DriveByJoysticks teleop = new DriveByJoysticks(() -> controller.getX(), () -> controller.getY(), ()-> controller.getZ(), () -> true, Consts.USES_ABS_ENCODER);
-                                        // new DriveByJoysticks(() -> xbox.getLeftX(), () -> xbox.getLeftY(), () -> xbox.getRightX(), () -> true, true);
-                                        // new DriveByJoysticks(() -> leftJoystick.getX(), () -> leftJoystick.getY(), ()-> rightJoystick.getX(), () -> true, Consts.USES_ABS_ENCODER);
+  public static DriveByJoysticks teleop = new DriveByJoysticks(() -> controller.getX(), () -> controller.getY(),
+      () -> controller.getZ(), () -> true, Consts.USES_ABS_ENCODER);
+  // new DriveByJoysticks(() -> xbox.getLeftX(), () -> xbox.getLeftY(), () ->
+  // xbox.getRightX(), () -> true, true);
+  // new DriveByJoysticks(() -> leftJoystick.getX(), () -> leftJoystick.getY(),
+  // ()-> rightJoystick.getX(), () -> true, Consts.USES_ABS_ENCODER);
 
-                                        
   private void configureBindings() {
 
-    Trigger resetModules = new JoystickButton(controller, 2).onTrue(new InstantCommand(() ->{
-       Swerve.getInstance(Consts.USES_ABS_ENCODER).zeroModulesAngles();
+    Trigger resetModules = new JoystickButton(controller, 2).onTrue(new InstantCommand(() -> {
+      Swerve.getInstance(Consts.USES_ABS_ENCODER).zeroModulesAngles();
     }));
 
-    Trigger rotateRobotBy45 = new JoystickButton(controller, 6).onTrue(new InstantCommand(() ->{
+    Trigger rotateRobotBy45 = new JoystickButton(controller, 6).onTrue(new InstantCommand(() -> {
       Swerve.getInstance(Consts.USES_ABS_ENCODER).rotateBy(45);
-   }));
-
-  Trigger rotateRobotByMinus45 = new JoystickButton(controller, 5).onTrue(new InstantCommand(() ->{
-    Swerve.getInstance(Consts.USES_ABS_ENCODER).rotateBy(-45);;
     }));
-    Trigger rotateRobot180 = new JoystickButton(controller, 8).onTrue(new InstantCommand(() ->{
-      Swerve.getInstance(Consts.USES_ABS_ENCODER).rotateBy(180);;
-      }));
-  }
 
+    Trigger rotateRobotByMinus45 = new JoystickButton(controller, 5).onTrue(new InstantCommand(() -> {
+      Swerve.getInstance(Consts.USES_ABS_ENCODER).rotateBy(-45);
+      ;
+    }));
+    Trigger rotateRobot180 = new JoystickButton(controller, 8).onTrue(new InstantCommand(() -> {
+      Swerve.getInstance(Consts.USES_ABS_ENCODER).rotateBy(180);
+      ;
+    }));
+    Trigger rotateRobotTo0 = new JoystickButton(controller, 7).onTrue(new InstantCommand(() -> {
+      Swerve.getInstance(Consts.USES_ABS_ENCODER).rotateTo(0);
+      ;
+    }));
+  }
 
   public Command getAutonomousCommand() {
     return Commands.print("No autonomous command configured");

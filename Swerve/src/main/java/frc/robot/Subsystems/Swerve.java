@@ -138,6 +138,10 @@ public class Swerve extends SubsystemBase {
         m_headingTargetAngle += angle;
     }
 
+    public void rotateTo(double angle){
+        m_headingTargetAngle = angle;
+    }
+
     public void zeroYaw(){
         m_gyro.zeroYaw();
         m_headingTargetAngle = m_gyro.getAngle();
