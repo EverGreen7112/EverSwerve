@@ -26,23 +26,20 @@ public class Consts {
     };    
 
     //chassis motors
-    public static final int TOP_LEFT_SPEED_PORT = 6;
-    public static final int TOP_RIGHT_SPEED_PORT = 8;
-    public static final int DOWN_LEFT_SPEED_PORT = 4;
-    public static final int DOWN_RIGHT_SPEED_PORT = 10;
-    public static final int TOP_LEFT_ROT_PORT = 7;
-    public static final int TOP_RIGHT_ROT_PORT = 9;
-    public static final int DOWN_LEFT_ROT_PORT = 5;
-    public static final int DOWN_RIGHT_ROT_PORT = 11;
+    public static final int TOP_LEFT_DRIVE_PORT = 6;
+    public static final int TOP_RIGHT_DRIVE_PORT = 8;
+    public static final int DOWN_LEFT_DRIVE_PORT = 4;
+    public static final int DOWN_RIGHT_DRIVE_PORT = 10;
+    public static final int TOP_LEFT_STEERING_PORT = 7;
+    public static final int TOP_RIGHT_STEERING_PORT = 9;
+    public static final int DOWN_LEFT_STEERING_PORT = 5;
+    public static final int DOWN_RIGHT_STEERING_PORT = 11;
 
     //chassis encoders
     public static final int TOP_LEFT_CANCODER = 0;
     public static final int TOP_RIGHT_CANCODER = 2;
     public static final int DOWN_LEFT_CANCODER = 1;
     public static final int DOWN_RIGHT_CANCODER = 3;
-
-    //gyro id
-    public static final int PIGEON = 9;
 
     //cancoder offset(remember to update with robot!!)
     //remember to sub your offset from 360

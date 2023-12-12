@@ -32,24 +32,24 @@ public class Swerve extends SubsystemBase {
 
     /**
      * 
-     * @param usesAbsEncoder -if robot got can coders connected to the rotation motors
+     * @param usesAbsEncoder -if robot got can coders connected to the steering motors
      */
     public Swerve(boolean usesAbsEncoder) {
         //create modules array
         if (usesAbsEncoder) {
-            m_modules[0] = new SwerveModule(Consts.TOP_RIGHT_SPEED_PORT, Consts.TOP_RIGHT_ROT_PORT,
+            m_modules[0] = new SwerveModule(Consts.TOP_RIGHT_DRIVE_PORT, Consts.TOP_RIGHT_STEERING_PORT,
                     Consts.TOP_RIGHT_CANCODER, Consts.TOP_RIGHT_CANCODER_OFFSET);
-            m_modules[1] = new SwerveModule(Consts.TOP_LEFT_SPEED_PORT, Consts.TOP_LEFT_ROT_PORT,
+            m_modules[1] = new SwerveModule(Consts.TOP_LEFT_DRIVE_PORT, Consts.TOP_LEFT_STEERING_PORT,
                     Consts.TOP_LEFT_CANCODER, Consts.TOP_LEFT_CANCODER_OFFSET);
-            m_modules[2] = new SwerveModule(Consts.DOWN_RIGHT_SPEED_PORT, Consts.DOWN_RIGHT_ROT_PORT,
+            m_modules[2] = new SwerveModule(Consts.DOWN_RIGHT_DRIVE_PORT, Consts.DOWN_RIGHT_STEERING_PORT,
                     Consts.DOWN_RIGHT_CANCODER, Consts.DOWN_RIGHT_CANCODER_OFFSET);
-            m_modules[3] = new SwerveModule(Consts.DOWN_LEFT_SPEED_PORT, Consts.DOWN_LEFT_ROT_PORT,
+            m_modules[3] = new SwerveModule(Consts.DOWN_LEFT_DRIVE_PORT, Consts.DOWN_LEFT_STEERING_PORT,
                     Consts.DOWN_LEFT_CANCODER, Consts.DOWN_LEFT_CANCODER_OFFSET);
         } else {
-            m_modules[0] = new SwerveModule(Consts.TOP_RIGHT_SPEED_PORT, Consts.TOP_RIGHT_ROT_PORT);
-            m_modules[1] = new SwerveModule(Consts.TOP_LEFT_SPEED_PORT, Consts.TOP_LEFT_ROT_PORT);
-            m_modules[2] = new SwerveModule(Consts.DOWN_RIGHT_SPEED_PORT, Consts.DOWN_RIGHT_ROT_PORT);
-            m_modules[3] = new SwerveModule(Consts.DOWN_LEFT_SPEED_PORT, Consts.DOWN_LEFT_ROT_PORT);
+            m_modules[0] = new SwerveModule(Consts.TOP_RIGHT_DRIVE_PORT, Consts.TOP_RIGHT_STEERING_PORT);
+            m_modules[1] = new SwerveModule(Consts.TOP_LEFT_DRIVE_PORT, Consts.TOP_LEFT_STEERING_PORT);
+            m_modules[2] = new SwerveModule(Consts.DOWN_RIGHT_DRIVE_PORT, Consts.DOWN_RIGHT_STEERING_PORT);
+            m_modules[3] = new SwerveModule(Consts.DOWN_LEFT_DRIVE_PORT, Consts.DOWN_LEFT_STEERING_PORT);
         }
         m_gyro = new AHRS(SerialPort.Port.kMXP);
         m_headingTargetAngle = m_gyro.getAngle();
@@ -57,7 +57,7 @@ public class Swerve extends SubsystemBase {
 
      /**
      * 
-     * @param usesAbsEncoder -if robot got can coders connected to the rotation motors
+     * @param usesAbsEncoder -if robot got can coders connected to the steering motors
      */
     public static Swerve getInstance(boolean usesAbsEncoder) {
         if (m_instance == null) {
@@ -72,9 +72,6 @@ public class Swerve extends SubsystemBase {
         m_headingPidController.setPID(Consts.HEADING_KP.get(), Consts.HEADING_KI, Consts.HEADING_KD.get()); //remove later
         double optimizedAngle = currentAngle + Consts.closestAngle(currentAngle, m_headingTargetAngle);
         m_rotationSpeed = -MathUtil.clamp(m_headingPidController.calculate(currentAngle, optimizedAngle), -Consts.MAX_ANGULAR_SPEED.get(), Consts.MAX_ANGULAR_SPEED.get());
-        
-        SmartDashboard.putNumber("rotation speed", m_rotationSpeed);
-        SmartDashboard.putNumber("current angle", currentAngle);
     }
 
     /**

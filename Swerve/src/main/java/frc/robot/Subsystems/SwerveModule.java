@@ -131,8 +131,7 @@ public class SwerveModule extends SubsystemBase {
        
        double currentAngle = getAngle();
 
-
-    //calculate optimal delta angle
+        //calculate optimal delta angle
        double optimizedFlippedDeltaTargetAngle = Consts.closestAngle(currentAngle, targetAngle - 180);
        double optimizedNormalDeltaTargetAngle = Consts.closestAngle(currentAngle, targetAngle);
 
