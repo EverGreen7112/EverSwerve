@@ -30,21 +30,22 @@ public class DriveByJoysticks extends CommandBase{
         //get values from suppliers
         double speedX = m_speedX.get();
         double speedY = m_speedY.get();
-        double rotation = m_rotation.get();
+        // double rotation = m_rotation.get();
         
         //apply deadzone on supplier values
-        if(Math.abs(speedX) < Consts.JOYSTICK_DEADZONE && Math.abs(speedY) < Consts.JOYSTICK_DEADZONE && Math.abs(rotation) < Consts.JOYSTICK_DEADZONE){
-            Swerve.getInstance(true).stop();
-            return;
+        if(Math.abs(speedX) < Consts.JOYSTICK_DEADZONE && Math.abs(speedY) < Consts.JOYSTICK_DEADZONE){
+            Swerve.getInstance(Consts.USES_ABS_ENCODER).stop();
+            // speedX = 0;
+            // speedY = 0;
         }
 
-        //create direction vector
+        //create drive vector
         //y is multiplied by -1 because the y axis on the joystick is flipped 
         //rotated by -90 so 0 degrees would be on the front of the joystick
         Vector2d vec = new Vector2d(speedX, speedY * -1).rotate(Math.toRadians(-90));
 
         //activate the drive function with the s
-        Swerve.getInstance(m_usesAbsEncoder).drive(vec, rotation, m_isFieldOriented.get());
+        Swerve.getInstance(m_usesAbsEncoder).drive(vec, m_isFieldOriented.get());
 
         
     }

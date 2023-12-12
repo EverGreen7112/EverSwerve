@@ -1,5 +1,7 @@
 package frc.robot.Subsystems;
 
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -21,6 +23,12 @@ public class Swerve extends SubsystemBase {
 
     //Swerve instance
     private static Swerve m_instance = null;
+
+    private double m_headingTargetAngle;
+    private double m_rotationSpeed;
+
+    private PIDController m_headingPidController = new PIDController(Consts.HEADING_KP.get(), Consts.HEADING_KI, Consts.HEADING_KD.get());
+
 
     /**
      * 
@@ -44,6 +52,7 @@ public class Swerve extends SubsystemBase {
             m_modules[3] = new SwerveModule(Consts.DOWN_LEFT_SPEED_PORT, Consts.DOWN_LEFT_ROT_PORT);
         }
         m_gyro = new AHRS(SerialPort.Port.kMXP);
+        m_headingTargetAngle = m_gyro.getAngle();
     }
 
      /**
@@ -57,15 +66,23 @@ public class Swerve extends SubsystemBase {
         return m_instance;
     }
 
-  
+    @Override
+    public void periodic() {
+        double currentAngle = m_gyro.getAngle();
+        m_headingPidController.setPID(Consts.HEADING_KP.get(), Consts.HEADING_KI, Consts.HEADING_KD.get()); //remove later
+        double optimizedAngle = currentAngle + Consts.closestAngle(currentAngle, m_headingTargetAngle);
+        m_rotationSpeed = -MathUtil.clamp(m_headingPidController.calculate(currentAngle, optimizedAngle), -Consts.MAX_ANGULAR_SPEED.get(), Consts.MAX_ANGULAR_SPEED.get());
+        
+        SmartDashboard.putNumber("rotation speed", m_rotationSpeed);
+        SmartDashboard.putNumber("current angle", currentAngle);
+    }
 
     /**
      * see math on pdf document for more information 
      * @param directionVec - 2d vector that represents target velocity vector (x and y values are between 1 and -1)
-     * @param spinSpeed - the speed the robot needs to turn in place (value is between 1 and -1)
      * @param isFieldOriented - true if you want the robot to drive accoring to field coordinates false if you want the robot to drive accoring to robot facing direction
      */
-    public void drive(Vector2d directionVec, double spinSpeed, boolean isFieldOriented) {
+    public void drive(Vector2d directionVec, boolean isFieldOriented) {
         Vector2d dirVec = directionVec;
 
         if (isFieldOriented) {
@@ -88,7 +105,7 @@ public class Swerve extends SubsystemBase {
         // normalize by the vector with the biggest magnitude
         for (int i = 0; i < rotVecs.length; i++) {
             rotVecs[i].mul(1 / mag); // normalize
-            rotVecs[i].mul(spinSpeed); // mul by the rotation speed
+            rotVecs[i].mul(m_rotationSpeed); // mul by the rotation speed
         }
 
         // add vectors
@@ -117,8 +134,23 @@ public class Swerve extends SubsystemBase {
         }
     }
     
+    public void rotateBy(double angle){
+        m_headingTargetAngle += angle;
+    }
+
+    public void rotateTo(double angle){
+        m_headingTargetAngle = angle;
+    }
+
     public void zeroYaw(){
         m_gyro.zeroYaw();
+        m_headingTargetAngle = m_gyro.getAngle();
+    }
+
+    public void zeroModulesAngles(){
+        for(int i = 0; i < m_modules.length; i++){
+            m_modules[i].setModuleAngle(0);
+        }
     }
 
     /**
@@ -142,5 +174,9 @@ public class Swerve extends SubsystemBase {
 
     public Gyro getGyro(){
         return m_gyro;
+    }
+
+    public SwerveModule getModule(int idx){
+        return m_modules[idx];
     }
 }
