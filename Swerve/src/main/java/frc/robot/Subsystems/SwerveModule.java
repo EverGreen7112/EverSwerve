@@ -148,7 +148,7 @@ public class SwerveModule extends SubsystemBase {
 
        //dot product to current state
        targetSpeed *= Math.cos(Math.toRadians(optimizedNormalDeltaTargetAngle));
-
+    
        SmartDashboard.putNumber("targetSpeed", targetSpeed);
        //set speed of module at target speed
        m_driveMotor.getPIDController().setReference(targetSpeed, ControlType.kVelocity);

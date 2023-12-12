@@ -17,6 +17,8 @@ public class Consts {
       }
     };
 
+    public static final double ANGULAR_SPEED = 75;
+
     //speed values in m/s
     public static final Supplier<Double> MAX_ANGULAR_SPEED = new Supplier<Double>() {
       @Override
@@ -113,6 +115,13 @@ public class Consts {
 
     public static double modulo(double a, double b) {
       return ((a % b) + b) % b;
+    }
+
+    public static double roundAfterDecimalPoint(double num, int amount){
+      num *= Math.pow(10, amount);
+      num = (int)num;
+      num /= Math.pow(10, amount);
+      return num;
     }
 
    

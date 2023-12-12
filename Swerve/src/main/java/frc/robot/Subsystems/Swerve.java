@@ -72,6 +72,7 @@ public class Swerve extends SubsystemBase {
         m_headingPidController.setPID(Consts.HEADING_KP.get(), Consts.HEADING_KI, Consts.HEADING_KD.get()); //remove later
         double optimizedAngle = currentAngle + Consts.closestAngle(currentAngle, m_headingTargetAngle);
         m_rotationSpeed = -MathUtil.clamp(m_headingPidController.calculate(currentAngle, optimizedAngle), -Consts.MAX_ANGULAR_SPEED.get(), Consts.MAX_ANGULAR_SPEED.get());
+        SmartDashboard.putNumber("rotationSpeed", m_rotationSpeed);
     }
 
     /**
