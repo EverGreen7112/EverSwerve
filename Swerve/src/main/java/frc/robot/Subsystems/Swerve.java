@@ -104,7 +104,6 @@ public class Swerve extends SubsystemBase {
             rotVecs[i] = new Vector2d(Consts.physicalMoudulesVector[i]);
             rotVecs[i].rotate(Math.toRadians(0));
             // rotVecs[i].rotate(Math.toRadians(90));
-
         }
 
         // we need the max magnitude and because all of the magnitudes are equal there is no reason to search for the biggest one
@@ -202,8 +201,8 @@ public class Swerve extends SubsystemBase {
         y += vy * deltaTime;
 
         SmartDashboard.putNumber("deltaTime",deltaTime);
-        SmartDashboard.putNumber("vx", vy);
-        SmartDashboard.putNumber("vx", vx);
+        SmartDashboard.putNumber("vX", vx);
+        SmartDashboard.putNumber("vY", vy);
         SmartDashboard.putNumber("x",x);
         SmartDashboard.putNumber("y", y);
     }

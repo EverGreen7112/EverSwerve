@@ -23,9 +23,8 @@ public class Robot extends TimedRobot {
     m_robotContainer = new RobotContainer();    
     SmartDashboard.putNumber("max speed", 1);
     SmartDashboard.putNumber("max angular speed", 5);
-    SmartDashboard.putNumber("heading kp", 0.05);
+    SmartDashboard.putNumber("heading kp", 0.034);
     SmartDashboard.putNumber("heading kd", 0.0);
-
     m_swerveInstance.zeroModulesAngles();
   }
 

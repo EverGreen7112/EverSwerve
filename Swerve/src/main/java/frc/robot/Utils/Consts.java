@@ -17,7 +17,7 @@ public class Consts {
       }
     };
 
-    public static final double ANGULAR_SPEED = 75;
+    public static final double ANGULAR_SPEED = 150;
 
     //speed values in m/s
     public static final Supplier<Double> MAX_ANGULAR_SPEED = new Supplier<Double>() {
@@ -59,11 +59,12 @@ public class Consts {
     public static final double WHEEL_ANGLE_KP = 0.01; //0.08
     public static final double WHEEL_ANGLE_KI = 0.0;//0.000007
     public static final double WHEEL_ANGLE_KD = 0.0;
+    
 
-    public static final double WHEEL_VELOCITY_KP = 0.1;
-    public static final double WHEEL_VELOCITY_KI = 0.001;
-    public static final double WHEEL_VELOCITY_KD = 0.005;
-
+    public static final double WHEEL_VELOCITY_KP = 0.05;
+    public static final double WHEEL_VELOCITY_KI = 0;
+    public static final double WHEEL_VELOCITY_KD = 0;
+    public static final double WHEEL_VELOCITY_KF = 0.75 / 2.81;
 
     //chassis size
     public static final double FRONT_WHEEL_DIST_METERS = 0.57;
@@ -79,7 +80,7 @@ public class Consts {
     public static final Vector2d[] physicalMoudulesVector = { TOP_RIGHT, TOP_LEFT, DOWN_RIGHT, DOWN_LEFT};//array of vectors from robot center to swerves module
 
     //module gear ratios
-    public static final double DRIVE_GEAR_RATIO =  1 / 8.14; //L1
+    public static final double DRIVE_GEAR_RATIO = 6.75 / 1; //L2
     public static final double STEERING_GEAR_RATIO = 1 / 12.8;
 
      //speed values

@@ -51,6 +51,7 @@ public class SwerveModule extends SubsystemBase {
         m_driveMotor.getPIDController().setP(Consts.WHEEL_VELOCITY_KP);
         m_driveMotor.getPIDController().setI(Consts.WHEEL_VELOCITY_KI);
         m_driveMotor.getPIDController().setD(Consts.WHEEL_VELOCITY_KD);
+        m_driveMotor.getPIDController().setFF(Consts.WHEEL_VELOCITY_KF);
 
         //init desired state
         m_desiredState = new Vector2d(0, 0);
@@ -80,7 +81,10 @@ public class SwerveModule extends SubsystemBase {
     }
 
     @Override
-    public void periodic() {}
+    public void periodic() {
+       //config velocity pid values
+       m_driveMotor.getPIDController().setFF(Consts.WHEEL_VELOCITY_KF);
+    }
 
     /**
      * set the speeds of motors to 0

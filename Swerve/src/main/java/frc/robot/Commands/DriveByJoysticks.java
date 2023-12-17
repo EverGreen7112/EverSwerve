@@ -43,13 +43,16 @@ public class DriveByJoysticks extends CommandBase{
         //apply deadzone on supplier values
         if(Math.abs(speedX) < Consts.JOYSTICK_DEADZONE && Math.abs(speedY) < Consts.JOYSTICK_DEADZONE){
             Swerve.getInstance(Consts.USES_ABS_ENCODER).stop();
-            
-            // speedY = 0;speedX = 0;
         }
 
         if(Math.abs(rotation) < Consts.JOYSTICK_DEADZONE){
             rotation = 0;
         }
+
+        //round values
+        rotation = Consts.roundAfterDecimalPoint(rotation, 2);
+        speedX = Consts.roundAfterDecimalPoint(speedX, 2);
+        speedY = Consts.roundAfterDecimalPoint(speedY, 2);
 
         //rotate robot according to rotation supplier
         Swerve.getInstance(Consts.USES_ABS_ENCODER).rotateBy(Consts.ANGULAR_SPEED * rotation * deltaTime);
@@ -58,6 +61,7 @@ public class DriveByJoysticks extends CommandBase{
         //y is multiplied by -1 because the y axis on the joystick is flipped 
         //rotated by -90 so 0 degrees would be on the front of the joystick
         Vector2d vec = new Vector2d(speedX, speedY * -1).rotate(Math.toRadians(-90));
+
 
         //activate the drive function with the s
         Swerve.getInstance(m_usesAbsEncoder).drive(vec, m_isFieldOriented.get());
