@@ -56,11 +56,11 @@ public class SwerveModule extends SubsystemBase {
         //init desired state
         m_desiredState = new Vector2d(0, 0);
 
-         //convert rotation motor position value to degrees and take care of gear ratio
-         m_steeringMotor.getEncoder().setPositionConversionFactor(Consts.STEERING_GEAR_RATIO * 360); //degrees and gear ratio
+        //convert rotation motor position value to degrees and take care of gear ratio
+        m_steeringMotor.getEncoder().setPositionConversionFactor(Consts.STEERING_GEAR_RATIO * 360); //degrees and gear ratio
 
-         //take care of speed motor velocity gear velocity
-         m_driveMotor.getEncoder().setVelocityConversionFactor(Consts.DRIVE_GEAR_RATIO * Consts.WHEEL_PERIMETER / 60.0); //convert from rpm to m/s
+        //take care of speed motor velocity gear velocity
+        m_driveMotor.getEncoder().setVelocityConversionFactor(Consts.DRIVE_GEAR_RATIO * Consts.WHEEL_PERIMETER / 60.0); //convert from rpm to m/s
     }
 
     /**

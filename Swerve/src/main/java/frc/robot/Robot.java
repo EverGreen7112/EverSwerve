@@ -16,15 +16,15 @@ public class Robot extends TimedRobot {
   private RobotContainer m_robotContainer;
   private Swerve m_swerveInstance;
 
-
   @Override
   public void robotInit() {
     m_swerveInstance = Swerve.getInstance(Consts.USES_ABS_ENCODER);
-    m_robotContainer = new RobotContainer();    
-    SmartDashboard.putNumber("max speed", 1);
+    m_robotContainer = new RobotContainer();
+    SmartDashboard.putNumber("max speed", 2);
+    SmartDashboard.putNumber("speed", 1);
     SmartDashboard.putNumber("max angular speed", 5);
     SmartDashboard.putNumber("heading kp", 0.034);
-    SmartDashboard.putNumber("heading kd", 0.0);
+    SmartDashboard.putNumber("heading kd", 0.0025);
     m_swerveInstance.zeroModulesAngles();
   }
 
@@ -49,32 +49,38 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+  }
 
   @Override
-  public void disabledExit() {}
+  public void disabledExit() {
+  }
 
   @Override
-  public void autonomousInit() {}
+  public void autonomousInit() {
+  }
 
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+  }
 
   @Override
-  public void autonomousExit() {}
+  public void autonomousExit() {
+  }
 
   @Override
   public void teleopInit() {
     CommandScheduler.getInstance().cancelAll();
     RobotContainer.teleop.schedule();
     // for(int i =0 ; i < 4;i++){
-    //    Swerve.getInstance(true).m_modules[i].setState(0.1, 90);
+    // Swerve.getInstance(true).m_modules[i].setState(0.1, 90);
     // }
     m_swerveInstance.zeroYaw();
   }
 
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+  }
 
   @Override
   public void teleopExit() {
@@ -89,7 +95,8 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void testPeriodic() {}
+  public void testPeriodic() {
+  }
 
   @Override
   public void testExit() {

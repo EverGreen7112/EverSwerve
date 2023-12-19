@@ -11,6 +11,7 @@ import frc.robot.Utils.Consts;
 import frc.robot.Utils.Vector2d;
 
 import com.ctre.phoenix.sensors.PigeonIMU;
+import com.fasterxml.jackson.databind.deser.std.ContainerDeserializerBase;
 import com.kauailabs.navx.frc.AHRS;
 
 public class Swerve extends SubsystemBase {
@@ -75,8 +76,12 @@ public class Swerve extends SubsystemBase {
 
         double currentAngle = m_gyro.getAngle();
         m_headingPidController.setPID(Consts.HEADING_KP.get(), Consts.HEADING_KI, Consts.HEADING_KD.get()); //remove later
-        double optimizedAngle = currentAngle + Consts.closestAngle(currentAngle, m_headingTargetAngle);
+        double closestAngle = Consts.closestAngle(currentAngle, m_headingTargetAngle);
+        double optimizedAngle = currentAngle + closestAngle;
         m_rotationSpeed = -MathUtil.clamp(m_headingPidController.calculate(currentAngle, optimizedAngle), -Consts.MAX_ANGULAR_SPEED.get(), Consts.MAX_ANGULAR_SPEED.get());
+        if(Math.abs(closestAngle) < Consts.HEADING_TOLERANCE){
+            m_rotationSpeed = 0.001;
+        } 
         SmartDashboard.putNumber("rotationSpeed", m_rotationSpeed);
 
         double deltaTime = (System.currentTimeMillis() / 1000.0) - m_currentTime;
@@ -133,7 +138,7 @@ public class Swerve extends SubsystemBase {
             finalVecs[i].mul(1 / mag); // divide by maxMagnitude
         }
 
-        mag = Math.min(Consts.MAX_SPEED.get() * mag, Consts.MAX_SPEED.get());
+        mag = Math.min(Consts.SPEED.get() * mag, Consts.MAX_SPEED.get());
         // set target state of module
         for (int i = 0; i < finalVecs.length; i++) {
             finalVecs[i].mul(mag);
@@ -186,23 +191,22 @@ public class Swerve extends SubsystemBase {
         return m_modules[idx];
     }
     public void odometry(double deltaTime){
-        double vx = 0, vy = 0;
+        double vX = 0, vY = 0;
         for(int i = 0; i < m_modules.length; i++){
-            double tempY = Math.sin(Math.toRadians(m_modules[i].getAngle())) * m_modules[i].getSpeed();
             double tempX = Math.cos(Math.toRadians(m_modules[i].getAngle())) * m_modules[i].getSpeed();
+            double tempY = Math.sin(Math.toRadians(m_modules[i].getAngle())) * m_modules[i].getSpeed();
             Vector2d tempVector = new Vector2d(tempX,tempY);
-            tempVector.rotate(Math.toRadians(-m_modules[i].getAngle()));
-            vx += (Math.cos(tempVector.theta()) * tempVector.mag());
-            vy += (Math.sin(tempVector.theta()) * tempVector.mag());
-            SmartDashboard.putNumber("speed", m_modules[i].getSpeed());
+            tempVector.rotate(Math.toRadians(m_gyro.getAngle()));
+            vX += tempVector.x;
+            vY += (tempVector.y) * 0.206;
         }
         
-        x += vx * deltaTime;
-        y += vy * deltaTime;
+        x += vX * deltaTime;
+        y += vY * deltaTime;
 
         SmartDashboard.putNumber("deltaTime",deltaTime);
-        SmartDashboard.putNumber("vX", vx);
-        SmartDashboard.putNumber("vY", vy);
+        SmartDashboard.putNumber("vX", vX);
+        SmartDashboard.putNumber("vY", vY);
         SmartDashboard.putNumber("x",x);
         SmartDashboard.putNumber("y", y);
     }
