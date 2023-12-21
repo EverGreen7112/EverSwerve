@@ -56,6 +56,9 @@ public class RobotContainer {
       Swerve.getInstance(Consts.USES_ABS_ENCODER).rotateTo(0);
       ;
     }));
+    Trigger resetOdometry = new JoystickButton(controller, 3).onTrue(new InstantCommand(() -> {
+      Swerve.getInstance(Consts.USES_ABS_ENCODER).resetOdometry();      
+    }));
   }
 
   public Command getAutonomousCommand() {

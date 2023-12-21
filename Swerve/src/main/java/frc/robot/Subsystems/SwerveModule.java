@@ -23,6 +23,8 @@ public class SwerveModule extends SubsystemBase {
     private CANCoder m_coder;
 
     private Vector2d m_desiredState;
+    public double m_currentPosition;
+
     
     /**
      * 
@@ -61,6 +63,10 @@ public class SwerveModule extends SubsystemBase {
 
         //take care of speed motor velocity gear velocity
         m_driveMotor.getEncoder().setVelocityConversionFactor(Consts.DRIVE_GEAR_RATIO * Consts.WHEEL_PERIMETER / 60.0); //convert from rpm to m/s
+        //turn position to meters
+        m_driveMotor.getEncoder().setPositionConversionFactor(Consts.DRIVE_GEAR_RATIO * Consts.WHEEL_PERIMETER);
+
+        m_currentPosition = m_driveMotor.getEncoder().getPosition();
     }
 
     /**
@@ -77,7 +83,7 @@ public class SwerveModule extends SubsystemBase {
         m_coder = new CANCoder(absoluteEncoderPort);
         m_coder.configFactoryDefault();
         m_coder.configMagnetOffset(canCoderOffset,50);
-    
+        
     }
 
     @Override
@@ -167,5 +173,15 @@ public class SwerveModule extends SubsystemBase {
      public void turnToAngle(double targetAngle){
         m_steeringMotor.getPIDController().setReference(targetAngle, ControlType.kPosition);
     }
+    public double getPos(){
+        return m_driveMotor.getEncoder().getPosition();
+    }
 
+    public void updatePos(){
+        m_currentPosition = this.getPos();
+    }
+
+    public void updatePos(double pos){
+        m_driveMotor.getEncoder().setPosition(pos);
+    }
 }

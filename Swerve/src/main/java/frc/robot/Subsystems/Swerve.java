@@ -27,7 +27,6 @@ public class Swerve extends SubsystemBase {
 
     private double m_headingTargetAngle;
     private double m_rotationSpeed;
-    private double m_currentTime;
     private PIDController m_headingPidController = new PIDController(Consts.HEADING_KP.get(), Consts.HEADING_KI, Consts.HEADING_KD.get());
     private double x, y;
 
@@ -54,10 +53,10 @@ public class Swerve extends SubsystemBase {
         }
         m_gyro = new AHRS(SerialPort.Port.kMXP);
         m_headingTargetAngle = m_gyro.getAngle();
-        
-        m_currentTime = System.currentTimeMillis() / 1000.0;
+
         x = 0;
         y = 0;
+        
     }
 
      /**
@@ -73,7 +72,6 @@ public class Swerve extends SubsystemBase {
 
     @Override
     public void periodic() {
-
         double currentAngle = m_gyro.getAngle();
         m_headingPidController.setPID(Consts.HEADING_KP.get(), Consts.HEADING_KI, Consts.HEADING_KD.get()); //remove later
         double closestAngle = Consts.closestAngle(currentAngle, m_headingTargetAngle);
@@ -83,11 +81,10 @@ public class Swerve extends SubsystemBase {
             m_rotationSpeed = 0.001;
         } 
         SmartDashboard.putNumber("rotationSpeed", m_rotationSpeed);
-
-        double deltaTime = (System.currentTimeMillis() / 1000.0) - m_currentTime;
-        odometry(deltaTime);
-
-        m_currentTime = System.currentTimeMillis() / 1000.0;
+        odometry();
+        for(int i = 0; i < m_modules.length; i++){
+            SmartDashboard.putNumber("pos" + i, m_modules[i].getPos());
+        }
     }
 
     /**
@@ -186,27 +183,31 @@ public class Swerve extends SubsystemBase {
     public Gyro getGyro(){
         return m_gyro;
     }
+    public void resetOdometry(){
+        x = 0;
+        y = 0;
+        for(int i = 0 ; i < m_modules.length; i++){
+            m_modules[i].updatePos(0);
+        }
+    }
 
     public SwerveModule getModule(int idx){
         return m_modules[idx];
     }
-    public void odometry(double deltaTime){
-        double vX = 0, vY = 0;
+    public void odometry(){
+        double deltaX = 0, deltaY = 0;
         for(int i = 0; i < m_modules.length; i++){
-            double tempX = Math.cos(Math.toRadians(m_modules[i].getAngle())) * m_modules[i].getSpeed();
-            double tempY = Math.sin(Math.toRadians(m_modules[i].getAngle())) * m_modules[i].getSpeed();
-            Vector2d tempVector = new Vector2d(tempX,tempY);
-            tempVector.rotate(Math.toRadians(m_gyro.getAngle()));
-            vX += tempVector.x;
-            vY += (tempVector.y) * 0.206;
+            double deltaP = m_modules[i].getPos() - m_modules[i].m_currentPosition;
+            deltaX = (Math.cos(Math.toRadians(m_modules[i].getAngle())) * deltaP) / 4;
+            deltaY = (Math.sin(Math.toRadians(m_modules[i].getAngle())) * deltaP) / 4;
+            Vector2d tempVec = new Vector2d(deltaX, deltaY);
+            tempVec.rotate(-Math.toRadians(m_gyro.getYaw()));
+            x += tempVec.x;
+            y += tempVec.y;
+            m_modules[i].updatePos();
+            SmartDashboard.putNumber("deltaX", deltaX);
+            SmartDashboard.putNumber("deltaY", deltaY);
         }
-        
-        x += vX * deltaTime;
-        y += vY * deltaTime;
-
-        SmartDashboard.putNumber("deltaTime",deltaTime);
-        SmartDashboard.putNumber("vX", vX);
-        SmartDashboard.putNumber("vY", vY);
         SmartDashboard.putNumber("x",x);
         SmartDashboard.putNumber("y", y);
     }

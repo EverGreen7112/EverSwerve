@@ -76,7 +76,7 @@ public class Consts {
   // chassis size
   public static final double FRONT_WHEEL_DIST_METERS = 0.57;
   public static final double SIDE_WHEEL_DIST_METERS = 0.57;
-  public static final double WHEEL_PERIMETER = Math.PI * 0.095;
+  public static final double WHEEL_PERIMETER = Math.PI * 0.0935;
   // swerve vectors
   public static final Vector2d TOP_RIGHT = new Vector2d((FRONT_WHEEL_DIST_METERS / 2), (SIDE_WHEEL_DIST_METERS / 2));
   public static final Vector2d TOP_LEFT = new Vector2d(-(FRONT_WHEEL_DIST_METERS / 2), SIDE_WHEEL_DIST_METERS / 2);
