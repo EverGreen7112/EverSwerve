@@ -13,19 +13,9 @@ public class Consts {
   public static final Supplier<Double> MAX_SPEED = new Supplier<Double>() {
     @Override
     public Double get() {
-      return SmartDashboard.getNumber("max speed", 2);
+      return SmartDashboard.getNumber("max drive speed", 2);
     }
   };
-
-  // speed values in m/s
-  public static final Supplier<Double> SPEED = new Supplier<Double>() {
-    @Override
-    public Double get() {
-      return SmartDashboard.getNumber("speed", 1);
-    }
-  };
-
-  public static final double ANGULAR_SPEED = 200;
 
   // speed values in m/s
   public static final Supplier<Double> MAX_ANGULAR_SPEED = new Supplier<Double>() {
@@ -77,6 +67,8 @@ public class Consts {
   public static final double FRONT_WHEEL_DIST_METERS = 0.57;
   public static final double SIDE_WHEEL_DIST_METERS = 0.57;
   public static final double WHEEL_PERIMETER = Math.PI * 0.0935;
+  public static final double ROBOT_BOUNDING_CIRCLE_PERIMETER = Math.PI * Math.sqrt(FRONT_WHEEL_DIST_METERS * FRONT_WHEEL_DIST_METERS + SIDE_WHEEL_DIST_METERS * SIDE_WHEEL_DIST_METERS);
+
   // swerve vectors
   public static final Vector2d TOP_RIGHT = new Vector2d((FRONT_WHEEL_DIST_METERS / 2), (SIDE_WHEEL_DIST_METERS / 2));
   public static final Vector2d TOP_LEFT = new Vector2d(-(FRONT_WHEEL_DIST_METERS / 2), SIDE_WHEEL_DIST_METERS / 2);

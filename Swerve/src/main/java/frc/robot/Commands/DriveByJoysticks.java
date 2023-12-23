@@ -54,10 +54,9 @@ public class DriveByJoysticks extends CommandBase{
         speedY = Consts.roundAfterDecimalPoint(speedY, 2);
 
         //rotate robot according to rotation supplier
-        Swerve.getInstance(Consts.USES_ABS_ENCODER).rotateBy(Consts.MAX_ANGULAR_SPEED.get() * rotation * deltaTime);
+        Swerve.getInstance(Consts.USES_ABS_ENCODER).rotateBy((Consts.MAX_ANGULAR_SPEED.get() / Consts.ROBOT_BOUNDING_CIRCLE_PERIMETER) * rotation);
         //create drive vector
-        //y is multiplied by -1 because the y axis on the joystick is flipped 
-        Vector2d vec = new Vector2d(speedX, speedY * -1);
+        Vector2d vec = new Vector2d(-speedX, speedY);
         //drive
         Swerve.getInstance(m_usesAbsEncoder).drive(vec, m_isFieldOriented.get());
         //update current time
