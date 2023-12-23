@@ -83,14 +83,10 @@ public class SwerveModule extends SubsystemBase {
         m_coder = new CANCoder(absoluteEncoderPort);
         m_coder.configFactoryDefault();
         m_coder.configMagnetOffset(canCoderOffset,50);
-        
     }
 
     @Override
-    public void periodic() {
-       //config velocity pid values
-       m_driveMotor.getPIDController().setFF(Consts.WHEEL_VELOCITY_KF);
-    }
+    public void periodic() {}
 
     /**
      * set the speeds of motors to 0
@@ -103,7 +99,7 @@ public class SwerveModule extends SubsystemBase {
     /**
      * put the current position of the can coder in the rotation motor's integrated encoder
      */
-    public void initModulesToAbs(){
+    public void setModulesToAbs(){
         m_steeringMotor.getEncoder().setPosition(m_coder.getAbsolutePosition());
     }
 
@@ -119,8 +115,19 @@ public class SwerveModule extends SubsystemBase {
         return m_steeringMotor.getEncoder().getPosition();
     }
 
-    public double getSpeed(){
+    /**
+     * 
+     * @return current module velocity in m/s
+     */
+    public double getVelocity(){
         return m_driveMotor.getEncoder().getVelocity();
+    }
+
+    /**
+     * @param velocity - target module velocity in m/s
+     */
+    public void setVelocity(double velocity){
+        m_driveMotor.getPIDController().setReference(velocity, ControlType.kVelocity);
     }
 
     public void setState(double speed, double angle){
@@ -134,6 +141,9 @@ public class SwerveModule extends SubsystemBase {
      */
     public void setState(Vector2d desiredState) {
        this.m_desiredState = desiredState;
+        
+       //rotate vector by 90 because we want 0 degrees to be in the front and not in the right
+       desiredState.rotate(Math.toRadians(90));
 
        //get polar values from desired state vector
        double targetSpeed = m_desiredState.mag(); //get target speed

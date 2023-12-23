@@ -31,7 +31,6 @@ public class Swerve extends SubsystemBase {
     private double x, y;
 
     /**
-     * 
      * @param usesAbsEncoder -if robot got can coders connected to the steering motors
      */
     public Swerve(boolean usesAbsEncoder) {
@@ -53,14 +52,14 @@ public class Swerve extends SubsystemBase {
         }
         m_gyro = new AHRS(SerialPort.Port.kMXP);
         m_headingTargetAngle = m_gyro.getAngle();
+        m_headingPidController.setTolerance(Consts.HEADING_TOLERANCE);
 
         x = 0;
         y = 0;
         
     }
 
-     /**
-     * 
+     /** 
      * @param usesAbsEncoder -if robot got can coders connected to the steering motors
      */
     public static Swerve getInstance(boolean usesAbsEncoder) {
@@ -77,13 +76,12 @@ public class Swerve extends SubsystemBase {
         double closestAngle = Consts.closestAngle(currentAngle, m_headingTargetAngle);
         double optimizedAngle = currentAngle + closestAngle;
         m_rotationSpeed = -MathUtil.clamp(m_headingPidController.calculate(currentAngle, optimizedAngle), -Consts.MAX_ANGULAR_SPEED.get(), Consts.MAX_ANGULAR_SPEED.get());
-        if(Math.abs(closestAngle) < Consts.HEADING_TOLERANCE){
-            m_rotationSpeed = 0.001;
-        } 
+ 
         SmartDashboard.putNumber("rotationSpeed", m_rotationSpeed);
-        odometry();
-        for(int i = 0; i < m_modules.length; i++){
-            SmartDashboard.putNumber("pos" + i, m_modules[i].getPos());
+        SmartDashboard.putNumber("optimizedAngle", optimizedAngle);
+
+        for(int i = 0; i < 4; i++){
+            SmartDashboard.putString("module " + i, (Consts.physicalMoudulesVector[i].toString()));            
         }
     }
 
@@ -92,55 +90,42 @@ public class Swerve extends SubsystemBase {
      * @param directionVec - 2d vector that represents target velocity vector (x and y values are between 1 and -1)
      * @param isFieldOriented - true if you want the robot to drive accoring to field coordinates false if you want the robot to drive accoring to robot facing direction
      */
-    public void drive(Vector2d directionVec, boolean isFieldOriented) {
-        Vector2d dirVec = directionVec;
-
-        if (isFieldOriented) {
-            // rotates the direction vector to fit field coordinate system
-            dirVec = dirVec.rotate(Math.toRadians(m_gyro.getYaw()));
-        }
-
-        Vector2d[] rotVecs = new Vector2d[m_modules.length];
-
-        for (int i = 0; i < rotVecs.length; i++) {
-            rotVecs[i] = new Vector2d(Consts.physicalMoudulesVector[i]);
-            rotVecs[i].rotate(Math.toRadians(0));
-            // rotVecs[i].rotate(Math.toRadians(90));
-        }
-
-        // we need the max magnitude and because all of the magnitudes are equal there is no reason to search for the biggest one
-        double mag = rotVecs[0].mag();
-
-        // normalize by the vector with the biggest magnitude
-        for (int i = 0; i < rotVecs.length; i++) {
-            rotVecs[i].mul(1 / mag); // normalize
-            rotVecs[i].mul(m_rotationSpeed); // mul by the rotation speed
-        }
-
-        // add vectors
-        Vector2d[] finalVecs = new Vector2d[m_modules.length];
-        for (int i = 0; i < finalVecs.length; i++) {
-            finalVecs[i] = new Vector2d(rotVecs[i]);
-            finalVecs[i].add(dirVec);
-        }
-
-        // find max magnitude
-        mag = finalVecs[0].mag();
-        for (int i = 1; i < finalVecs.length; i++) {
-            mag = Math.max(mag, finalVecs[i].mag());
-        }
-
-        // normalize by the vector with the biggest magnitude
-        for (int i = 0; i < finalVecs.length; i++) {
-            finalVecs[i].mul(1 / mag); // divide by maxMagnitude
-        }
-
-        mag = Math.min(Consts.SPEED.get() * mag, Consts.MAX_SPEED.get());
-        // set target state of module
-        for (int i = 0; i < finalVecs.length; i++) {
-            finalVecs[i].mul(mag);
-            m_modules[i].setState(finalVecs[i]);
-        }
+    public void drive(Vector2d driveVec, boolean isFieldOriented) {
+            //if drive values are 0 stop moving
+            if(driveVec.mag() == 0 && m_rotationSpeed == 0){
+                for(int i = 0; i < m_modules.length; i++){
+                    m_modules[i].setVelocity(0);
+                }
+            }
+            
+            //convert driveVector to field oriented
+            if(isFieldOriented){
+                driveVec.rotate(Math.toRadians(m_gyro.getYaw()));
+            }
+            
+            //calculate rotation vectors
+            Vector2d[] rotVecs = new Vector2d[m_modules.length];
+            for(int i = 0; i < rotVecs.length; i++){
+                rotVecs[i] = new Vector2d(Consts.physicalMoudulesVector[i]);
+                rotVecs[i].rotate(Math.toRadians(90));
+                //change magnitude of rot vector to m_rotationSpeed
+                rotVecs[i].normalise();
+                rotVecs[i].mul(m_rotationSpeed);
+            }
+    
+            Vector2d[] sumVectors = new Vector2d[m_modules.length];
+            for(int i = 0; i < sumVectors.length; i++){
+                //sum rot and drive vectors 
+                sumVectors[i] = new Vector2d(driveVec);
+                sumVectors[i].add(rotVecs[i]);
+                //make sure that the max magnitude is the max speed
+                if(sumVectors[i].mag() > Consts.MAX_SPEED.get()){
+                    sumVectors[i].normalise();
+                    sumVectors[i].mul(Consts.MAX_SPEED.get());
+                }
+                //set module state             
+                m_modules[i].setState(sumVectors[i]);
+            }
     }
     
     public void rotateBy(double angle){
@@ -166,9 +151,9 @@ public class Swerve extends SubsystemBase {
      * put the current position of every can coder in the every rotation motor's integrated encoder
      * activate this at the start
      */
-    public void initModulesToAbs(){
+    public void setModulesToAbs(){
         for(int i = 0; i < m_modules.length; i++){
-            m_modules[i].initModulesToAbs();
+            m_modules[i].setModulesToAbs();
         }
     }
     

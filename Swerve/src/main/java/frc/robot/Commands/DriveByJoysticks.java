@@ -41,13 +41,12 @@ public class DriveByJoysticks extends CommandBase{
         double deltaTime = (System.currentTimeMillis() / 1000.0) - m_currentTime;
 
         //apply deadzone on supplier values
-        if(Math.abs(speedX) < Consts.JOYSTICK_DEADZONE && Math.abs(speedY) < Consts.JOYSTICK_DEADZONE){
-            Swerve.getInstance(Consts.USES_ABS_ENCODER).stop();
-        }
-
-        if(Math.abs(rotation) < Consts.JOYSTICK_DEADZONE){
+        if(Math.abs(speedX) < Consts.JOYSTICK_DEADZONE)
+            speedX = 0;
+        if(Math.abs(speedY) < Consts.JOYSTICK_DEADZONE)
+            speedY = 0; 
+        if(Math.abs(rotation) < Consts.JOYSTICK_DEADZONE)
             rotation = 0;
-        }
 
         //round values
         rotation = Consts.roundAfterDecimalPoint(rotation, 2);
@@ -55,26 +54,14 @@ public class DriveByJoysticks extends CommandBase{
         speedY = Consts.roundAfterDecimalPoint(speedY, 2);
 
         //rotate robot according to rotation supplier
-        Swerve.getInstance(Consts.USES_ABS_ENCODER).rotateBy(Consts.ANGULAR_SPEED * rotation * deltaTime);
-
+        Swerve.getInstance(Consts.USES_ABS_ENCODER).rotateBy(Consts.MAX_ANGULAR_SPEED.get() * rotation * deltaTime);
         //create drive vector
         //y is multiplied by -1 because the y axis on the joystick is flipped 
-        //rotated by -90 so 0 degrees would be on the front of the joystick
-        Vector2d vec = new Vector2d(speedX, speedY * -1).rotate(Math.toRadians(-90));
-
-
-        //activate the drive function with the s
+        Vector2d vec = new Vector2d(speedX, speedY * -1);
+        //drive
         Swerve.getInstance(m_usesAbsEncoder).drive(vec, m_isFieldOriented.get());
+        //update current time
         m_currentTime = System.currentTimeMillis() / 1000.0;
     }
 
-    @Override
-    public boolean isFinished() {
-        return false;
-    }
-
-    @Override
-    public void end(boolean interrupted) {
-        
-    }
 }
