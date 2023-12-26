@@ -22,7 +22,6 @@ public class SwerveModule extends SubsystemBase {
     //can coder to save the absolute position of the module
     private CANCoder m_coder;
 
-    private Vector2d m_desiredState;
     public double m_currentPosition;
 
     
@@ -54,9 +53,6 @@ public class SwerveModule extends SubsystemBase {
         m_driveMotor.getPIDController().setI(Consts.WHEEL_VELOCITY_KI);
         m_driveMotor.getPIDController().setD(Consts.WHEEL_VELOCITY_KD);
         m_driveMotor.getPIDController().setFF(Consts.WHEEL_VELOCITY_KF);
-
-        //init desired state
-        m_desiredState = new Vector2d(0, 0);
 
         //convert rotation motor position value to degrees and take care of gear ratio
         m_steeringMotor.getEncoder().setPositionConversionFactor(Consts.STEERING_GEAR_RATIO * 360); //degrees and gear ratio
@@ -136,18 +132,16 @@ public class SwerveModule extends SubsystemBase {
 
     /**
      * 
-     * @param desiredState - 2d vector - magnitude represents the target speed (-1 - 1)  
+     * @param desiredState - 2d vector - magnitude represents the target speed  
      *                                   angle represents the target angle 
      */
-    public void setState(Vector2d desiredState) {
-       this.m_desiredState = desiredState;
-        
+    public void setState(Vector2d desiredState) {        
        //rotate vector by 90 because we want 0 degrees to be in the front and not in the right
        desiredState.rotate(Math.toRadians(90));
 
        //get polar values from desired state vector
-       double targetSpeed = m_desiredState.mag(); //get target speed
-       double targetAngle = Math.toDegrees(m_desiredState.theta()); //convert target angle from radians to degrees
+       double targetSpeed = desiredState.mag(); //get target speed
+       double targetAngle = Math.toDegrees(desiredState.theta()); //convert target angle from radians to degrees
        
        double currentAngle = getAngle();
 

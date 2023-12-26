@@ -118,11 +118,7 @@ public class Swerve extends SubsystemBase {
                 //sum rot and drive vectors 
                 sumVectors[i] = new Vector2d(driveVec);
                 sumVectors[i].add(rotVecs[i]);
-                //make sure that the max magnitude is the max speed
-                if(sumVectors[i].mag() > Consts.MAX_SPEED.get()){
-                    sumVectors[i].normalise();
-                    sumVectors[i].mul(Consts.MAX_SPEED.get());
-                }
+                
                 //set module state             
                 m_modules[i].setState(sumVectors[i]);
             }
