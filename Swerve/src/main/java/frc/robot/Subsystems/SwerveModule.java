@@ -62,6 +62,7 @@ public class SwerveModule extends SubsystemBase {
         //turn position to meters
         m_driveMotor.getEncoder().setPositionConversionFactor(Consts.DRIVE_GEAR_RATIO * Consts.WHEEL_PERIMETER);
 
+        m_driveMotor.getEncoder().setPosition(0);
         m_currentPosition = m_driveMotor.getEncoder().getPosition();
     }
 

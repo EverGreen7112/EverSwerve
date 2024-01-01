@@ -20,26 +20,16 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     m_swerveInstance = Swerve.getInstance(Consts.USES_ABS_ENCODER);
     m_robotContainer = new RobotContainer();
-    SmartDashboard.putNumber("max drive speed", 2);
-    SmartDashboard.putNumber("max angular speed", 5);
-    SmartDashboard.putNumber("heading kp", 0.034);
-    SmartDashboard.putNumber("heading kd", 0.0025);
+    SmartDashboard.putNumber("max drive speed", 1);
+    SmartDashboard.putNumber("max angular speed", 1.5);
+    SmartDashboard.putNumber("heading kp", 0.03);
+    SmartDashboard.putNumber("heading kd", 0.0001);
     m_swerveInstance.zeroModulesAngles();
   }
 
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
-    SmartDashboard.putNumber("top right angle", m_swerveInstance.getModule(0).getAngle());
-    SmartDashboard.putNumber("top left angle", m_swerveInstance.getModule(1).getAngle());
-    SmartDashboard.putNumber("down right angle", m_swerveInstance.getModule(2).getAngle());
-    SmartDashboard.putNumber("down left angle", m_swerveInstance.getModule(3).getAngle());
-
-    SmartDashboard.putNumber("top right velocity", m_swerveInstance.getModule(0).getVelocity());
-    SmartDashboard.putNumber("top left velocity", m_swerveInstance.getModule(1).getVelocity());
-    SmartDashboard.putNumber("down right velocity", m_swerveInstance.getModule(2).getVelocity());
-    SmartDashboard.putNumber("down left velocity", m_swerveInstance.getModule(3).getVelocity());
-
   }
 
   @Override
@@ -71,6 +61,8 @@ public class Robot extends TimedRobot {
   public void teleopInit() {
     CommandScheduler.getInstance().cancelAll();
     m_swerveInstance.zeroYaw();
+    Swerve.getInstance(Consts.USES_ABS_ENCODER).resetOdometry();
+    Swerve.getInstance(Consts.USES_ABS_ENCODER).resetOdometry();
     RobotContainer.teleop.schedule();
     // for(int i =0 ; i < 4;i++){
     // Swerve.getInstance(true).m_modules[i].setState(0.1, 90);

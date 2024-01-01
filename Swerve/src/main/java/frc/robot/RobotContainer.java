@@ -11,9 +11,11 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Commands.DriveByJoysticks;
+import frc.robot.Commands.FollowRoute;
 import frc.robot.Subsystems.Swerve;
 import frc.robot.Utils.Consts;
 
@@ -57,8 +59,11 @@ public class RobotContainer {
       ;
     }));
     Trigger resetOdometry = new JoystickButton(controller, 3).onTrue(new InstantCommand(() -> {
-      Swerve.getInstance(Consts.USES_ABS_ENCODER).resetOdometry();      
+      Swerve.getInstance(Consts.USES_ABS_ENCODER).resetOdometry();
     }));
+    Trigger FollowRoute = new JoystickButton(controller, 10).onTrue(new FollowRoute(1, 2, 90));
+    Trigger ActivateTeleop = new JoystickButton(controller, 9).onTrue(teleop);
+
   }
 
   public Command getAutonomousCommand() {

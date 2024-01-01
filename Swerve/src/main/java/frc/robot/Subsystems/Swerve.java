@@ -17,23 +17,24 @@ import com.kauailabs.navx.frc.AHRS;
 public class Swerve extends SubsystemBase {
 
     //array of swerve modules
-    public SwerveModule[] m_modules = new SwerveModule[Consts.physicalMoudulesVector.length];
+    public SwerveModule[] m_modules;
 
     //robot gyro
     private AHRS m_gyro;
 
     //Swerve instance
-    private static Swerve m_instance = null;
+    private static Swerve m_instance;
 
     private double m_headingTargetAngle;
     private double m_rotationSpeed;
-    private PIDController m_headingPidController = new PIDController(Consts.HEADING_KP.get(), Consts.HEADING_KI, Consts.HEADING_KD.get());
-    private double x, y;
+    private PIDController m_headingPidController;
+    private double m_x, m_y;
 
     /**
      * @param usesAbsEncoder -if robot got can coders connected to the steering motors
      */
     public Swerve(boolean usesAbsEncoder) {
+        m_modules = new SwerveModule[Consts.physicalMoudulesVector.length];
         //create modules array
         if (usesAbsEncoder) {
             m_modules[0] = new SwerveModule(Consts.TOP_RIGHT_DRIVE_PORT, Consts.TOP_RIGHT_STEERING_PORT,
@@ -50,13 +51,14 @@ public class Swerve extends SubsystemBase {
             m_modules[2] = new SwerveModule(Consts.DOWN_RIGHT_DRIVE_PORT, Consts.DOWN_RIGHT_STEERING_PORT);
             m_modules[3] = new SwerveModule(Consts.DOWN_LEFT_DRIVE_PORT, Consts.DOWN_LEFT_STEERING_PORT);
         }
+        m_instance = null;
+        m_headingPidController = new PIDController(Consts.HEADING_KP, Consts.HEADING_KI, Consts.HEADING_KD);
         m_gyro = new AHRS(SerialPort.Port.kMXP);
         m_headingTargetAngle = m_gyro.getAngle();
         m_headingPidController.setTolerance(Consts.HEADING_TOLERANCE);
-
         m_rotationSpeed = 0;
-        x = 0;
-        y = 0;
+        m_x = 0;
+        m_y = 0;
         
     }
 
@@ -73,11 +75,12 @@ public class Swerve extends SubsystemBase {
     @Override
     public void periodic() {
         double currentAngle = m_gyro.getAngle();
-        m_headingPidController.setPID(Consts.HEADING_KP.get(), Consts.HEADING_KI, Consts.HEADING_KD.get()); //remove later
+        m_headingPidController.setPID(Consts.HEADING_KP, Consts.HEADING_KI, Consts.HEADING_KD); //remove later
         double closestAngle = Consts.closestAngle(currentAngle, m_headingTargetAngle);
         double optimizedAngle = currentAngle + closestAngle;
         m_rotationSpeed = MathUtil.clamp(m_headingPidController.calculate(currentAngle, optimizedAngle), -Consts.MAX_ANGULAR_SPEED.get(), Consts.MAX_ANGULAR_SPEED.get());
  
+        odometry();
         SmartDashboard.putNumber("rotationSpeed", m_rotationSpeed);
         SmartDashboard.putNumber("optimizedAngle", optimizedAngle);
         SmartDashboard.putNumber("currentAngle", currentAngle);
@@ -98,6 +101,9 @@ public class Swerve extends SubsystemBase {
                 }
             }
             
+            //convert drive vector to m/s
+            driveVec.mul(Consts.MAX_SPEED.get());
+
             //convert driveVector to field oriented
             if(isFieldOriented){
                 driveVec.rotate(Math.toRadians(m_gyro.getYaw()));
@@ -112,7 +118,8 @@ public class Swerve extends SubsystemBase {
                 rotVecs[i].normalise();
                 rotVecs[i].mul(m_rotationSpeed);
             }
-    
+            
+
             Vector2d[] sumVectors = new Vector2d[m_modules.length];
             for(int i = 0; i < sumVectors.length; i++){
                 //sum rot and drive vectors 
@@ -153,6 +160,7 @@ public class Swerve extends SubsystemBase {
         }
     }
     
+
     /**
      * set the speeds of all motors to 0
      */
@@ -165,16 +173,25 @@ public class Swerve extends SubsystemBase {
         return m_gyro;
     }
     public void resetOdometry(){
-        x = 0;
-        y = 0;
         for(int i = 0 ; i < m_modules.length; i++){
             m_modules[i].updatePos(0);
         }
+        m_x = 0;
+        m_y = 0;
     }
 
     public SwerveModule getModule(int idx){
         return m_modules[idx];
     }
+
+    public double getX(){
+        return m_x;
+    }
+
+    public double getY(){
+        return m_y;
+    }
+
     public void odometry(){
         double deltaX = 0, deltaY = 0;
         for(int i = 0; i < m_modules.length; i++){
@@ -183,14 +200,14 @@ public class Swerve extends SubsystemBase {
             deltaY = (Math.sin(Math.toRadians(m_modules[i].getAngle())) * deltaP) / 4;
             Vector2d tempVec = new Vector2d(deltaX, deltaY);
             tempVec.rotate(-Math.toRadians(m_gyro.getYaw()));
-            x += tempVec.x;
-            y += tempVec.y;
+            m_x += tempVec.x;
+            m_y += tempVec.y;
             m_modules[i].updatePos();
             SmartDashboard.putNumber("deltaX", deltaX);
             SmartDashboard.putNumber("deltaY", deltaY);
         }
-        SmartDashboard.putNumber("x",x);
-        SmartDashboard.putNumber("y", y);
+        SmartDashboard.putNumber("x",m_x);
+        SmartDashboard.putNumber("y", m_y);
     }
 }
     

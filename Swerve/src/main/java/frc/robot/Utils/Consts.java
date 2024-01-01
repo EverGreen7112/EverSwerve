@@ -63,10 +63,23 @@ public class Consts {
   public static final double WHEEL_VELOCITY_KD = 0;
   public static final double WHEEL_VELOCITY_KF = 0.75 / 2.81;
 
+  // pid on the pos on the x axis
+  public static final double X_KP = 1.5;
+  public static final double X_KI = 0;
+  public static final double X_KD = 0;
+
+  // pid on the pos on the y axis
+  public static final double Y_KP = 1.5;
+  public static final double Y_KI = 0;
+  public static final double Y_KD = 0;
+
+  public static final double X_THRESHOLD = 0.04;
+  public static final double Y_THRESHOLD =  0.04;
+
   // chassis size
   public static final double FRONT_WHEEL_DIST_METERS = 0.57;
   public static final double SIDE_WHEEL_DIST_METERS = 0.57;
-  public static final double WHEEL_PERIMETER = Math.PI * 0.0935;
+  public static final double WHEEL_PERIMETER = Math.PI * 0.095;
   public static final double ROBOT_BOUNDING_CIRCLE_PERIMETER = Math.PI * Math.sqrt(FRONT_WHEEL_DIST_METERS * FRONT_WHEEL_DIST_METERS + SIDE_WHEEL_DIST_METERS * SIDE_WHEEL_DIST_METERS);
 
   // swerve vectors
@@ -87,19 +100,9 @@ public class Consts {
   public static final double STEERING_GEAR_RATIO = 1 / 12.8;
 
   // speed values
-  public static final Supplier<Double> HEADING_KP = new Supplier<Double>() {
-    @Override
-    public Double get() {
-      return SmartDashboard.getNumber("heading kp", 0);
-    }
-  };
+  public static final double HEADING_KP = 0.03;
   public static final double HEADING_KI = 0;
-  public static final Supplier<Double> HEADING_KD = new Supplier<Double>() {
-    @Override
-    public Double get() {
-      return SmartDashboard.getNumber("heading kd", 0);
-    }
-  };
+  public static final double HEADING_KD = 0.0001;
   public static final double HEADING_TOLERANCE = 3;
 
   public static double closestAngle(double a, double b) {
