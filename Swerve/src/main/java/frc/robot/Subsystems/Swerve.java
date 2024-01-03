@@ -201,8 +201,6 @@ public class Swerve extends SubsystemBase {
             m_x += tempVec.x;
             m_y += tempVec.y;
             m_modules[i].updatePos();
-            SmartDashboard.putNumber("deltaX", deltaX);
-            SmartDashboard.putNumber("deltaY", deltaY);
         }
         SmartDashboard.putNumber("x",m_x);
         SmartDashboard.putNumber("y", m_y);

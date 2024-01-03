@@ -5,7 +5,6 @@
 package frc.robot;
 
 import java.util.ArrayList;
-
 import org.opencv.core.Point;
 
 import edu.wpi.first.wpilibj.Joystick;
@@ -39,10 +38,6 @@ public class RobotContainer {
 
   private void configureBindings() {
 
-    Trigger resetModules = new JoystickButton(controller, 2).onTrue(new InstantCommand(() -> {
-      Swerve.getInstance(Consts.USES_ABS_ENCODER).zeroModulesAngles();
-    }));
-
     Trigger rotateRobotBy45 = new JoystickButton(controller, 6).onTrue(new InstantCommand(() -> {
       Swerve.getInstance(Consts.USES_ABS_ENCODER).rotateBy(45);
     }));
@@ -62,10 +57,10 @@ public class RobotContainer {
     Trigger resetOdometry = new JoystickButton(controller, 3).onTrue(new InstantCommand(() -> {
       Swerve.getInstance(Consts.USES_ABS_ENCODER).resetOdometry();
     }));
-    ArrayList<Point> posList = new ArrayList<>();
+
+    ArrayList<Point> posList = new ArrayList<Point>();
     posList.add(new Point(1, 2));
     Trigger FollowRoute = new JoystickButton(controller, 10).onTrue(new FollowRoute(posList, 90));
-    Trigger ActivateTeleop = new JoystickButton(controller, 9).onTrue(teleop);
 
   }
 

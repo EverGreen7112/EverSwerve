@@ -1,7 +1,6 @@
 package frc.robot.Commands;
 
 import java.util.ArrayList;
-
 import org.opencv.core.Point;
 
 import edu.wpi.first.math.MathUtil;
@@ -19,9 +18,9 @@ public class FollowRoute extends CommandBase {
     private ArrayList<Point> m_posList;
 
     public FollowRoute(ArrayList<Point> posList, double targetAngle) {
-        if (posList.isEmpty())
-            return;
-        m_posList = posList;
+        for(int i = 0; i < posList.size(); i++){
+            m_posList.add(posList.get(i));
+        }
         m_targetAngle = targetAngle;
         m_xPidController = new PIDController(Consts.X_KP, Consts.X_KI, Consts.X_KD);
         m_yPidController = new PIDController(Consts.Y_KP, Consts.Y_KI, Consts.Y_KD);
@@ -29,6 +28,8 @@ public class FollowRoute extends CommandBase {
 
     @Override
     public void execute() {
+        if (m_posList.isEmpty())
+            return;
         double xCurrent = Swerve.getInstance(Consts.USES_ABS_ENCODER).getX();
         double yCurrent = Swerve.getInstance(Consts.USES_ABS_ENCODER).getY();
 
@@ -42,6 +43,8 @@ public class FollowRoute extends CommandBase {
 
     @Override
     public boolean isFinished() {
+        if (m_posList.isEmpty())
+            return true;
         double xCurrent = Swerve.getInstance(Consts.USES_ABS_ENCODER).getX();
         double yCurrent = Swerve.getInstance(Consts.USES_ABS_ENCODER).getY();
         if ((Math.abs(m_posList.get(0).x) + Consts.X_THRESHOLD) > xCurrent &&
@@ -56,7 +59,7 @@ public class FollowRoute extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        Swerve.getInstance(Consts.USES_ABS_ENCODER);
+        Swerve.getInstance(Consts.USES_ABS_ENCODER).stop();
     }
 
 }
