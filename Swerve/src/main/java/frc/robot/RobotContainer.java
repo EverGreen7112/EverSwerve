@@ -4,14 +4,15 @@
 
 package frc.robot;
 
-import java.lang.ModuleLayer.Controller;
+import java.util.ArrayList;
+
+import org.opencv.core.Point;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Commands.DriveByJoysticks;
@@ -61,7 +62,9 @@ public class RobotContainer {
     Trigger resetOdometry = new JoystickButton(controller, 3).onTrue(new InstantCommand(() -> {
       Swerve.getInstance(Consts.USES_ABS_ENCODER).resetOdometry();
     }));
-    Trigger FollowRoute = new JoystickButton(controller, 10).onTrue(new FollowRoute(1, 2, 90));
+    ArrayList<Point> posList = new ArrayList<>();
+    posList.add(new Point(1, 2));
+    Trigger FollowRoute = new JoystickButton(controller, 10).onTrue(new FollowRoute(posList, 90));
     Trigger ActivateTeleop = new JoystickButton(controller, 9).onTrue(teleop);
 
   }

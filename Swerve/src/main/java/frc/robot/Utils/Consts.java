@@ -3,7 +3,6 @@ package frc.robot.Utils;
 import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Subsystems.Swerve;
 
 public class Consts {
 
