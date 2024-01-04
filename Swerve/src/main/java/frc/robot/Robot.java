@@ -11,17 +11,20 @@ import frc.robot.Subsystems.Swerve;
 import frc.robot.Utils.Consts;
 
 public class Robot extends TimedRobot {
-  private RobotContainer m_robotContainer;
   private Swerve m_swerveInstance;
 
   @Override
   public void robotInit() {
     m_swerveInstance = Swerve.getInstance(Consts.USES_ABS_ENCODER);
-    m_robotContainer = new RobotContainer();
+    new RobotContainer();
     SmartDashboard.putNumber("max drive speed", 1);
     SmartDashboard.putNumber("max angular speed", 1.5);
     SmartDashboard.putNumber("heading kp", 0.03);
     SmartDashboard.putNumber("heading kd", 0.0001);
+    SmartDashboard.putNumber("xkp", 1.5);
+    SmartDashboard.putNumber("xkd", 0);
+    SmartDashboard.putNumber("ykp", 1.5);
+    SmartDashboard.putNumber("ykd", 0);
     m_swerveInstance.zeroModulesAngles();
   }
 

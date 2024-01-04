@@ -79,11 +79,6 @@ public class Swerve extends SubsystemBase {
         m_rotationSpeed = MathUtil.clamp(m_headingPidController.calculate(currentAngle, optimizedAngle), -Consts.MAX_ANGULAR_SPEED.get(), Consts.MAX_ANGULAR_SPEED.get());
  
         odometry();
-        SmartDashboard.putNumber("rotationSpeed", m_rotationSpeed);
-        SmartDashboard.putNumber("optimizedAngle", optimizedAngle);
-        SmartDashboard.putNumber("currentAngle", currentAngle);
-        SmartDashboard.putNumber("m_headingTargetAngle", m_headingTargetAngle);
-
     }
 
     /**

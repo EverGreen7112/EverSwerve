@@ -6,7 +6,6 @@ import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Utils.Consts;
 import frc.robot.Utils.Vector2d;
@@ -164,7 +163,6 @@ public class SwerveModule extends SubsystemBase {
        //dot product to current state
        targetSpeed *= Math.cos(Math.toRadians(optimizedNormalDeltaTargetAngle));
     
-       SmartDashboard.putNumber("targetSpeed", targetSpeed);
        //set speed of module at target speed
        m_driveMotor.getPIDController().setReference(targetSpeed, ControlType.kVelocity);
    }
