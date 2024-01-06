@@ -72,12 +72,16 @@ public class Swerve extends SubsystemBase {
 
     @Override
     public void periodic() {
+        //get current speed
         double currentAngle = m_gyro.getAngle();
+        //update pid values according to dashboard
         m_headingPidController.setPID(Consts.HEADING_KP, Consts.HEADING_KI, Consts.HEADING_KD); //remove later
+        //calculate optimized target angle
         double closestAngle = Consts.closestAngle(currentAngle, m_headingTargetAngle);
         double optimizedAngle = currentAngle + closestAngle;
+        //get pid output
         m_rotationSpeed = MathUtil.clamp(m_headingPidController.calculate(currentAngle, optimizedAngle), -Consts.MAX_ANGULAR_SPEED.get(), Consts.MAX_ANGULAR_SPEED.get());
- 
+        //calculate odometry
         odometry();
     }
 

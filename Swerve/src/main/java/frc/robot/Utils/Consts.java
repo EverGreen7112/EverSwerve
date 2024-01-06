@@ -6,13 +6,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Consts {
 
-  public static final boolean USES_ABS_ENCODER = false;
+  public static final boolean USES_ABS_ENCODER = true;
 
   // max speed values in m/s
   public static final Supplier<Double> MAX_SPEED = new Supplier<Double>() {
     @Override
     public Double get() {
-      return SmartDashboard.getNumber("max drive speed", 2);
+      return SmartDashboard.getNumber("max drive speed", 1);
     }
   };
 
@@ -20,9 +20,11 @@ public class Consts {
   public static final Supplier<Double> MAX_ANGULAR_SPEED = new Supplier<Double>() {
     @Override
     public Double get() {
-      return SmartDashboard.getNumber("max angular speed", 5);
+      return SmartDashboard.getNumber("max angular speed", 1);
     }
   };
+
+  public static final double AUTONOMOUS_MAX_ANGULAR_SPEED = 0.5;
 
   // chassis motors
   public static final int TOP_LEFT_DRIVE_PORT = 6;

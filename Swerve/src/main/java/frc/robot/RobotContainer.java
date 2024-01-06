@@ -18,6 +18,7 @@ import frc.robot.Commands.DriveByJoysticks;
 import frc.robot.Commands.FollowRoute;
 import frc.robot.Subsystems.Swerve;
 import frc.robot.Utils.Consts;
+import frc.robot.Utils.SwervePoint;
 
 public class RobotContainer {
   public RobotContainer() {
@@ -58,9 +59,12 @@ public class RobotContainer {
       Swerve.getInstance(Consts.USES_ABS_ENCODER).resetOdometry();
     }));
 
-    ArrayList<Point> posList = new ArrayList<Point>();
-    posList.add(new Point(1, 2));
-    Trigger FollowRoute = new JoystickButton(controller, 10).onTrue(new FollowRoute(posList, 90));
+    ArrayList<SwervePoint> posList = new ArrayList<SwervePoint>();
+    posList.add(new SwervePoint(0, 0, 0));
+    posList.add(new SwervePoint(1, 1, 90));
+    posList.add(new SwervePoint(2, 1, 270));
+    posList.add(new SwervePoint(0, 0, 0));
+    Trigger FollowRoute = new JoystickButton(controller, 10).onTrue(new FollowRoute(posList));
 
   }
 
