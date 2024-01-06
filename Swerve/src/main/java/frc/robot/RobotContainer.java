@@ -4,7 +4,8 @@
 
 package frc.robot;
 
-import java.lang.ModuleLayer.Controller;
+import java.util.ArrayList;
+import org.opencv.core.Point;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -14,8 +15,10 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Commands.DriveByJoysticks;
+import frc.robot.Commands.FollowRoute;
 import frc.robot.Subsystems.Swerve;
 import frc.robot.Utils.Consts;
+import frc.robot.Utils.SwervePoint;
 
 public class RobotContainer {
   public RobotContainer() {
@@ -36,10 +39,6 @@ public class RobotContainer {
 
   private void configureBindings() {
 
-    Trigger resetModules = new JoystickButton(controller, 2).onTrue(new InstantCommand(() -> {
-      Swerve.getInstance(Consts.USES_ABS_ENCODER).zeroModulesAngles();
-    }));
-
     Trigger rotateRobotBy45 = new JoystickButton(controller, 6).onTrue(new InstantCommand(() -> {
       Swerve.getInstance(Consts.USES_ABS_ENCODER).rotateBy(45);
     }));
@@ -56,6 +55,17 @@ public class RobotContainer {
       Swerve.getInstance(Consts.USES_ABS_ENCODER).rotateTo(0);
       ;
     }));
+    Trigger resetOdometry = new JoystickButton(controller, 3).onTrue(new InstantCommand(() -> {
+      Swerve.getInstance(Consts.USES_ABS_ENCODER).resetOdometry();
+    }));
+
+    ArrayList<SwervePoint> posList = new ArrayList<SwervePoint>();
+    posList.add(new SwervePoint(0, 0, 0));
+    posList.add(new SwervePoint(1, 1, 90));
+    posList.add(new SwervePoint(2, 1, 270));
+    posList.add(new SwervePoint(0, 0, 0));
+    Trigger FollowRoute = new JoystickButton(controller, 10).onTrue(new FollowRoute(posList));
+
   }
 
   public Command getAutonomousCommand() {
