@@ -4,10 +4,11 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Subsystems.Swerve;
-import frc.robot.Utils.Consts;
+import frc.robot.Utils.Constants;
+import frc.robot.Utils.Funcs;
 import frc.robot.Utils.Vector2d;
 
-public class DriveByJoysticks extends CommandBase{
+public class DriveByJoysticks extends CommandBase implements Constants{
 
     private Supplier<Double> m_speedX, m_speedY, m_rotation;
     private Supplier<Boolean> m_isFieldOriented;
@@ -38,20 +39,20 @@ public class DriveByJoysticks extends CommandBase{
         double deltaTime = (System.currentTimeMillis() / 1000.0) - m_currentTime;
 
         //apply deadzone on supplier values
-        if(Math.abs(speedX) < Consts.JOYSTICK_DEADZONE)
+        if(Math.abs(speedX) < JoystickValues.JOYSTICK_DEADZONE)
             speedX = 0;
-        if(Math.abs(speedY) < Consts.JOYSTICK_DEADZONE)
+        if(Math.abs(speedY) < JoystickValues.JOYSTICK_DEADZONE)
             speedY = 0; 
-        if(Math.abs(rotation) < Consts.JOYSTICK_DEADZONE)
+        if(Math.abs(rotation) < JoystickValues.JOYSTICK_DEADZONE)
             rotation = 0;
 
         //round values
-        rotation = Consts.roundAfterDecimalPoint(rotation, 2);
-        speedX = Consts.roundAfterDecimalPoint(speedX, 2);
-        speedY = Consts.roundAfterDecimalPoint(speedY, 2);
+        rotation = Funcs.roundAfterDecimalPoint(rotation, 2);
+        speedX = Funcs.roundAfterDecimalPoint(speedX, 2);
+        speedY = Funcs.roundAfterDecimalPoint(speedY, 2);
 
         //rotate robot according to rotation supplier   
-        Swerve.getInstance(Consts.USES_ABS_ENCODER).rotateBy(360 * (Consts.MAX_ANGULAR_SPEED.get() / Consts.ROBOT_BOUNDING_CIRCLE_PERIMETER) * rotation * deltaTime);
+        Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).rotateBy(360 * (SpeedValues.MAX_ANGULAR_SPEED.get() / SwerveValues.ROBOT_BOUNDING_CIRCLE_PERIMETER) * rotation * deltaTime);
         //create drive vector
         Vector2d vec = new Vector2d(-speedX, speedY);
         //make sure mag never goes over 1 so driving in all directions will be the same speed

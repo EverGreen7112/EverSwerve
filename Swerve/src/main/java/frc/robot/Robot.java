@@ -8,14 +8,14 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Subsystems.Swerve;
-import frc.robot.Utils.Consts;
+import frc.robot.Utils.Constants;
 
-public class Robot extends TimedRobot {
+public class Robot extends TimedRobot implements Constants {
   private Swerve m_swerveInstance;
 
   @Override
   public void robotInit() {
-    m_swerveInstance = Swerve.getInstance(Consts.USES_ABS_ENCODER);
+    m_swerveInstance = Swerve.getInstance(SwerveValues.USES_ABS_ENCODER);
     new RobotContainer();
     SmartDashboard.putNumber("max drive speed", 1);
     SmartDashboard.putNumber("max angular speed", 1.5);
@@ -62,8 +62,8 @@ public class Robot extends TimedRobot {
   public void teleopInit() {
     CommandScheduler.getInstance().cancelAll();
     m_swerveInstance.zeroYaw();
-    Swerve.getInstance(Consts.USES_ABS_ENCODER).resetOdometry();
-    Swerve.getInstance(Consts.USES_ABS_ENCODER).resetOdometry();
+    Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).resetOdometry();
+    Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).resetOdometry();
     RobotContainer.teleop.schedule();
     // for(int i =0 ; i < 4;i++){
     // Swerve.getInstance(true).m_modules[i].setState(0.1, 90);

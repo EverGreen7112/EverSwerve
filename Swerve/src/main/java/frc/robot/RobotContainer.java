@@ -5,8 +5,6 @@
 package frc.robot;
 
 import java.util.ArrayList;
-import org.opencv.core.Point;
-
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -17,21 +15,22 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Commands.DriveByJoysticks;
 import frc.robot.Commands.FollowRoute;
 import frc.robot.Subsystems.Swerve;
-import frc.robot.Utils.Consts;
+import frc.robot.Utils.Constants;
 import frc.robot.Utils.SwervePoint;
 
-public class RobotContainer {
+public class RobotContainer implements Constants {
+
   public RobotContainer() {
     configureBindings();
   }
 
-  public static final Joystick leftJoystick = new Joystick(Consts.LEFT_JOYSTICK);
-  public static final Joystick rightJoystick = new Joystick(Consts.RIGHT_JOYSTICK);
-  public static final Joystick controller = new Joystick(2);
+  public static final Joystick leftJoystick = new Joystick(JoystickValues.LEFT_JOYSTICK);
+  public static final Joystick rightJoystick = new Joystick(JoystickValues.RIGHT_JOYSTICK);
+  public static final Joystick controller = new Joystick(JoystickValues.OPERATOR);
   public static final XboxController xbox = new XboxController(3);
 
   public static DriveByJoysticks teleop = new DriveByJoysticks(() -> controller.getX(), () -> controller.getY(),
-      () -> controller.getZ(), () -> true, Consts.USES_ABS_ENCODER);
+      () -> controller.getZ(), () -> true, SwerveValues.USES_ABS_ENCODER);
   // new DriveByJoysticks(() -> xbox.getLeftX(), () -> xbox.getLeftY(), () ->
   // xbox.getRightX(), () -> true, true);
   // new DriveByJoysticks(() -> leftJoystick.getX(), () -> leftJoystick.getY(),
@@ -40,23 +39,23 @@ public class RobotContainer {
   private void configureBindings() {
 
     Trigger rotateRobotBy45 = new JoystickButton(controller, 6).onTrue(new InstantCommand(() -> {
-      Swerve.getInstance(Consts.USES_ABS_ENCODER).rotateBy(45);
+      Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).rotateBy(45);
     }));
 
     Trigger rotateRobotByMinus45 = new JoystickButton(controller, 5).onTrue(new InstantCommand(() -> {
-      Swerve.getInstance(Consts.USES_ABS_ENCODER).rotateBy(-45);
+      Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).rotateBy(-45);
       ;
     }));
     Trigger rotateRobot180 = new JoystickButton(controller, 8).onTrue(new InstantCommand(() -> {
-      Swerve.getInstance(Consts.USES_ABS_ENCODER).rotateBy(180);
+      Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).rotateBy(180);
       ;
     }));
     Trigger rotateRobotTo0 = new JoystickButton(controller, 7).onTrue(new InstantCommand(() -> {
-      Swerve.getInstance(Consts.USES_ABS_ENCODER).rotateTo(0);
+      Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).rotateTo(0);
       ;
     }));
     Trigger resetOdometry = new JoystickButton(controller, 3).onTrue(new InstantCommand(() -> {
-      Swerve.getInstance(Consts.USES_ABS_ENCODER).resetOdometry();
+      Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).resetOdometry();
     }));
 
     ArrayList<SwervePoint> posList = new ArrayList<SwervePoint>();
