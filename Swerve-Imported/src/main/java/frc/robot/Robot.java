@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.mechanisms.swerve.SwerveModule;
+
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -68,6 +70,7 @@ public class Robot extends TimedRobot implements Constants {
     m_swerveInstance.zeroYaw();
     Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).resetOdometry();
     RobotContainer.teleop.schedule();
+    Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).setModulesToAbs();
     // for(int i =0 ; i < 4;i++){
     // Swerve.getInstance(true).m_modules[i].setState(0.1, 90);
     // }

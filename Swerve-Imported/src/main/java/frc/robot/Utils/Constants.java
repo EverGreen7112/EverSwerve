@@ -21,15 +21,15 @@ public interface Constants {
         public static final int DOWN_RIGHT_STEERING_PORT = 11;
 
         // chassis encoders
-        public static final int TOP_LEFT_CANCODER = 0;
+        public static final int TOP_LEFT_CANCODER = 1;
         public static final int TOP_RIGHT_CANCODER = 4;
-        public static final int DOWN_LEFT_CANCODER = 1;
-        public static final int DOWN_RIGHT_CANCODER = 5;
+        public static final int DOWN_LEFT_CANCODER = 5;
+        public static final int DOWN_RIGHT_CANCODER = 0;
 
-        public static final double TOP_RIGHT_CANCODER_OFFSET = 360 - 360;
-        public static final double TOP_LEFT_CANCODER_OFFSET = 360 - 360;
-        public static final double DOWN_RIGHT_CANCODER_OFFSET = 360 - 360;
-        public static final double DOWN_LEFT_CANCODER_OFFSET = 360 - 360;
+        public static final double TOP_RIGHT_CANCODER_OFFSET = 0.293212890625;
+        public static final double TOP_LEFT_CANCODER_OFFSET = 0.291748046875;
+        public static final double DOWN_RIGHT_CANCODER_OFFSET = -0.1171875;
+        public static final double DOWN_LEFT_CANCODER_OFFSET = 0.310546875;
 
         // chassis size
         public static final double FRONT_WHEEL_DIST_METERS = 0.57;

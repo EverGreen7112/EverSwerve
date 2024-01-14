@@ -86,8 +86,9 @@ public class SwerveModule extends SubsystemBase implements Constants {
         // configure cancoder
         m_coder = new CANcoder(absoluteEncoderPort);
         CANcoderConfiguration canConfig = new CANcoderConfiguration();
-        canConfig.MagnetSensor.MagnetOffset = canCoderOffset;
+        canConfig.MagnetSensor.MagnetOffset = 1 - canCoderOffset;
         m_coder.getConfigurator().apply(canConfig);
+        setModulesToAbs();
     }
 
     @Override
@@ -107,15 +108,19 @@ public class SwerveModule extends SubsystemBase implements Constants {
      * encoder
      */
     public void setModulesToAbs() {
-        m_steeringMotor.getEncoder().setPosition(m_coder.getAbsolutePosition().getValueAsDouble());
+        m_steeringMotor.getEncoder().setPosition(getCoderPos());
     }
 
     public void setModuleAngle(double angle) {
         m_steeringMotor.getEncoder().setPosition(angle);
     }
 
+    /*
+     * get current absolute position of module
+     */
     public double getCoderPos() {
-        return m_coder.getAbsolutePosition().getValueAsDouble();
+        return Funcs.convertRotationsToDegrees(m_coder.getPosition().getValue());
+        // return m_coder.getAbsolutePosition().getValue();
     }
 
     public double getAngle() {

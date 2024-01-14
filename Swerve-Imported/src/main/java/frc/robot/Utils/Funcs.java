@@ -24,4 +24,14 @@ public class Funcs {
         return num;
     }
 
+    public static double convertRotationsToDegrees(double rotations){
+        //convert rotations to degrees
+        rotations *= 360;
+       
+        //convert from -180 - 180 to 0 - 360 
+        if(rotations < 0){
+            rotations += 360;
+        }
+        return rotations;
+    }
 }
