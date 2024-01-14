@@ -31,6 +31,10 @@ public class Robot extends TimedRobot implements Constants {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
+    SmartDashboard.putNumber("top right angle", m_swerveInstance.getModule(0).getCoderPos());
+    SmartDashboard.putNumber("top left angle", m_swerveInstance.getModule(1).getCoderPos());
+    SmartDashboard.putNumber("down right angle", m_swerveInstance.getModule(2).getCoderPos());
+    SmartDashboard.putNumber("down left angle", m_swerveInstance.getModule(3).getCoderPos());
   }
 
   @Override

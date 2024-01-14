@@ -1,6 +1,6 @@
 package frc.robot.Subsystems;
 
-import com.ctre.phoenix.sensors.CANCoder;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
@@ -20,7 +20,7 @@ public class SwerveModule extends SubsystemBase implements Constants {
     private CANSparkMax m_steeringMotor;
 
     // can coder to save the absolute position of the module
-    private CANCoder m_coder;
+    private CANcoder m_coder;
 
     public double m_currentPosition;
 
@@ -83,11 +83,9 @@ public class SwerveModule extends SubsystemBase implements Constants {
      */
     public SwerveModule(int drivePort, int steeringPort, int absoluteEncoderPort, double canCoderOffset) {
         this(drivePort, steeringPort);
-
         // configure cancoder
-        m_coder = new CANCoder(absoluteEncoderPort);
-        m_coder.configFactoryDefault();
-        m_coder.configMagnetOffset(canCoderOffset, 50);
+        m_coder = new CANcoder(absoluteEncoderPort);
+        m_coder.setPosition(canCoderOffset, 50);
     }
 
     @Override
@@ -107,7 +105,7 @@ public class SwerveModule extends SubsystemBase implements Constants {
      * encoder
      */
     public void setModulesToAbs() {
-        m_steeringMotor.getEncoder().setPosition(m_coder.getAbsolutePosition());
+        m_steeringMotor.getEncoder().setPosition(m_coder.getAbsolutePosition().getValueAsDouble());
     }
 
     public void setModuleAngle(double angle) {
@@ -115,7 +113,7 @@ public class SwerveModule extends SubsystemBase implements Constants {
     }
 
     public double getCoderPos() {
-        return m_coder.getAbsolutePosition();
+        return m_coder.getAbsolutePosition().getValueAsDouble();
     }
 
     public double getAngle() {
