@@ -120,7 +120,6 @@ public class SwerveModule extends SubsystemBase implements Constants {
      */
     public double getCoderPos() {
         return Funcs.convertRotationsToDegrees(m_coder.getPosition().getValue());
-        // return m_coder.getAbsolutePosition().getValue();
     }
 
     public double getAngle() {

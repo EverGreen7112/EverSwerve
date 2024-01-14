@@ -30,7 +30,7 @@ public class RobotContainer implements Constants {
   public static final XboxController xbox = new XboxController(3);
 
   public static DriveByJoysticks teleop = new DriveByJoysticks(() -> controller.getX(), () -> controller.getY(),
-      () -> controller.getZ(), () -> false, SwerveValues.USES_ABS_ENCODER);
+      () -> controller.getZ(), () -> true, SwerveValues.USES_ABS_ENCODER);
   // new DriveByJoysticks(() -> xbox.getLeftX(), () -> xbox.getLeftY(), () ->
   // xbox.getRightX(), () -> true, true);
   // new DriveByJoysticks(() -> leftJoystick.getX(), () -> leftJoystick.getY(),
