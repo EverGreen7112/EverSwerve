@@ -67,7 +67,6 @@ public class Robot extends TimedRobot implements Constants {
     CommandScheduler.getInstance().cancelAll();
     m_swerveInstance.zeroYaw();
     Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).resetOdometry();
-    Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).resetOdometry();
     RobotContainer.teleop.schedule();
     // for(int i =0 ; i < 4;i++){
     // Swerve.getInstance(true).m_modules[i].setState(0.1, 90);
