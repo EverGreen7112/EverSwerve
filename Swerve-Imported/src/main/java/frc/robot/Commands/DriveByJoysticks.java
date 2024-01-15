@@ -16,6 +16,7 @@ public class DriveByJoysticks extends CommandBase implements Constants{
     private double m_currentTime;
 
     public DriveByJoysticks(Supplier<Double> speedX, Supplier<Double> speedY, Supplier<Double> rotation, Supplier<Boolean> isFieldOriented, boolean usesAbsEncoder){
+        addRequirements(Swerve.getInstance(SwerveValues.USES_ABS_ENCODER));
         m_speedX = speedX;
         m_speedY = speedY;
         m_rotation = rotation;

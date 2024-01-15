@@ -61,9 +61,9 @@ public class RobotContainer implements Constants {
       Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).resetOdometry();
     }));
 
-    ArrayList<Point> posList = new ArrayList<Point>();
-    posList.add(new Point(1, 1));
-    Trigger followRoute = new JoystickButton(controller, 10).onTrue(new FollowRoute(posList, 90));
+    ArrayList<SwervePoint> posList = new ArrayList<SwervePoint>();
+    posList.add(new SwervePoint(0.5, 0.5, 90));
+    Trigger followRoute = new JoystickButton(controller, 10).onTrue(new FollowRoute(posList));
 
     // Trigger savePoint = new JoystickButton(controller, 2).onTrue(new InstantCommand(() -> {
     //   posList.add(new SwervePoint(Swerve.getInstance(Constants.SwerveValues.USES_ABS_ENCODER).getX(),
@@ -71,7 +71,7 @@ public class RobotContainer implements Constants {
     //                               Swerve.getInstance(Constants.SwerveValues.USES_ABS_ENCODER).getGyro().getAngle()));
     // }));
 
-    // Trigger removePoint = new JoystickButton(controller, 1).onTrue(new InstantCommand(() -> {
+    // Trigger removePoints = new JoystickButton(controller, 1).onTrue(new InstantCommand(() -> {
     //   posList.clear();
     // }));
 
