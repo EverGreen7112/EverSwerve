@@ -14,7 +14,7 @@ import frc.robot.Utils.Vector2d;
 public class Swerve extends SubsystemBase implements Constants {
 
     // array of swerve modules
-    public SwerveModule[] m_modules;
+    private SwerveModule[] m_modules;
 
     // robot gyro
     private AHRS m_gyro;
@@ -75,8 +75,6 @@ public class Swerve extends SubsystemBase implements Constants {
     public void periodic() {
         // get current speed
         double currentAngle = m_gyro.getAngle();
-        // update pid values according to dashboard
-        m_headingPidController.setPID(PIDValues.HEADING_KP, PIDValues.HEADING_KI, PIDValues.HEADING_KD); // remove later
         // calculate optimized target angle
         double closestAngle = Funcs.closestAngle(currentAngle, m_headingTargetAngle);
         double optimizedAngle = currentAngle + closestAngle;
@@ -100,7 +98,7 @@ public class Swerve extends SubsystemBase implements Constants {
         // if drive values are 0 stop moving
         if (driveVec.mag() == 0 && m_rotationSpeed == 0) {
             for (int i = 0; i < m_modules.length; i++) {
-                m_modules[i].setVelocity(0);
+                m_modules[i].stopModule();
             }
         }
 

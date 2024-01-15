@@ -58,6 +58,8 @@ public interface Constants {
     }
 
     public class SpeedValues {
+        public static final double AUTONOMOUS_MAX_ANGULAR_SPEED = 0.5;
+
         // max speed values in m/s
         public static final Supplier<Double> MAX_SPEED = new Supplier<Double>() {
             @Override
@@ -74,7 +76,6 @@ public interface Constants {
             }
         };
 
-        public static final double AUTONOMOUS_MAX_ANGULAR_SPEED = 0.5;
     }
 
     public class PIDValues {
@@ -104,7 +105,7 @@ public interface Constants {
         // speed values
         public static final double HEADING_KP = 0.03;
         public static final double HEADING_KI = 0;
-        public static final double HEADING_KD = 0.0001;
+        public static final double HEADING_KD = 0;
         public static final double HEADING_TOLERANCE = 3;
 
     }
