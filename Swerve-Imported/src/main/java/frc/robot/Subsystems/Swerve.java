@@ -201,7 +201,7 @@ public class Swerve extends SubsystemBase implements Constants {
             deltaX = (Math.cos(Math.toRadians(m_modules[i].getAngle())) * deltaP) / 4;
             deltaY = (Math.sin(Math.toRadians(m_modules[i].getAngle())) * deltaP) / 4;
             Vector2d tempVec = new Vector2d(deltaX, deltaY);
-            tempVec.rotate(-Math.toRadians(m_gyro.getYaw()));
+            tempVec.rotate(-Math.toRadians(m_gyro.getYaw() - 90));
             m_x += tempVec.x;
             m_y += tempVec.y;
             m_modules[i].updatePos();

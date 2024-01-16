@@ -90,17 +90,17 @@ public interface Constants {
         public static final double WHEEL_VELOCITY_KF = 0.75 / 2.81;
 
         // pid on the pos on the x axis
-        public static final double X_KP = 5;
-        public static final double X_KI = 0;
-        public static final double X_KD = 0;
+        public static final double X_KP = 10;
+        public static final double X_KI = 1;
+        public static final double X_KD = 2;
 
         // pid on the pos on the y axis
-        public static final double Y_KP = 5;
-        public static final double Y_KI = 0;
+        public static final double Y_KP = 10;
+        public static final double Y_KI = 5;
         public static final double Y_KD = 0;
 
-        public static final double X_THRESHOLD = 0.04;
-        public static final double Y_THRESHOLD = 0.04;
+        public static final double X_THRESHOLD = 0.1;
+        public static final double Y_THRESHOLD = 0.1;
 
         // speed values
         public static final double HEADING_KP = 0.03;

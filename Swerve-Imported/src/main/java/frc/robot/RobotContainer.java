@@ -62,22 +62,21 @@ public class RobotContainer implements Constants {
     }));
 
     ArrayList<SwervePoint> posList = new ArrayList<SwervePoint>();
-    posList.add(new SwervePoint(0, 0, 0));
-    posList.add(new SwervePoint(1, 1, 90));
-    posList.add(new SwervePoint(0, 0, 0));
-    
+    // posList.add(new SwervePoint(0, 0, 0));
+    // posList.add(new SwervePoint(1, 1, 90));
+    posList.add(new SwervePoint(1, 0, 0));
    
     Trigger FollowRoute = new JoystickButton(controller, 10).onTrue(new FollowRoute(posList));
 
-    // Trigger savePoint = new JoystickButton(controller, 2).onTrue(new InstantCommand(() -> {
-    //   posList.add(new SwervePoint(Swerve.getInstance(Constants.SwerveValues.USES_ABS_ENCODER).getX(),
-    //                               Swerve.getInstance(Constants.SwerveValues.USES_ABS_ENCODER).getY(),
-    //                               Swerve.getInstance(Constants.SwerveValues.USES_ABS_ENCODER).getGyro().getAngle()));
-    // }));
+    Trigger savePoint = new JoystickButton(controller, 2).onTrue(new InstantCommand(() -> {
+      posList.add(new SwervePoint(Swerve.getInstance(Constants.SwerveValues.USES_ABS_ENCODER).getX(),
+                                  Swerve.getInstance(Constants.SwerveValues.USES_ABS_ENCODER).getY(),
+                                  Swerve.getInstance(Constants.SwerveValues.USES_ABS_ENCODER).getGyro().getAngle()));
+    }));
 
-    // Trigger removePoints = new JoystickButton(controller, 1).onTrue(new InstantCommand(() -> {
-    //   posList.clear();
-    // }));
+    Trigger removePoints = new JoystickButton(controller, 1).onTrue(new InstantCommand(() -> {
+      posList.clear();
+    }));
 
   
   }
