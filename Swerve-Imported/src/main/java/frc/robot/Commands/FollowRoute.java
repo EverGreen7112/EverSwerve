@@ -22,15 +22,13 @@ public class FollowRoute extends CommandBase implements Constants {
     private int current;
 
     public FollowRoute(ArrayList<SwervePoint> posList) {
-        if (posList.isEmpty())
-            return;
         m_posList = posList;
     }
 
     @Override
     public void initialize() {
-        m_xPidController = new PIDController(PIDValues.X_KP, PIDValues.X_KI, PIDValues.X_KD);
-        m_yPidController = new PIDController(PIDValues.Y_KP, PIDValues.Y_KI, PIDValues.Y_KD);
+        m_xPidController = new PIDController(PIDValues.POS_KP, PIDValues.POS_KI, PIDValues.POS_KD);
+        m_yPidController = new PIDController(PIDValues.POS_KP, PIDValues.POS_KI, PIDValues.POS_KD);
         current = 0;
     }
 
@@ -68,7 +66,7 @@ public class FollowRoute extends CommandBase implements Constants {
         SmartDashboard.putNumber("current", current);
         SmartDashboard.putNumber("size", m_posList.size());
         SmartDashboard.putBoolean("is finished", current == m_posList.size());
-        return current == m_posList.size();
+        return current >= m_posList.size();
     }
 
     @Override
