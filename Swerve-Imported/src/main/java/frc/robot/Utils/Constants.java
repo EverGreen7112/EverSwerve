@@ -90,12 +90,12 @@ public interface Constants {
         public static final double WHEEL_VELOCITY_KF = 0.75 / 2.81;
 
         // pid on the pos on the x axis
-        public static final double X_KP = 1;
+        public static final double X_KP = 5;
         public static final double X_KI = 0;
         public static final double X_KD = 0;
 
         // pid on the pos on the y axis
-        public static final double Y_KP = 1;
+        public static final double Y_KP = 5;
         public static final double Y_KI = 0;
         public static final double Y_KD = 0;
 

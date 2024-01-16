@@ -36,17 +36,18 @@ public class FollowRoute extends CommandBase implements Constants {
         //get current values
         double xCurrent = Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).getX();
         double yCurrent = Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).getY();
-        SmartDashboard.putNumber("target x", m_posList.get(0).getX());
-        SmartDashboard.putNumber("target y", m_posList.get(0).getY());
-        SmartDashboard.putNumber("target theta", m_posList.get(0).getAngle());
-
-        //get outputs
-        double xOutput = MathUtil.clamp(m_xPidController.calculate(xCurrent, m_posList.get(0).getX()), -1, 1);
-        double yOutput = MathUtil.clamp(m_yPidController.calculate(yCurrent, m_posList.get(0).getY()), -1, 1);
-        SmartDashboard.putNumber("xOutput", xOutput);
-        SmartDashboard.putNumber("yOutput", yOutput);
-        Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).drive(new Vector2d(xOutput, yOutput), true);
-        Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).rotateTo(m_targetAngle);
+        //calculate outputs
+       // double xOutput = MathUtil.clamp(m_xPidController.calculate(xCurrent, m_posList.get(current).getX()), -1, 1);
+       // double yOutput = MathUtil.clamp(m_yPidController.calculate(yCurrent, m_posList.get(current).getY()), -1, 1);
+        double xOutput =  MathUtil.clamp((m_posList.get(current).getX() - xCurrent) * PIDValues.X_KP, -1, 1);
+        double yOutput =  MathUtil.clamp((m_posList.get(current).getY() - yCurrent) * PIDValues.Y_KP, -1, 1);
+       
+       //round values
+        xCurrent = Funcs.roundAfterDecimalPoint(xCurrent, 2);
+        yCurrent = Funcs.roundAfterDecimalPoint(yCurrent, 2);
+        //apply outputs
+        Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).drive(new Vector2d(xOutput, yOutput), false);
+        Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).rotateTo(m_posList.get(current).getAngle());
     }
 
     @Override
@@ -68,6 +69,7 @@ public class FollowRoute extends CommandBase implements Constants {
     @Override
     public void end(boolean interrupted) {
         Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).stop();
+        current = 0;
     }
 
 }
