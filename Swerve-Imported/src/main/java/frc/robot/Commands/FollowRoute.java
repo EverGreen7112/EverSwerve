@@ -43,9 +43,6 @@ public class FollowRoute extends CommandBase implements Constants {
         double xOutput = MathUtil.clamp(m_xPidController.calculate(m_posList.get(current).getX() - xCurrent), -1, 1);
         double yOutput = MathUtil.clamp(m_yPidController.calculate(m_posList.get(current).getY() - yCurrent), -1, 1);
 
-        // round values
-        xCurrent = Funcs.roundAfterDecimalPoint(xCurrent, 2);
-        yCurrent = Funcs.roundAfterDecimalPoint(yCurrent, 2);
         // apply outputs
         Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).drive(new Vector2d(xOutput, yOutput), true);
         Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).rotateTo(m_posList.get(current).getAngle());
@@ -57,10 +54,10 @@ public class FollowRoute extends CommandBase implements Constants {
             return true;
         double xCurrent = Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).getX();
         double yCurrent = Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).getY();
-        if ((Math.abs(m_posList.get(current).getX()) + PIDValues.X_THRESHOLD) > xCurrent &&
-                (Math.abs(m_posList.get(current).getX()) - PIDValues.X_THRESHOLD) < xCurrent &&
-                (Math.abs(m_posList.get(current).getY()) + PIDValues.Y_THRESHOLD) > yCurrent &&
-                (Math.abs(m_posList.get(current).getY()) - PIDValues.Y_THRESHOLD) < yCurrent) {
+        if ((Math.abs(m_posList.get(current).getX()) + PIDValues.X_THRESHOLD > Math.abs(xCurrent) &&
+                (Math.abs(m_posList.get(current).getX()) - PIDValues.X_THRESHOLD) < Math.abs(xCurrent) &&
+                (Math.abs(m_posList.get(current).getY()) + PIDValues.Y_THRESHOLD) > Math.abs(yCurrent) &&
+                (Math.abs(m_posList.get(current).getY()) - PIDValues.Y_THRESHOLD) < Math.abs(yCurrent))) {
             current++;
         }
         SmartDashboard.putNumber("current", current);

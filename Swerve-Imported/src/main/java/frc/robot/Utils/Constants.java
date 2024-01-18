@@ -94,8 +94,8 @@ public interface Constants {
         public static final double POS_KI = 0;//5
         public static final double POS_KD = 0;//2
 
-        public static final double X_THRESHOLD = 0.05;
-        public static final double Y_THRESHOLD = 0.05;
+        public static final double X_THRESHOLD = 0.1;
+        public static final double Y_THRESHOLD = 0.1;
 
         // speed values
         public static final double HEADING_KP = 0.03;
