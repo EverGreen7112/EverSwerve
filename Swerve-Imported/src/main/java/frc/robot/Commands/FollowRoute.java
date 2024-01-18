@@ -54,15 +54,19 @@ public class FollowRoute extends CommandBase implements Constants {
             return true;
         double xCurrent = Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).getX();
         double yCurrent = Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).getY();
-        if ((Math.abs(m_posList.get(current).getX()) + PIDValues.X_THRESHOLD > Math.abs(xCurrent) &&
-                (Math.abs(m_posList.get(current).getX()) - PIDValues.X_THRESHOLD) < Math.abs(xCurrent) &&
-                (Math.abs(m_posList.get(current).getY()) + PIDValues.Y_THRESHOLD) > Math.abs(yCurrent) &&
-                (Math.abs(m_posList.get(current).getY()) - PIDValues.Y_THRESHOLD) < Math.abs(yCurrent))) {
+        double headingCurrent = Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).getGyro().getAngle();
+        if ((   //check if entered x threshold
+                (Math.abs(m_posList.get(current).getX()) + PIDValues.X_TOLERANCE) > Math.abs(xCurrent) &&
+                (Math.abs(m_posList.get(current).getX()) - PIDValues.X_TOLERANCE) < Math.abs(xCurrent) &&
+                //check if entered y threshold
+                (Math.abs(m_posList.get(current).getY()) + PIDValues.Y_TOLERANCE) > Math.abs(yCurrent) &&
+                (Math.abs(m_posList.get(current).getY()) - PIDValues.Y_TOLERANCE) < Math.abs(yCurrent) &&
+                //check if entered heading threshold
+                (Math.abs(m_posList.get(current).getAngle()) + PIDValues.HEADING_TOLERANCE) > Math.abs(headingCurrent) &&
+                (Math.abs(m_posList.get(current).getAngle()) - PIDValues.HEADING_TOLERANCE) < Math.abs(headingCurrent)   
+            )) {
             current++;
         }
-        SmartDashboard.putNumber("current", current);
-        SmartDashboard.putNumber("size", m_posList.size());
-        SmartDashboard.putBoolean("is finished", current == m_posList.size());
         return current >= m_posList.size();
     }
 
