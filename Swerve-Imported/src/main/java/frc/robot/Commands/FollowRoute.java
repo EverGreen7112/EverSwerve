@@ -52,6 +52,7 @@ public class FollowRoute extends CommandBase implements Constants {
     public boolean isFinished() {
         if (m_posList.isEmpty())
             return true;
+        //get current state of robot
         double xCurrent = Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).getX();
         double yCurrent = Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).getY();
         double headingCurrent = Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).getGyro().getAngle();
