@@ -73,6 +73,8 @@ public class Swerve extends SubsystemBase implements Constants {
 
     @Override
     public void periodic() {
+        //convert max angular speed to m/s instead from deg/s
+        double ms_max_angular_speed = (SpeedValues.MAX_ANGULAR_SPEED.get() / 360.0) * SwerveValues.ROBOT_BOUNDING_CIRCLE_PERIMETER;
         // get current speed
         double currentAngle = m_gyro.getAngle();
         // calculate optimized target angle
@@ -80,7 +82,7 @@ public class Swerve extends SubsystemBase implements Constants {
         double optimizedAngle = currentAngle + closestAngle;
         // get pid output
         m_rotationSpeed = MathUtil.clamp(m_headingPidController.calculate(currentAngle, optimizedAngle),
-                -SpeedValues.MAX_ANGULAR_SPEED.get(), SpeedValues.MAX_ANGULAR_SPEED.get());
+                -ms_max_angular_speed, ms_max_angular_speed);
         // calculate odometry
         odometry();
     }
@@ -131,14 +133,25 @@ public class Swerve extends SubsystemBase implements Constants {
         }
     }
 
+    /**
+     * 
+     * rotate chassis by angle
+     */
     public void rotateBy(double angle) {
         m_headingTargetAngle += angle;
     }
 
+    /**
+     * 
+     * rotate chassis to angle
+     */
     public void rotateTo(double angle) {
         m_headingTargetAngle = angle;
     }
 
+    /**
+     * set gyro's yaw value to 0 
+     */
     public void zeroYaw() {
         m_gyro.zeroYaw();
         m_headingTargetAngle = m_gyro.getAngle();
@@ -201,6 +214,8 @@ public class Swerve extends SubsystemBase implements Constants {
             deltaX = (Math.cos(Math.toRadians(m_modules[i].getAngle())) * deltaP) / 4;
             deltaY = (Math.sin(Math.toRadians(m_modules[i].getAngle())) * deltaP) / 4;
             Vector2d tempVec = new Vector2d(deltaX, deltaY);
+            //rotate by yaw to get the values as field oriented
+            // -90 and -angle to convert values to the rights axises
             tempVec.rotate(-Math.toRadians(m_gyro.getYaw() - 90));
             m_x += tempVec.x;
             m_y += tempVec.y;

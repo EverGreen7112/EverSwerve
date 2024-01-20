@@ -26,6 +26,7 @@ public interface Constants {
         public static final int DOWN_LEFT_CANCODER = 5;
         public static final int DOWN_RIGHT_CANCODER = 0;
 
+        //cancoder offsets
         public static final double TOP_RIGHT_CANCODER_OFFSET = 0.293212890625;
         public static final double TOP_LEFT_CANCODER_OFFSET = 0.291748046875;
         public static final double DOWN_RIGHT_CANCODER_OFFSET = -0.1171875;
@@ -36,7 +37,7 @@ public interface Constants {
         public static final double SIDE_WHEEL_DIST_METERS = 0.57;
         public static final double WHEEL_PERIMETER = Math.PI * 0.095;
         public static final double ROBOT_BOUNDING_CIRCLE_PERIMETER = Math.PI * Math.sqrt(
-                FRONT_WHEEL_DIST_METERS * FRONT_WHEEL_DIST_METERS + SIDE_WHEEL_DIST_METERS * SIDE_WHEEL_DIST_METERS);
+            FRONT_WHEEL_DIST_METERS * FRONT_WHEEL_DIST_METERS + SIDE_WHEEL_DIST_METERS * SIDE_WHEEL_DIST_METERS);
 
         // swerve vectors
         public static final Vector2d TOP_RIGHT = new Vector2d((FRONT_WHEEL_DIST_METERS / 2),
@@ -68,11 +69,11 @@ public interface Constants {
             }
         };
 
-        // speed values in m/s
+        // speed values in deg/s
         public static final Supplier<Double> MAX_ANGULAR_SPEED = new Supplier<Double>() {
             @Override
             public Double get() {
-                return SmartDashboard.getNumber("max angular speed", 1);
+                return SmartDashboard.getNumber("max angular speed", 180);
             }
         };
 

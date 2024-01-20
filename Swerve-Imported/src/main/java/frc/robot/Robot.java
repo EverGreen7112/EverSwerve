@@ -23,7 +23,7 @@ public class Robot extends TimedRobot implements Constants {
     m_swerveInstance = Swerve.getInstance(SwerveValues.USES_ABS_ENCODER);
     new RobotContainer();
     SmartDashboard.putNumber("max drive speed", 1);
-    SmartDashboard.putNumber("max angular speed", 1.5);
+    SmartDashboard.putNumber("max angular speed", 180);
     m_swerveInstance.zeroModulesAngles();
     //create and add robot field data to dashboard
     m_field = new Field2d();
@@ -34,15 +34,16 @@ public class Robot extends TimedRobot implements Constants {
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
     //get current position and rotation of robot 
-    double xCurrent = Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).getX();
-    double yCurrent = Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).getY();
-    double headingCurrent = Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).getGyro().getAngle();
+    double xCurrent = m_swerveInstance.getX();
+    double yCurrent = m_swerveInstance.getY();
+    double headingCurrent = m_swerveInstance.getGyro().getAngle();
+    //update the robot position of dashboard
     m_field.setRobotPose(yCurrent, -xCurrent, new Rotation2d(Math.toRadians(headingCurrent)));//(because of side view x and y are flipped)
   }
 
   @Override
   public void disabledInit() {
-    Swerve.getInstance(true).stop();
+    m_swerveInstance.stop();
   }
 
   @Override
@@ -69,8 +70,8 @@ public class Robot extends TimedRobot implements Constants {
   public void teleopInit() {
     CommandScheduler.getInstance().cancelAll();
     m_swerveInstance.zeroYaw();
-    Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).resetOdometry();
-    Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).setModulesToAbs();
+    m_swerveInstance.resetOdometry();
+    m_swerveInstance.setModulesToAbs();
     RobotContainer.teleop.schedule();
   }
 
@@ -80,12 +81,12 @@ public class Robot extends TimedRobot implements Constants {
 
   @Override
   public void teleopExit() {
-    Swerve.getInstance(true).stop();
+    m_swerveInstance.stop();
   }
 
   @Override
   public void testInit() {
-    Swerve.getInstance(true).zeroYaw();
+    m_swerveInstance.zeroYaw();
     CommandScheduler.getInstance().cancelAll();
     RobotContainer.teleop.schedule();
   }
@@ -96,6 +97,6 @@ public class Robot extends TimedRobot implements Constants {
 
   @Override
   public void testExit() {
-    Swerve.getInstance(true).stop();
+    m_swerveInstance.stop();
   }
 }
