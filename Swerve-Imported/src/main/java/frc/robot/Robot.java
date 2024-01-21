@@ -23,7 +23,7 @@ public class Robot extends TimedRobot implements Constants {
     m_swerveInstance = Swerve.getInstance(SwerveValues.USES_ABS_ENCODER);
     new RobotContainer();
     SmartDashboard.putNumber("max drive speed", 1);
-    SmartDashboard.putNumber("max angular speed", 180);
+    SmartDashboard.putNumber("max angular speed", 200);
     m_swerveInstance.zeroModulesAngles();
     //create and add robot field data to dashboard
     m_field = new Field2d();
@@ -38,7 +38,7 @@ public class Robot extends TimedRobot implements Constants {
     double yCurrent = m_swerveInstance.getY();
     double headingCurrent = m_swerveInstance.getGyro().getAngle();
     //update the robot position of dashboard
-    m_field.setRobotPose(yCurrent, -xCurrent, new Rotation2d(Math.toRadians(headingCurrent)));//(because of side view x and y are flipped)
+    m_field.setRobotPose(yCurrent, -xCurrent, new Rotation2d(Math.toRadians(360 - headingCurrent)));//(because of side view x and y are flipped)
   }
 
   @Override
