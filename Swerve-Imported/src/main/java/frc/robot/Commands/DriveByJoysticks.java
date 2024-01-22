@@ -16,6 +16,7 @@ public class DriveByJoysticks extends CommandBase implements Constants{
     private double m_currentTime;
 
     public DriveByJoysticks(Supplier<Double> speedX, Supplier<Double> speedY, Supplier<Double> rotation, Supplier<Boolean> isFieldOriented, boolean usesAbsEncoder){
+        addRequirements(Swerve.getInstance(SwerveValues.USES_ABS_ENCODER));
         m_speedX = speedX;
         m_speedY = speedY;
         m_rotation = rotation;
@@ -52,7 +53,7 @@ public class DriveByJoysticks extends CommandBase implements Constants{
         speedY = Funcs.roundAfterDecimalPoint(speedY, 2);
 
         //rotate robot according to rotation supplier   
-        Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).rotateBy(360 * (SpeedValues.MAX_ANGULAR_SPEED.get() / SwerveValues.ROBOT_BOUNDING_CIRCLE_PERIMETER) * rotation * deltaTime);
+        Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).rotateBy(SpeedValues.MAX_ANGULAR_SPEED.get() * rotation * deltaTime);
         //create drive vector
         Vector2d vec = new Vector2d(-speedX, speedY);
         //make sure mag never goes over 1 so driving in all directions will be the same speed

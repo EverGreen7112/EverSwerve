@@ -14,7 +14,7 @@ import frc.robot.Utils.Vector2d;
 public class Swerve extends SubsystemBase implements Constants {
 
     // array of swerve modules
-    public SwerveModule[] m_modules;
+    private SwerveModule[] m_modules;
 
     // robot gyro
     private AHRS m_gyro;
@@ -73,16 +73,16 @@ public class Swerve extends SubsystemBase implements Constants {
 
     @Override
     public void periodic() {
+        //convert max angular speed to m/s instead from deg/s
+        double ms_max_angular_speed = (SpeedValues.MAX_ANGULAR_SPEED.get() / 360.0) * SwerveValues.ROBOT_BOUNDING_CIRCLE_PERIMETER;
         // get current speed
         double currentAngle = m_gyro.getAngle();
-        // update pid values according to dashboard
-        m_headingPidController.setPID(PIDValues.HEADING_KP, PIDValues.HEADING_KI, PIDValues.HEADING_KD); // remove later
         // calculate optimized target angle
         double closestAngle = Funcs.closestAngle(currentAngle, m_headingTargetAngle);
         double optimizedAngle = currentAngle + closestAngle;
         // get pid output
         m_rotationSpeed = MathUtil.clamp(m_headingPidController.calculate(currentAngle, optimizedAngle),
-                -SpeedValues.MAX_ANGULAR_SPEED.get(), SpeedValues.MAX_ANGULAR_SPEED.get());
+                -ms_max_angular_speed, ms_max_angular_speed);
         // calculate odometry
         odometry();
     }
@@ -100,7 +100,7 @@ public class Swerve extends SubsystemBase implements Constants {
         // if drive values are 0 stop moving
         if (driveVec.mag() == 0 && m_rotationSpeed == 0) {
             for (int i = 0; i < m_modules.length; i++) {
-                m_modules[i].setVelocity(0);
+                m_modules[i].stopModule();
             }
         }
 
@@ -133,14 +133,25 @@ public class Swerve extends SubsystemBase implements Constants {
         }
     }
 
+    /**
+     * 
+     * rotate chassis by angle
+     */
     public void rotateBy(double angle) {
         m_headingTargetAngle += angle;
     }
 
+    /**
+     * 
+     * rotate chassis to angle
+     */
     public void rotateTo(double angle) {
         m_headingTargetAngle = angle;
     }
 
+    /**
+     * set gyro's yaw value to 0 
+     */
     public void zeroYaw() {
         m_gyro.zeroYaw();
         m_headingTargetAngle = m_gyro.getAngle();
@@ -196,6 +207,10 @@ public class Swerve extends SubsystemBase implements Constants {
         return m_y;
     }
 
+    public Vector2d getPos(){
+        return new Vector2d(getX(), getY());
+    }
+
     public void odometry() {
         double deltaX = 0, deltaY = 0;
         for (int i = 0; i < m_modules.length; i++) {
@@ -203,7 +218,9 @@ public class Swerve extends SubsystemBase implements Constants {
             deltaX = (Math.cos(Math.toRadians(m_modules[i].getAngle())) * deltaP) / 4;
             deltaY = (Math.sin(Math.toRadians(m_modules[i].getAngle())) * deltaP) / 4;
             Vector2d tempVec = new Vector2d(deltaX, deltaY);
-            tempVec.rotate(-Math.toRadians(m_gyro.getYaw()));
+            //rotate by yaw to get the values as field oriented
+            // -90 and -angle to convert values to the rights axises
+            tempVec.rotate(-Math.toRadians(m_gyro.getYaw() - 90));
             m_x += tempVec.x;
             m_y += tempVec.y;
             m_modules[i].updatePos();

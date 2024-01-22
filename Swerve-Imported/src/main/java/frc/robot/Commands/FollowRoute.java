@@ -2,6 +2,8 @@ package frc.robot.Commands;
 
 import java.util.ArrayList;
 
+import org.opencv.core.Point;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -13,6 +15,7 @@ import frc.robot.Utils.SwervePoint;
 import frc.robot.Utils.Vector2d;
 
 public class FollowRoute extends CommandBase implements Constants {
+
     private PIDController m_xPidController;
     private PIDController m_yPidController;
     private ArrayList<SwervePoint> m_posList;
@@ -20,14 +23,12 @@ public class FollowRoute extends CommandBase implements Constants {
 
     public FollowRoute(ArrayList<SwervePoint> posList) {
         m_posList = posList;
-        m_xPidController = new PIDController(PIDValues.X_KP, PIDValues.X_KI, PIDValues.X_KD);
-        m_yPidController = new PIDController(PIDValues.Y_KP, PIDValues.Y_KI, PIDValues.Y_KD);
     }
 
     @Override
     public void initialize() {
-        // inorder to set MAX_ANGULAR_SPEED to auto value
-        SmartDashboard.putNumber("max angular speed", SpeedValues.AUTONOMOUS_MAX_ANGULAR_SPEED);
+        m_xPidController = new PIDController(PIDValues.POS_KP, PIDValues.POS_KI, PIDValues.POS_KD);
+        m_yPidController = new PIDController(PIDValues.POS_KP, PIDValues.POS_KI, PIDValues.POS_KD);
         current = 0;
     }
 
@@ -35,17 +36,15 @@ public class FollowRoute extends CommandBase implements Constants {
     public void execute() {
         if (m_posList.isEmpty())
             return;
-        //get current position
+        // get current values
         double xCurrent = Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).getX();
         double yCurrent = Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).getY();
-        //calculate outputs
-        double xOutput = MathUtil.clamp(m_xPidController.calculate(xCurrent, m_posList.get(current).getX()), -1, 1);
-        double yOutput = MathUtil.clamp(m_yPidController.calculate(yCurrent, m_posList.get(current).getY()), -1, 1);
-        //round values
-        xCurrent = Funcs.roundAfterDecimalPoint(xCurrent, 2);
-        yCurrent = Funcs.roundAfterDecimalPoint(yCurrent, 2);
-        //apply outputs
-        Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).drive(new Vector2d(xOutput, yOutput), false);
+        // calculate outputs
+        double xOutput = MathUtil.clamp(m_xPidController.calculate(m_posList.get(current).getX() - xCurrent), -1, 1);
+        double yOutput = MathUtil.clamp(m_yPidController.calculate(m_posList.get(current).getY() - yCurrent), -1, 1);
+
+        // apply outputs
+        Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).drive(new Vector2d(xOutput, yOutput), true);
         Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).rotateTo(m_posList.get(current).getAngle());
     }
 
@@ -53,22 +52,29 @@ public class FollowRoute extends CommandBase implements Constants {
     public boolean isFinished() {
         if (m_posList.isEmpty())
             return true;
+        //get current state of robot
         double xCurrent = Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).getX();
         double yCurrent = Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).getY();
-        if ((Math.abs(m_posList.get(current).getX()) + PIDValues.X_THRESHOLD) > xCurrent &&
-                (Math.abs(m_posList.get(current).getX()) - PIDValues.X_THRESHOLD) < xCurrent &&
-                (Math.abs(m_posList.get(current).getY()) + PIDValues.Y_THRESHOLD) > yCurrent &&
-                (Math.abs(m_posList.get(current).getY()) - PIDValues.Y_THRESHOLD) < yCurrent) {
+        double headingCurrent = Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).getGyro().getAngle();
+        if ((   //check if entered x threshold
+                (Math.abs(m_posList.get(current).getX()) + PIDValues.X_TOLERANCE) > Math.abs(xCurrent) &&
+                (Math.abs(m_posList.get(current).getX()) - PIDValues.X_TOLERANCE) < Math.abs(xCurrent) &&
+                //check if entered y threshold
+                (Math.abs(m_posList.get(current).getY()) + PIDValues.Y_TOLERANCE) > Math.abs(yCurrent) &&
+                (Math.abs(m_posList.get(current).getY()) - PIDValues.Y_TOLERANCE) < Math.abs(yCurrent) &&
+                //check if entered heading threshold
+                (Math.abs(m_posList.get(current).getAngle()) + PIDValues.HEADING_TOLERANCE) > Math.abs(headingCurrent) &&
+                (Math.abs(m_posList.get(current).getAngle()) - PIDValues.HEADING_TOLERANCE) < Math.abs(headingCurrent)   
+            )) {
             current++;
-            if (m_posList.size() == current)
-                return true;
         }
-        return false;
+        return current >= m_posList.size();
     }
 
     @Override
     public void end(boolean interrupted) {
         Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).stop();
+        current = 0;
     }
 
 }

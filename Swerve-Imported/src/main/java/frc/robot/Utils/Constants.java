@@ -26,6 +26,7 @@ public interface Constants {
         public static final int DOWN_LEFT_CANCODER = 5;
         public static final int DOWN_RIGHT_CANCODER = 0;
 
+        //cancoder offsets
         public static final double TOP_RIGHT_CANCODER_OFFSET = 0.293212890625;
         public static final double TOP_LEFT_CANCODER_OFFSET = 0.291748046875;
         public static final double DOWN_RIGHT_CANCODER_OFFSET = -0.1171875;
@@ -36,7 +37,7 @@ public interface Constants {
         public static final double SIDE_WHEEL_DIST_METERS = 0.57;
         public static final double WHEEL_PERIMETER = Math.PI * 0.095;
         public static final double ROBOT_BOUNDING_CIRCLE_PERIMETER = Math.PI * Math.sqrt(
-                FRONT_WHEEL_DIST_METERS * FRONT_WHEEL_DIST_METERS + SIDE_WHEEL_DIST_METERS * SIDE_WHEEL_DIST_METERS);
+            FRONT_WHEEL_DIST_METERS * FRONT_WHEEL_DIST_METERS + SIDE_WHEEL_DIST_METERS * SIDE_WHEEL_DIST_METERS);
 
         // swerve vectors
         public static final Vector2d TOP_RIGHT = new Vector2d((FRONT_WHEEL_DIST_METERS / 2),
@@ -58,6 +59,8 @@ public interface Constants {
     }
 
     public class SpeedValues {
+        public static final double AUTONOMOUS_MAX_ANGULAR_SPEED = 0.5;
+
         // max speed values in m/s
         public static final Supplier<Double> MAX_SPEED = new Supplier<Double>() {
             @Override
@@ -66,15 +69,14 @@ public interface Constants {
             }
         };
 
-        // speed values in m/s
+        // speed values in deg/s
         public static final Supplier<Double> MAX_ANGULAR_SPEED = new Supplier<Double>() {
             @Override
             public Double get() {
-                return SmartDashboard.getNumber("max angular speed", 1);
+                return SmartDashboard.getNumber("max angular speed", 180);
             }
         };
 
-        public static final double AUTONOMOUS_MAX_ANGULAR_SPEED = 0.5;
     }
 
     public class PIDValues {
@@ -89,22 +91,17 @@ public interface Constants {
         public static final double WHEEL_VELOCITY_KF = 0.75 / 2.81;
 
         // pid on the pos on the x axis
-        public static final double X_KP = 3;
-        public static final double X_KI = 0;
-        public static final double X_KD = 0;
+        public static final double POS_KP = 15;
+        public static final double POS_KI = 0;//5
+        public static final double POS_KD = 0;//2
 
-        // pid on the pos on the y axis
-        public static final double Y_KP = 3;
-        public static final double Y_KI = 0;
-        public static final double Y_KD = 0;
-
-        public static final double X_THRESHOLD = 0.04;
-        public static final double Y_THRESHOLD = 0.04;
+        public static final double X_TOLERANCE = 0.05;
+        public static final double Y_TOLERANCE = 0.05;
 
         // speed values
         public static final double HEADING_KP = 0.03;
         public static final double HEADING_KI = 0;
-        public static final double HEADING_KD = 0.0001;
+        public static final double HEADING_KD = 0;
         public static final double HEADING_TOLERANCE = 3;
 
     }

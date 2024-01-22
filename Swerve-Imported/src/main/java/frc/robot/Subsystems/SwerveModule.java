@@ -91,10 +91,6 @@ public class SwerveModule extends SubsystemBase implements Constants {
         setModulesToAbs();
     }
 
-    @Override
-    public void periodic() {
-    }
-
     /**
      * set the speeds of motors to 0
      */
@@ -135,12 +131,10 @@ public class SwerveModule extends SubsystemBase implements Constants {
     }
 
     /**
-     * @param velocity - target module velocity in m/s
+     * set state in cartesian values
+     * @param speed - in m/s
+     * @param angle - in degrees
      */
-    public void setVelocity(double velocity) {
-        m_driveMotor.getPIDController().setReference(velocity, ControlType.kVelocity);
-    }
-
     public void setState(double speed, double angle) {
         setState(new Vector2d(speed * Math.cos(Math.toRadians(angle)), speed * Math.sin(Math.toRadians(angle))));
     }
@@ -193,14 +187,32 @@ public class SwerveModule extends SubsystemBase implements Constants {
         m_steeringMotor.getPIDController().setReference(targetAngle, ControlType.kPosition);
     }
 
+    /**
+     * stop the movement of module
+     */
+    public void stopModule(){
+        m_driveMotor.set(0);
+    }
+
+    /**
+     * 
+     * @return current position of module(in meters)
+     */
     public double getPos() {
         return m_driveMotor.getEncoder().getPosition();
     }
 
+    /**
+     * update current position of module(in meters)
+     */
     public void updatePos() {
         m_currentPosition = this.getPos();
     }
 
+    /**
+     * 
+     * @param pos - set current position to pos(in meters)
+     */
     public void updatePos(double pos) {
         m_driveMotor.getEncoder().setPosition(pos);
     }

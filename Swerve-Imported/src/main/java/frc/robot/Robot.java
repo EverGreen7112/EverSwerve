@@ -6,7 +6,10 @@ package frc.robot;
 
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Subsystems.Swerve;
@@ -14,34 +17,33 @@ import frc.robot.Utils.Constants;
 
 public class Robot extends TimedRobot implements Constants {
   private Swerve m_swerveInstance;
-
+  private Field2d m_field;
   @Override
   public void robotInit() {
     m_swerveInstance = Swerve.getInstance(SwerveValues.USES_ABS_ENCODER);
     new RobotContainer();
     SmartDashboard.putNumber("max drive speed", 1);
-    SmartDashboard.putNumber("max angular speed", 1.5);
-    SmartDashboard.putNumber("heading kp", 0.03);
-    SmartDashboard.putNumber("heading kd", 0.0001);
-    SmartDashboard.putNumber("xkp", 1.5);
-    SmartDashboard.putNumber("xkd", 0);
-    SmartDashboard.putNumber("ykp", 1.5);
-    SmartDashboard.putNumber("ykd", 0);
+    SmartDashboard.putNumber("max angular speed", 200);
     m_swerveInstance.zeroModulesAngles();
+    //create and add robot field data to dashboard
+    m_field = new Field2d();
+    SmartDashboard.putData(m_field);
   }
 
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
-    SmartDashboard.putNumber("top right angle", m_swerveInstance.getModule(0).getCoderPos());
-    SmartDashboard.putNumber("top left angle", m_swerveInstance.getModule(1).getCoderPos());
-    SmartDashboard.putNumber("down right angle", m_swerveInstance.getModule(2).getCoderPos());
-    SmartDashboard.putNumber("down left angle", m_swerveInstance.getModule(3).getCoderPos());
+    //get current position and rotation of robot 
+    double xCurrent = m_swerveInstance.getX();
+    double yCurrent = m_swerveInstance.getY();
+    double headingCurrent = m_swerveInstance.getGyro().getAngle();
+    //update the robot position of dashboard
+    m_field.setRobotPose(yCurrent, -xCurrent, new Rotation2d(Math.toRadians(360 - headingCurrent)));//(because of side view x and y are flipped)
   }
 
   @Override
   public void disabledInit() {
-    Swerve.getInstance(true).stop();
+    m_swerveInstance.stop();
   }
 
   @Override
@@ -68,12 +70,9 @@ public class Robot extends TimedRobot implements Constants {
   public void teleopInit() {
     CommandScheduler.getInstance().cancelAll();
     m_swerveInstance.zeroYaw();
-    Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).resetOdometry();
+    m_swerveInstance.resetOdometry();
+    m_swerveInstance.setModulesToAbs();
     RobotContainer.teleop.schedule();
-    Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).setModulesToAbs();
-    // for(int i =0 ; i < 4;i++){
-    // Swerve.getInstance(true).m_modules[i].setState(0.1, 90);
-    // }
   }
 
   @Override
@@ -82,12 +81,12 @@ public class Robot extends TimedRobot implements Constants {
 
   @Override
   public void teleopExit() {
-    Swerve.getInstance(true).stop();
+    m_swerveInstance.stop();
   }
 
   @Override
   public void testInit() {
-    Swerve.getInstance(true).zeroYaw();
+    m_swerveInstance.zeroYaw();
     CommandScheduler.getInstance().cancelAll();
     RobotContainer.teleop.schedule();
   }
@@ -98,6 +97,6 @@ public class Robot extends TimedRobot implements Constants {
 
   @Override
   public void testExit() {
-    Swerve.getInstance(true).stop();
+    m_swerveInstance.stop();
   }
 }
