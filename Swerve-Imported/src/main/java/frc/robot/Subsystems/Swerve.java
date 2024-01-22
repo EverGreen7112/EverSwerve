@@ -195,6 +195,14 @@ public class Swerve extends SubsystemBase implements Constants {
         m_y = 0;
     }
 
+    public void setOdometryVals(double x, double y){
+        for (int i = 0; i < m_modules.length; i++) {
+            m_modules[i].updatePos(0);
+        }
+        m_x = x;
+        m_y = y;
+    }
+
     public SwerveModule getModule(int idx) {
         return m_modules[idx];
     }

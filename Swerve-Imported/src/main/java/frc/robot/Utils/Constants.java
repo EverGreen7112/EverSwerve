@@ -115,4 +115,9 @@ public interface Constants {
 
     }
 
+    public class VisionValues{
+        public static final int LOCALIZATION_VISION_PORT = 5800;
+          
+    }
+
 }

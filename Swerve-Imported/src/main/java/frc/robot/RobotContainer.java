@@ -79,7 +79,7 @@ public class RobotContainer implements Constants {
       posList.clear();
     }));
 
-    Trigger turnToPoint = new JoystickButton(controller, 4).whileTrue(new TurnToPoint(0, 0)); //change it in the future to speaker
+    Trigger turnToPoint = new JoystickButton(controller, 4).whileTrue(new TurnToPoint(2.64, 13.68)); //change it in the future to speaker
   
   }
 

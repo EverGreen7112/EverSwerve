@@ -14,10 +14,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Subsystems.Swerve;
 import frc.robot.Utils.Constants;
+import frc.robot.Utils.Vision;
 
 public class Robot extends TimedRobot implements Constants {
   private Swerve m_swerveInstance;
   private Field2d m_field;
+  private Vision m_vision;
+  
   @Override
   public void robotInit() {
     m_swerveInstance = Swerve.getInstance(SwerveValues.USES_ABS_ENCODER);
@@ -28,6 +31,7 @@ public class Robot extends TimedRobot implements Constants {
     //create and add robot field data to dashboard
     m_field = new Field2d();
     SmartDashboard.putData(m_field);
+    m_vision = new Vision(VisionValues.LOCALIZATION_VISION_PORT);
   }
 
   @Override
