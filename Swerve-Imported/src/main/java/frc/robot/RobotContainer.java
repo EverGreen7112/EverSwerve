@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Commands.DriveByJoysticks;
 import frc.robot.Commands.FollowRoute;
+import frc.robot.Commands.TurnToPoint;
 import frc.robot.Subsystems.Swerve;
 import frc.robot.Utils.Constants;
 import frc.robot.Utils.SwervePoint;
@@ -78,6 +79,7 @@ public class RobotContainer implements Constants {
       posList.clear();
     }));
 
+    Trigger turnToPoint = new JoystickButton(controller, 4).whileTrue(new TurnToPoint(0, 0)); //change it in the future to speaker
   
   }
 

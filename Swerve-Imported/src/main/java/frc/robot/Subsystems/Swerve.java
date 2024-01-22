@@ -207,6 +207,10 @@ public class Swerve extends SubsystemBase implements Constants {
         return m_y;
     }
 
+    public Vector2d getPos(){
+        return new Vector2d(getX(), getY());
+    }
+
     public void odometry() {
         double deltaX = 0, deltaY = 0;
         for (int i = 0; i < m_modules.length; i++) {
