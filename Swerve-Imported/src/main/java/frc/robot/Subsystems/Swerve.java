@@ -21,11 +21,16 @@ public class Swerve extends SubsystemBase implements Constants {
 
     // Swerve instance
     private static Swerve m_instance;
-
+    // heading pid target angle
     private double m_headingTargetAngle;
+    // current rotation speed
     private double m_rotationSpeed;
+    // heading pid controller
     private PIDController m_headingPidController;
+    // current x and y positions
     private double m_x, m_y;
+    // robot heading angle from the localization vision 
+    private double m_robotHeadingFromVision;
 
     /**
      * @param usesAbsEncoder -if robot got can coders connected to the steering
@@ -57,7 +62,7 @@ public class Swerve extends SubsystemBase implements Constants {
         m_rotationSpeed = 0;
         m_x = 0;
         m_y = 0;
-
+        m_robotHeadingFromVision = 0;
     }
 
     /**
@@ -195,12 +200,13 @@ public class Swerve extends SubsystemBase implements Constants {
         m_y = 0;
     }
 
-    public void setOdometryVals(double x, double y){
+    public void setOdometryVals(double x, double y, double robotHeadingFromVision){
         for (int i = 0; i < m_modules.length; i++) {
             m_modules[i].updatePos(0);
         }
         m_x = x;
         m_y = y;
+        m_robotHeadingFromVision = robotHeadingFromVision;
     }
 
     public SwerveModule getModule(int idx) {
@@ -228,12 +234,13 @@ public class Swerve extends SubsystemBase implements Constants {
             Vector2d tempVec = new Vector2d(deltaX, deltaY);
             //rotate by yaw to get the values as field oriented
             // -90 and -angle to convert values to the rights axises
-            tempVec.rotate(-Math.toRadians(m_gyro.getYaw() - 90));
+            tempVec.rotate(Math.toRadians(m_robotHeadingFromVision) - Math.toRadians(m_gyro.getYaw()));
             m_x += tempVec.x;
             m_y += tempVec.y;
             m_modules[i].updatePos();
         }
         SmartDashboard.putNumber("x", m_x);
         SmartDashboard.putNumber("y", m_y);
+        SmartDashboard.putNumber("heading vision", m_robotHeadingFromVision);
     }
 }

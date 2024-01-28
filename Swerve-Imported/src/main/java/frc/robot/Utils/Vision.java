@@ -15,15 +15,15 @@ public class Vision {
     private DatagramSocket m_socket;
     private DatagramPacket m_packet;
     private Thread m_visionThread;
-    private float[] m_locals={0,0,0};
-    private float[] m_lastLocals={0,0,0};
+    private float[] m_locals={0, 0, 0, 0};
+    private float[] m_lastLocals={0, 0, 0, 0};
     
     public Vision(int port){
         this.m_port = port;
         try{ 
             m_socket = new DatagramSocket(m_port, InetAddress.getByName("0.0.0.0"));
             m_socket.setBroadcast(true);
-            byte[] buf = new byte[24];
+            byte[] buf = new byte[48];
             m_packet = new DatagramPacket(buf, buf.length);
         }
         catch (Exception e){
@@ -36,18 +36,22 @@ public class Vision {
                     m_socket.receive(m_packet);
                 } catch (IOException e) {
                     e.printStackTrace();
-                }
+                }       
+                        //get floats from socket
                         float[] new_locals = new float[]{(ByteBuffer.wrap(m_packet.getData()).order(ByteOrder.LITTLE_ENDIAN).getFloat()),
-                            (ByteBuffer.wrap(m_packet.getData()).order(ByteOrder.LITTLE_ENDIAN).getFloat(4)),
-                            (ByteBuffer.wrap(m_packet.getData()).order(ByteOrder.LITTLE_ENDIAN).getFloat(8))};
+                            (ByteBuffer.wrap(m_packet.getData()).order(ByteOrder.LITTLE_ENDIAN).getFloat(4)),//get second float
+                            (ByteBuffer.wrap(m_packet.getData()).order(ByteOrder.LITTLE_ENDIAN).getFloat(8)), //get third float
+                            (ByteBuffer.wrap(m_packet.getData()).order(ByteOrder.LITTLE_ENDIAN).getFloat(12)),}; // get fourth float
+                        //save last locals
                         for(int i=0; i<m_locals.length; i++){
                             m_lastLocals[i] = m_locals[i];
                         }
+                        //save current locals
                         for(int i=0; i<m_locals.length; i++){
                             m_locals[i] = new_locals[i];
                         }
                     //put localization values from vision in swerve (not in the correct order because axises are flipped)
-                    Swerve.getInstance(Constants.SwerveValues.USES_ABS_ENCODER).setOdometryVals(m_locals[2], m_locals[0]);
+                    Swerve.getInstance(Constants.SwerveValues.USES_ABS_ENCODER).setOdometryVals(m_locals[0], m_locals[2], m_locals[3]);
             }
         });
         m_visionThread.setDaemon(true);

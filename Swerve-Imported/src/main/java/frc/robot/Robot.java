@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import com.ctre.phoenix6.mechanisms.swerve.SwerveModule;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -42,7 +40,7 @@ public class Robot extends TimedRobot implements Constants {
     double yCurrent = m_swerveInstance.getY();
     double headingCurrent = m_swerveInstance.getGyro().getAngle();
     //update the robot position of dashboard
-    m_field.setRobotPose(yCurrent, -xCurrent, new Rotation2d(Math.toRadians(360 - headingCurrent)));//(because of side view x and y are flipped)
+    m_field.setRobotPose(xCurrent, yCurrent, new Rotation2d(Math.toRadians(headingCurrent)));
   }
 
   @Override
