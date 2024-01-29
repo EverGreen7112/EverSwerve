@@ -31,6 +31,8 @@ public class Swerve extends SubsystemBase implements Constants {
     private double m_x, m_y;
     // robot heading angle from the localization vision 
     private double m_robotHeadingFromVision;
+    // angle offset of robot
+    private double m_angleOffset = 0;
 
     /**
      * @param usesAbsEncoder -if robot got can coders connected to the steering
@@ -206,23 +208,41 @@ public class Swerve extends SubsystemBase implements Constants {
         }
         m_x = x;
         m_y = y;
-        m_robotHeadingFromVision = robotHeadingFromVision;
+        m_robotHeadingFromVision = 90 + robotHeadingFromVision;
+        m_angleOffset = - robotHeadingFromVision - m_gyro.getYaw();
     }
 
+    /**
+     * get SwerveModule at idx
+     **/
     public SwerveModule getModule(int idx) {
         return m_modules[idx];
     }
 
+    /**  
+     * get current position in the x axis
+    */
     public double getX() {
         return m_x;
     }
 
-    public double getY() {
+    /**  
+     * get current position in the y axis
+    */
+     public double getY() {
         return m_y;
     }
 
+    /**
+     * 
+     * @return
+     */
     public Vector2d getPos(){
         return new Vector2d(getX(), getY());
+    }
+
+    public double getAngleWithOffset(){
+        return m_gyro.getAngle() + m_angleOffset;
     }
 
     public void odometry() {
@@ -231,16 +251,16 @@ public class Swerve extends SubsystemBase implements Constants {
             double deltaP = m_modules[i].getPos() - m_modules[i].m_currentPosition;
             deltaX = (Math.cos(Math.toRadians(m_modules[i].getAngle())) * deltaP) / 4;
             deltaY = (Math.sin(Math.toRadians(m_modules[i].getAngle())) * deltaP) / 4;
-            Vector2d tempVec = new Vector2d(deltaX, deltaY);
+            Vector2d deltaVec = new Vector2d(deltaX, deltaY);
             //rotate by yaw to get the values as field oriented
             // -90 and -angle to convert values to the rights axises
-            tempVec.rotate(Math.toRadians(m_robotHeadingFromVision) - Math.toRadians(m_gyro.getYaw()));
-            m_x += tempVec.x;
-            m_y += tempVec.y;
+            deltaVec.rotate(m_angleOffset);
+            m_x += deltaVec.x;
+            m_y += deltaVec.y;
             m_modules[i].updatePos();
         }
         SmartDashboard.putNumber("x", m_x);
         SmartDashboard.putNumber("y", m_y);
-        SmartDashboard.putNumber("heading vision", m_robotHeadingFromVision);
+        SmartDashboard.putNumber("heading vision", m_angleOffset);
     }
 }

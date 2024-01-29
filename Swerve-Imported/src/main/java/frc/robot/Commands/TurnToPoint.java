@@ -25,7 +25,7 @@ public class TurnToPoint extends CommandBase implements Constants{
         Vector2d currentPos = Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).getPos();
         //get the vector between current and target vectors
         Vector2d deltaPos = new Vector2d(m_target.x - currentPos.x, m_target.y - currentPos.y ); 
-        double targetAngle = 90 - Math.toDegrees(deltaPos.theta());
+        double targetAngle = -Math.toDegrees(deltaPos.theta()); // 180  -
         SmartDashboard.putNumber("target angle", targetAngle);
         // targetAngle += 180; //because of vision(cus ima shel nadav) remove later with real robot
         //rotate swerve to point
