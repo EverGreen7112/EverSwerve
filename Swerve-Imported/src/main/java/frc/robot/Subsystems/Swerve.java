@@ -31,6 +31,7 @@ public class Swerve extends SubsystemBase implements Constants {
     private double m_x, m_y;
     // robot heading angle from the localization vision 
     private double m_robotHeadingFromVision;
+    private double m_angleOffset = 0;
 
     /**
      * @param usesAbsEncoder -if robot got can coders connected to the steering
@@ -204,9 +205,10 @@ public class Swerve extends SubsystemBase implements Constants {
         for (int i = 0; i < m_modules.length; i++) {
             m_modules[i].updatePos(0);
         }
-        m_x = x;
-        m_y = y;
+        m_x = y;
+        m_y = x;
         m_robotHeadingFromVision = robotHeadingFromVision;
+        m_angleOffset = m_robotHeadingFromVision - m_gyro.getYaw();
     }
 
     public SwerveModule getModule(int idx) {
@@ -234,9 +236,9 @@ public class Swerve extends SubsystemBase implements Constants {
             Vector2d tempVec = new Vector2d(deltaX, deltaY);
             //rotate by yaw to get the values as field oriented
             // -90 and -angle to convert values to the rights axises
-            tempVec.rotate(Math.toRadians(m_robotHeadingFromVision) - Math.toRadians(m_gyro.getYaw()));
-            m_x += tempVec.x;
-            m_y += tempVec.y;
+            tempVec.rotateBy(Math.toRadians(m_angleOffset));
+            m_x += tempVec.y;
+            m_y += tempVec.x;
             m_modules[i].updatePos();
         }
         SmartDashboard.putNumber("x", m_x);
