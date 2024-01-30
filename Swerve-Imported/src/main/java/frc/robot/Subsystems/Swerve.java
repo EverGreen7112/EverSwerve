@@ -208,8 +208,8 @@ public class Swerve extends SubsystemBase implements Constants {
         }
         m_x = x;
         m_y = y;
-        m_robotHeadingFromVision = 90 + robotHeadingFromVision;
-        m_angleOffset = - robotHeadingFromVision - m_gyro.getYaw();
+        m_robotHeadingFromVision = -robotHeadingFromVision;
+        m_angleOffset = robotHeadingFromVision - m_gyro.getYaw();
     }
 
     /**
@@ -242,7 +242,7 @@ public class Swerve extends SubsystemBase implements Constants {
     }
 
     public double getAngleWithOffset(){
-        return m_gyro.getAngle() + m_angleOffset;
+        return -(m_gyro.getAngle() + m_angleOffset);
     }
 
     public void odometry() {
@@ -254,7 +254,8 @@ public class Swerve extends SubsystemBase implements Constants {
             Vector2d deltaVec = new Vector2d(deltaX, deltaY);
             //rotate by yaw to get the values as field oriented
             // -90 and -angle to convert values to the rights axises
-            deltaVec.rotate(m_angleOffset);
+
+            deltaVec.rotate(Math.toRadians(this.getAngleWithOffset()));
             m_x += deltaVec.x;
             m_y += deltaVec.y;
             m_modules[i].updatePos();

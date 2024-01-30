@@ -193,7 +193,7 @@ public class Vector2d
 
         double nx = x * cosTheta - y * sinTheta;
         double ny = x * sinTheta + y * cosTheta;
-
+        
         x = nx;
         y = ny;
         return this;
