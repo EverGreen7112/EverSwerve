@@ -69,17 +69,18 @@ public class RobotContainer implements Constants {
    
     Trigger FollowRoute = new JoystickButton(controller, 10).onTrue(new FollowRoute(posList));
 
-    Trigger savePoint = new JoystickButton(controller, 2).onTrue(new InstantCommand(() -> {
-      posList.add(new SwervePoint(Swerve.getInstance(Constants.SwerveValues.USES_ABS_ENCODER).getX(),
-                                  Swerve.getInstance(Constants.SwerveValues.USES_ABS_ENCODER).getY(),
-                                  Swerve.getInstance(Constants.SwerveValues.USES_ABS_ENCODER).getGyro().getAngle()));
-    }));
+    // Trigger savePoint = new JoystickButton(controller, 2).onTrue(new InstantCommand(() -> {
+    //   posList.add(new SwervePoint(Swerve.getInstance(Constants.SwerveValues.USES_ABS_ENCODER).getX(),
+    //                               Swerve.getInstance(Constants.SwerveValues.USES_ABS_ENCODER).getY(),
+    //                               Swerve.getInstance(Constants.SwerveValues.USES_ABS_ENCODER).getGyro().getAngle()));
+    // }));
 
-    Trigger removePoints = new JoystickButton(controller, 1).onTrue(new InstantCommand(() -> {
-      posList.clear();
-    }));
+    // Trigger removePoints = new JoystickButton(controller, 1).onTrue(new InstantCommand(() -> {
+    //   posList.clear();
+    // }));
 
-    Trigger turnToPoint = new JoystickButton(controller, 4).whileTrue(new TurnToPoint(2.64, 13.68)); //change it in the future to speaker
+    Trigger turnToZero = new JoystickButton(controller, 1).whileTrue(new TurnToPoint(0, 0)); //change it in the future to speaker
+    Trigger turnToPoint = new JoystickButton(controller, 4).whileTrue(new TurnToPoint(13.68, 2.64)); //change it in the future to speaker
   
   }
 
