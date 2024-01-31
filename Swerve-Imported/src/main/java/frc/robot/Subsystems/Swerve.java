@@ -206,10 +206,10 @@ public class Swerve extends SubsystemBase implements Constants {
         for (int i = 0; i < m_modules.length; i++) {
             m_modules[i].updatePos(0);
         }
-        m_x = x;
-        m_y = y;
-        m_robotHeadingFromVision = -robotHeadingFromVision;
-        m_angleOffset = robotHeadingFromVision - m_gyro.getYaw();
+        m_x = y;
+        m_y = x;
+        m_robotHeadingFromVision = robotHeadingFromVision;
+        m_angleOffset = m_robotHeadingFromVision - m_gyro.getYaw();
     }
 
     /**
@@ -254,10 +254,9 @@ public class Swerve extends SubsystemBase implements Constants {
             Vector2d deltaVec = new Vector2d(deltaX, deltaY);
             //rotate by yaw to get the values as field oriented
             // -90 and -angle to convert values to the rights axises
-
-            deltaVec.rotate(Math.toRadians(this.getAngleWithOffset()));
-            m_x += deltaVec.x;
-            m_y += deltaVec.y;
+            tempVec.rotateBy(Math.toRadians(m_angleOffset));
+            m_x += tempVec.y;
+            m_y += tempVec.x;
             m_modules[i].updatePos();
         }
         SmartDashboard.putNumber("x", m_x);

@@ -51,7 +51,8 @@ public class Vision {
                             m_locals[i] = new_locals[i];
                         }
                     //put localization values from vision in swerve (not in the correct order because axises are flipped)
-                    Swerve.getInstance(Constants.SwerveValues.USES_ABS_ENCODER).setOdometryVals(m_locals[0], m_locals[2], 90 - m_locals[3]);
+                    Swerve.getInstance(Constants.SwerveValues.USES_ABS_ENCODER).setOdometryVals(m_locals[0], m_locals[2], m_locals[3]);
+
             }
         });
         m_visionThread.setDaemon(true);

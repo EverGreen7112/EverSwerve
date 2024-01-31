@@ -199,6 +199,11 @@ public class Vector2d
         return this;
     }
 
+    public Vector2d rotateBy(double thetaRadians){
+        rotate(theta() + thetaRadians);
+        return this;
+    }
+
     /**
      * Calculates the scalar product of this vector and the one passed by parameter
      * @param v vector to do the scalar product with.
