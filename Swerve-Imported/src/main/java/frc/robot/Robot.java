@@ -38,9 +38,9 @@ public class Robot extends TimedRobot implements Constants {
     //get current position and rotation of robot 
     double xCurrent = m_swerveInstance.getX();
     double yCurrent = m_swerveInstance.getY();
-    double headingCurrent = m_swerveInstance.getGyro().getAngle();
+    double headingCurrent = m_swerveInstance.getAngleWithOffset();
     //update the robot position of dashboard
-    m_field.setRobotPose(yCurrent, xCurrent, new Rotation2d(Math.toRadians(360 - headingCurrent)));
+    m_field.setRobotPose(yCurrent, xCurrent, new Rotation2d(Math.toRadians(headingCurrent)));
   }
 
   @Override

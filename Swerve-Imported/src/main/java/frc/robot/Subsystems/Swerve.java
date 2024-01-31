@@ -209,7 +209,7 @@ public class Swerve extends SubsystemBase implements Constants {
         m_x = y;
         m_y = x;
         m_robotHeadingFromVision = robotHeadingFromVision;
-        m_angleOffset = m_robotHeadingFromVision - m_gyro.getYaw();
+        m_angleOffset = m_robotHeadingFromVision - m_gyro.getAngle();
     }
 
     /**
@@ -242,25 +242,40 @@ public class Swerve extends SubsystemBase implements Constants {
     }
 
     public double getAngleWithOffset(){
-        return -(m_gyro.getAngle() + m_angleOffset);
+        return m_gyro.getAngle() + m_angleOffset;
     }
 
     public void odometry() {
-        double deltaX = 0, deltaY = 0;
+        double moduleDeltaX = 0, moduleDeltaY = 0;  // these are robot oriented
+        double robotDeltaX = 0;
+        double robotDeltaY = 0;
         for (int i = 0; i < m_modules.length; i++) {
             double deltaP = m_modules[i].getPos() - m_modules[i].m_currentPosition;
-            deltaX = (Math.cos(Math.toRadians(m_modules[i].getAngle())) * deltaP) / 4;
-            deltaY = (Math.sin(Math.toRadians(m_modules[i].getAngle())) * deltaP) / 4;
-            Vector2d deltaVec = new Vector2d(deltaX, deltaY);
+
+            // these values are all robot oriented
+            moduleDeltaX = (Math.cos(Math.toRadians(m_modules[i].getAngle())) * deltaP);
+            moduleDeltaY = (Math.sin(Math.toRadians(m_modules[i].getAngle())) * deltaP);
+            Vector2d deltaVec = new Vector2d(moduleDeltaX, moduleDeltaY);
             //rotate by yaw to get the values as field oriented
             // -90 and -angle to convert values to the rights axises
-            tempVec.rotateBy(Math.toRadians(m_angleOffset));
-            m_x += tempVec.y;
-            m_y += tempVec.x;
-            m_modules[i].updatePos();
+            robotDeltaY += deltaVec.y;
+            robotDeltaX += deltaVec.x;
+            m_modules[i].updatePos(); 
         }
+        // takes the average 
+        robotDeltaX *= 0.25;
+        robotDeltaY *= 0.25;
+
+        // this is the robot's Delta movement in robot oriented coordinates
+        Vector2d robotDelta = new Vector2d(robotDeltaX, robotDeltaY);
+        robotDelta.rotateBy(Math.toRadians(getAngleWithOffset()));  // changes robotDelta to field oriented
+
+        m_x = robotDelta.x;
+        m_y = robotDelta.y;
+
+
         SmartDashboard.putNumber("x", m_x);
         SmartDashboard.putNumber("y", m_y);
-        SmartDashboard.putNumber("heading vision", m_angleOffset);
+        SmartDashboard.putNumber("offset", m_angleOffset);
     }
 }

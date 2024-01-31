@@ -2,8 +2,6 @@ package frc.robot.Commands;
 
 import java.util.ArrayList;
 
-import org.opencv.core.Point;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
