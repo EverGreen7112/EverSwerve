@@ -206,8 +206,8 @@ public class Swerve extends SubsystemBase implements Constants {
         for (int i = 0; i < m_modules.length; i++) {
             m_modules[i].updatePos(0);
         }
-        m_x = y;
-        m_y = x;
+        m_x = x;
+        m_y = y;
         m_robotHeadingFromVision = robotHeadingFromVision;
         m_angleOffset = m_robotHeadingFromVision - m_gyro.getAngle();
     }
@@ -281,14 +281,14 @@ public class Swerve extends SubsystemBase implements Constants {
         Vector2d robotDelta = new Vector2d(robotDeltaX, robotDeltaY);
         robotDelta.rotateBy(Math.toRadians(getAngleWithOffset()));  // changes robotDelta to field oriented
 
-        m_x += robotDelta.x;
+        m_x -= robotDelta.x;
         m_y += robotDelta.y;
 
 
         SmartDashboard.putNumber("x", m_x);
         SmartDashboard.putNumber("y", m_y);
         SmartDashboard.putNumber("angle", getAngleWithOffset());
-        // SmartDashboard.putNumber("vision angle", m_robotHeadingFromVision);
-        // SmartDashboard.putNumber("offset", m_angleOffset);
+        SmartDashboard.putNumber("vision angle", m_robotHeadingFromVision);
+        SmartDashboard.putNumber("offset", m_angleOffset);
     }
 }
