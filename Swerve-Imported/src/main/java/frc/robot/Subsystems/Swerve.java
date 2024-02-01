@@ -235,14 +235,25 @@ public class Swerve extends SubsystemBase implements Constants {
 
     /**
      * 
-     * @return
+     * @return get the current position as a vector
      */
     public Vector2d getPos(){
         return new Vector2d(getX(), getY());
     }
 
+    /**
+     * @return the angle offset that transforms an angle from robot oriented to field oriented
+     */
+    public double getOffsetAngle(){ 
+        return m_angleOffset;
+    }
+
+    /**
+     * 
+     * @return the angle of the robot with an offset to make it field oriented 
+     */
     public double getAngleWithOffset(){
-        return m_gyro.getAngle() + m_angleOffset;
+        return (m_gyro.getAngle() + m_angleOffset);
     }
 
     public void odometry() {
@@ -255,11 +266,11 @@ public class Swerve extends SubsystemBase implements Constants {
             // these values are all robot oriented
             moduleDeltaX = (Math.cos(Math.toRadians(m_modules[i].getAngle())) * deltaP);
             moduleDeltaY = (Math.sin(Math.toRadians(m_modules[i].getAngle())) * deltaP);
-            Vector2d deltaVec = new Vector2d(moduleDeltaX, moduleDeltaY);
+            // Vector2d deltaVec = new Vector2d(moduleDeltaX, moduleDeltaY);
             //rotate by yaw to get the values as field oriented
             // -90 and -angle to convert values to the rights axises
-            robotDeltaY += deltaVec.y;
-            robotDeltaX += deltaVec.x;
+            robotDeltaY += moduleDeltaY;
+            robotDeltaX += moduleDeltaX;
             m_modules[i].updatePos(); 
         }
         // takes the average 
@@ -270,12 +281,14 @@ public class Swerve extends SubsystemBase implements Constants {
         Vector2d robotDelta = new Vector2d(robotDeltaX, robotDeltaY);
         robotDelta.rotateBy(Math.toRadians(getAngleWithOffset()));  // changes robotDelta to field oriented
 
-        m_x = robotDelta.x;
-        m_y = robotDelta.y;
+        m_x += robotDelta.x;
+        m_y += robotDelta.y;
 
 
         SmartDashboard.putNumber("x", m_x);
         SmartDashboard.putNumber("y", m_y);
-        SmartDashboard.putNumber("offset", m_angleOffset);
+        SmartDashboard.putNumber("angle", getAngleWithOffset());
+        // SmartDashboard.putNumber("vision angle", m_robotHeadingFromVision);
+        // SmartDashboard.putNumber("offset", m_angleOffset);
     }
 }

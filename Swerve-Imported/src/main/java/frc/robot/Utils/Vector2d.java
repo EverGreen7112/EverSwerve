@@ -200,7 +200,10 @@ public class Vector2d
     }
 
     public Vector2d rotateBy(double thetaRadians){
-        rotate(theta() + thetaRadians);
+        double mag = this.mag();
+        double theta = Math.atan2(this.x, this.y) + thetaRadians;
+        this.x = Math.cos(theta) * mag;
+        this.y = Math.sin(theta) * mag;
         return this;
     }
 

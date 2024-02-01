@@ -80,7 +80,7 @@ public class RobotContainer implements Constants {
     // }));
 
     Trigger turnToZero = new JoystickButton(controller, 1).whileTrue(new TurnToPoint(0, 0)); 
-    Trigger turnToPoint = new JoystickButton(controller, 4).whileTrue(new TurnToPoint(13.68, 2.64)); 
+    Trigger turnToPoint = new JoystickButton(controller, 4).whileTrue(new TurnToPoint(16, 5.6));  // 13.68, 2.64
   
   }
 
