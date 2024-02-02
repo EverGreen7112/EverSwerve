@@ -21,15 +21,11 @@ public class TurnToPoint extends CommandBase implements Constants{
 
     @Override
     public void execute() {
-        //get current position of robot
+        // get current position of robot
         Vector2d currentPos = Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).getPos();
         // double targetAngle = -Math.toDegrees(deltaPos.theta() * Math.signum(deltaPos.x)); // 180  -
-        double targetAngle = Math.toDegrees(Math.atan2(m_target.x - currentPos.x, m_target.y - currentPos.y)) -
-            Swerve.getInstance(Constants.SwerveValues.USES_ABS_ENCODER).getOffsetAngle();
-        SmartDashboard.putNumber("target x", m_target.x);
-        SmartDashboard.putNumber("target y", m_target.y);
-        SmartDashboard.putNumber("target angle", targetAngle); 
-        //rotate swerve to point
-        Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).rotateTo(targetAngle);
+        double targetAngle = Math.toDegrees(Math.atan2(m_target.x - currentPos.x, m_target.y - currentPos.y));
+        // turn swerve to point
+        Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).turnToFieldOriented(targetAngle);
     }
 }

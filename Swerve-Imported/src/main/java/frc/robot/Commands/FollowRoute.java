@@ -20,6 +20,7 @@ public class FollowRoute extends CommandBase implements Constants {
     private int current;
 
     public FollowRoute(ArrayList<SwervePoint> posList) {
+        addRequirements(Swerve.getInstance(SwerveValues.USES_ABS_ENCODER));
         m_posList = posList;
     }
 
@@ -37,13 +38,16 @@ public class FollowRoute extends CommandBase implements Constants {
         // get current values
         double xCurrent = Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).getX();
         double yCurrent = Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).getY();
+
         // calculate outputs
-        double xOutput = MathUtil.clamp(m_xPidController.calculate(m_posList.get(current).getX() - xCurrent), -1, 1);
-        double yOutput = MathUtil.clamp(m_yPidController.calculate(m_posList.get(current).getY() - yCurrent), -1, 1);
+        double xOutput = MathUtil.clamp(m_xPidController.calculate(xCurrent, m_posList.get(current).getX()), -Constants.SpeedValues.MAX_SPEED.get(),
+         Constants.SpeedValues.MAX_SPEED.get());
+        double yOutput = MathUtil.clamp(m_yPidController.calculate(yCurrent, m_posList.get(current).getY()), -Constants.SpeedValues.MAX_SPEED.get(),
+         Constants.SpeedValues.MAX_SPEED.get());
 
         // apply outputs
-        Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).drive(new Vector2d(xOutput, yOutput), true);
-        Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).rotateTo(m_posList.get(current).getAngle());
+        Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).driveFieldOrientedAngle(new Vector2d(xOutput, yOutput));
+        Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).turnToFieldOriented(m_posList.get(current).getAngle());
     }
 
     @Override
@@ -53,16 +57,13 @@ public class FollowRoute extends CommandBase implements Constants {
         //get current state of robot
         double xCurrent = Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).getX();
         double yCurrent = Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).getY();
-        double headingCurrent = Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).getGyro().getAngle();
+        double headingCurrent = Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).getFieldOrientedAngle();
         if ((   //check if entered x threshold
-                (Math.abs(m_posList.get(current).getX()) + PIDValues.X_TOLERANCE) > Math.abs(xCurrent) &&
-                (Math.abs(m_posList.get(current).getX()) - PIDValues.X_TOLERANCE) < Math.abs(xCurrent) &&
+                Math.abs(m_posList.get(current).getX() - xCurrent) < PIDValues.X_TOLERANCE &&
                 //check if entered y threshold
-                (Math.abs(m_posList.get(current).getY()) + PIDValues.Y_TOLERANCE) > Math.abs(yCurrent) &&
-                (Math.abs(m_posList.get(current).getY()) - PIDValues.Y_TOLERANCE) < Math.abs(yCurrent) &&
+                Math.abs(m_posList.get(current).getY() - yCurrent) < PIDValues.Y_TOLERANCE &&
                 //check if entered heading threshold
-                (Math.abs(m_posList.get(current).getAngle()) + PIDValues.HEADING_TOLERANCE) > Math.abs(headingCurrent) &&
-                (Math.abs(m_posList.get(current).getAngle()) - PIDValues.HEADING_TOLERANCE) < Math.abs(headingCurrent)   
+                (Math.abs(m_posList.get(current).getAngle() - headingCurrent) % 360) < PIDValues.HEADING_TOLERANCE
             )) {
             current++;
         }

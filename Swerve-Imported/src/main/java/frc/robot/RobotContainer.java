@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Commands.DriveByJoysticks;
@@ -43,19 +44,19 @@ public class RobotContainer implements Constants {
   private void configureBindings() {
 
     Trigger rotateRobotBy45 = new JoystickButton(controller, 6).onTrue(new InstantCommand(() -> {
-      Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).rotateBy(45);
+      Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).turnBy(45);
     }));
 
     Trigger rotateRobotByMinus45 = new JoystickButton(controller, 5).onTrue(new InstantCommand(() -> {
-      Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).rotateBy(-45);
+      Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).turnBy(-45);
       ;
     }));
     Trigger rotateRobot180 = new JoystickButton(controller, 8).onTrue(new InstantCommand(() -> {
-      Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).rotateBy(180);
+      Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).turnBy(180);
       ;
     }));
     Trigger rotateRobotTo0 = new JoystickButton(controller, 7).onTrue(new InstantCommand(() -> {
-      Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).rotateTo(0);
+      Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).turnToRobotOriented(0);
       ;
     }));
     Trigger resetOdometry = new JoystickButton(controller, 3).onTrue(new InstantCommand(() -> {
@@ -67,21 +68,27 @@ public class RobotContainer implements Constants {
     // posList.add(new SwervePoint(1, 1, 90));
     // posList.add(new SwervePoint(1, 0, 0));
    
-    Trigger FollowRoute = new JoystickButton(controller, 10).onTrue(new FollowRoute(posList));
+    Trigger FollowRoute = new JoystickButton(controller, 10).onTrue(
+      new SequentialCommandGroup(new FollowRoute(posList), new DriveByJoysticks(() -> controller.getX(), () -> controller.getY(),
+      () -> controller.getZ(), () -> true, SwerveValues.USES_ABS_ENCODER)));
 
-    // Trigger savePoint = new JoystickButton(controller, 2).onTrue(new InstantCommand(() -> {
-    //   posList.add(new SwervePoint(Swerve.getInstance(Constants.SwerveValues.USES_ABS_ENCODER).getX(),
-    //                               Swerve.getInstance(Constants.SwerveValues.USES_ABS_ENCODER).getY(),
-    //                               Swerve.getInstance(Constants.SwerveValues.USES_ABS_ENCODER).getGyro().getAngle()));
-    // }));
+    Trigger savePoint = new JoystickButton(controller, 2).onTrue(new InstantCommand(() -> {
+      posList.add(new SwervePoint(Swerve.getInstance(Constants.SwerveValues.USES_ABS_ENCODER).getX(),
+                                  Swerve.getInstance(Constants.SwerveValues.USES_ABS_ENCODER).getY(),
+                                  Swerve.getInstance(Constants.SwerveValues.USES_ABS_ENCODER).getFieldOrientedAngle()));
+    }));
 
-    // Trigger removePoints = new JoystickButton(controller, 1).onTrue(new InstantCommand(() -> {
-    //   posList.clear();
-    // }));
+    Trigger removePoints = new JoystickButton(controller, 1).onTrue(new InstantCommand(() -> {
+      posList.clear();
+    }));
 
-    Trigger turnToZero = new JoystickButton(controller, 1).whileTrue(new TurnToPoint(0, 0)); 
-    Trigger turnToPoint = new JoystickButton(controller, 4).whileTrue(new TurnToPoint(16, 5.6));  // 13.68, 2.64
-  
+    // Trigger turnToZero = new JoystickButton(controller, 1).whileTrue(new TurnToPoint(0, 0)); 
+    // Trigger turnToPoint = new JoystickButton(controller, 4).whileTrue(new TurnToPoint(16, 5.6));  // 13.68, 2.64
+    ArrayList<SwervePoint> zeroRoute = new ArrayList<>();
+    zeroRoute.add(new SwervePoint(0, 0, 0));
+    Trigger goToZero = new JoystickButton(controller, 4).onTrue(
+      new SequentialCommandGroup(new FollowRoute(zeroRoute), new DriveByJoysticks(() -> controller.getX(), () -> controller.getY(),
+      () -> controller.getZ(), () -> true, SwerveValues.USES_ABS_ENCODER)));
   }
 
   public Command getAutonomousCommand() {

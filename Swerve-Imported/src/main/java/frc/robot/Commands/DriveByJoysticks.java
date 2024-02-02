@@ -2,6 +2,7 @@ package frc.robot.Commands;
 
 import java.util.function.Supplier;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Subsystems.Swerve;
 import frc.robot.Utils.Constants;
@@ -53,7 +54,7 @@ public class DriveByJoysticks extends CommandBase implements Constants{
         speedY = Funcs.roundAfterDecimalPoint(speedY, 2);
 
         //rotate robot according to rotation supplier   
-        Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).rotateBy(SpeedValues.MAX_ANGULAR_SPEED.get() * rotation * deltaTime);
+        Swerve.getInstance(SwerveValues.USES_ABS_ENCODER).turnBy(SpeedValues.MAX_ANGULAR_SPEED.get() * rotation * deltaTime);
         //create drive vector
         Vector2d vec = new Vector2d(-speedX, speedY);
         //make sure mag never goes over 1 so driving in all directions will be the same speed
@@ -61,7 +62,7 @@ public class DriveByJoysticks extends CommandBase implements Constants{
             vec.normalise();
         }
         //drive
-        Swerve.getInstance(m_usesAbsEncoder).drive(vec, m_isFieldOriented.get());
+        Swerve.getInstance(m_usesAbsEncoder).driveRobotOrientedAngle(vec, m_isFieldOriented.get());
         //update current time
         m_currentTime = System.currentTimeMillis() / 1000.0;
     }
